@@ -13,6 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Shapes.h"
 
+
 //==============================================================================
 /*
 */
@@ -25,12 +26,19 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     
-    void drawOctave(int octaveNumber);
+    void drawOctave(Graphics& g, int octaveNumber);
 
 private:
-    
-    //Polygon hex;
-    Path hex;
+   
+	OwnedArray<Path> hexes;
+
+	float widthMult = 0.018;
+	float spacing = 0.1;
+
+	float widthStatic = 5;
+
+	Array<int> octaveRows = { 2, 5, 6, 6, 6, 6, 6, 6, 6, 5, 1 };
+	Array<int> rowOffsets = { 0, 1, 1, 2, 2, 3, 3, 4, 4, 6, 10 };
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (KeyboardViewer)
 };

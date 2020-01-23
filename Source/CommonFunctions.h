@@ -11,7 +11,7 @@
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#define PI = 3.14159265359
+#define PI 3.14159265359f
 
 static Array<int> getCoprimes(int numIn)
 {
