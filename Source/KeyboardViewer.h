@@ -32,10 +32,8 @@ private:
    
 	OwnedArray<Path> hexes;
 
-	float widthMult = 0.018;
+	float widthMult = 0.015;
 	float spacing = 0.1;
-
-	float widthStatic = 5;
 
 	Array<int> octaveRows = { 2, 5, 6, 6, 6, 6, 6, 6, 6, 5, 1 };
 	Array<int> rowOffsets = { 0, 1, 1, 2, 2, 3, 3, 4, 4, 6, 10 };

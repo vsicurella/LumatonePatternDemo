@@ -18,7 +18,7 @@ MainComponent::MainComponent()
     gui->toFront(true);
     addAndMakeVisible(gui.get());
     
-    setSize (600, 400);
+    setSize (900, 600);
 
 //    LayoutGenerator lg(84, 19);
 //

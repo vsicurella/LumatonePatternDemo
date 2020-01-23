@@ -14,9 +14,6 @@
 //==============================================================================
 KeyboardViewer::KeyboardViewer()
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-    
 }
 
 KeyboardViewer::~KeyboardViewer()
@@ -25,23 +22,11 @@ KeyboardViewer::~KeyboardViewer()
 
 void KeyboardViewer::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
     g.setColour (Colours::grey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
-    g.setColour (Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("KeyboardViewer", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
-    
 	for (int i = 0; i < 5; i++)
 		drawOctave(g, i);
 }
@@ -61,7 +46,7 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 	hexes.clear();
 	Path* hex;
 
-	Array<Colour> ac = { Colours::red, Colours::orange, Colours::yellow, Colours::green, Colours::blue };
+	Array<Colour> ac = { Colours::red, Colours::orange, Colours::yellow, Colours::green, Colours::cornflowerblue };
 
 	int key = 55 * octaveNumber;
 	for (int r = 0; r < octaveRows.size(); r++)
@@ -70,7 +55,7 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 		{
 			hex = new Path();
 			hexes.add(hex);
-			hex->addPolygon(Point<float>(getWidth()*0.02f, getHeight()*0.1f) + 
+			hex->addPolygon(Point<float>(getWidth()*0.015f, getHeight()*0.11f) + 
 							(horizontalStep * (k + rowOffsets[r])) + 
 							verticalStep * r + octaveSpacing * octaveNumber, 6, getWidth() * widthMult);
 			hex->applyTransform(transform);
@@ -88,12 +73,5 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 
 void KeyboardViewer::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-    //hex.clear();
-    //hex.addPolygon(getLocalBounds().getCentre().toFloat(), 6, getWidth() * widthMult);
-    //AffineTransform transform = AffineTransform::translation(-getWidth() / 2.0f, -getHeight() / 2.0f);
-    //transform = transform.rotated(-0.2f);
-    //transform = transform.translated(getWidth() / 2.0f, getHeight() / 2.0f);
-    //hex.applyTransform(transform);
+
 }
