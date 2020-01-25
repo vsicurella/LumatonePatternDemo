@@ -14,6 +14,7 @@
 //==============================================================================
 KeyboardViewer::KeyboardViewer()
 {
+	scale = kbdScalePattern(Point<int>(2, 5), Point<int>(1, 2), 7, 130);
 }
 
 KeyboardViewer::~KeyboardViewer()
@@ -48,6 +49,7 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 
 	Array<Colour> ac = { Colours::red, Colours::orange, Colours::yellow, Colours::green, Colours::cornflowerblue };
 
+
 	int key = 55 * octaveNumber;
 	for (int r = 0; r < octaveRows.size(); r++)
 	{
@@ -60,7 +62,10 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 							verticalStep * r + octaveSpacing * octaveNumber, 6, getWidth() * widthMult);
 			hex->applyTransform(transform);
 			
-			g.setColour(ac[octaveNumber]);
+			if (scale.contains(key))
+				g.setColour(Colours::aliceblue);
+			else
+				g.setColour(ac[octaveNumber]);
 			g.fillPath(*hex);
 
 			g.setColour(Colours::black);

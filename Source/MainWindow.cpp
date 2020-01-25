@@ -64,6 +64,31 @@ MainWindow::MainWindow (LayoutGenerator& layoutToUse)
     addAndMakeVisible (editColorLayout.get());
     editColorLayout->setName ("new component");
 
+    editShowKeyNumber.reset (new ToggleButton ("new toggle button"));
+    addAndMakeVisible (editShowKeyNumber.get());
+    editShowKeyNumber->setButtonText (TRANS("Full Keyboard Number"));
+    editShowKeyNumber->setRadioGroupId (10);
+    editShowKeyNumber->addListener (this);
+    editShowKeyNumber->setToggleState (true, dontSendNotification);
+
+    editShowOctaveNum.reset (new ToggleButton ("new toggle button"));
+    addAndMakeVisible (editShowOctaveNum.get());
+    editShowOctaveNum->setButtonText (TRANS("Octave Number"));
+    editShowOctaveNum->setRadioGroupId (10);
+    editShowOctaveNum->addListener (this);
+
+    editShowMidiNote.reset (new ToggleButton ("new toggle button"));
+    addAndMakeVisible (editShowMidiNote.get());
+    editShowMidiNote->setButtonText (TRANS("MIDI Note"));
+    editShowMidiNote->setRadioGroupId (10);
+    editShowMidiNote->addListener (this);
+
+    editShowScaleDegree.reset (new ToggleButton ("new toggle button"));
+    addAndMakeVisible (editShowScaleDegree.get());
+    editShowScaleDegree->setButtonText (TRANS("Scale Degree"));
+    editShowScaleDegree->setRadioGroupId (10);
+    editShowScaleDegree->addListener (this);
+
 
     //[UserPreSize]
     editPeriod->setValue(12);
@@ -88,6 +113,10 @@ MainWindow::~MainWindow()
     editGenerator = nullptr;
     editKeyboard = nullptr;
     editColorLayout = nullptr;
+    editShowKeyNumber = nullptr;
+    editShowOctaveNum = nullptr;
+    editShowMidiNote = nullptr;
+    editShowScaleDegree = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -111,11 +140,15 @@ void MainWindow::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    keyboardView->setBounds (proportionOfWidth (0.0282f), proportionOfHeight (0.0229f), proportionOfWidth (0.9401f), proportionOfHeight (0.6638f));
-    editPeriod->setBounds (proportionOfWidth (0.1128f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6638f) * 1.0690f), 120, 24);
-    editGenerator->setBounds (proportionOfWidth (0.1128f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6638f) * 1.1724f), 112, 24);
-    editKeyboard->setBounds (proportionOfWidth (0.1128f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6638f) * 1.2759f), 112, 24);
-    editColorLayout->setBounds (proportionOfWidth (0.3102f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6638f) * 1.0690f), 240, 120);
+    keyboardView->setBounds (proportionOfWidth (0.0076f), proportionOfHeight (0.0226f), proportionOfWidth (0.9838f), proportionOfHeight (0.6632f));
+    editPeriod->setBounds (proportionOfWidth (0.1128f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0690f), 120, 24);
+    editGenerator->setBounds (proportionOfWidth (0.1128f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.1724f), 112, 24);
+    editKeyboard->setBounds (proportionOfWidth (0.1128f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2759f), 112, 24);
+    editColorLayout->setBounds (proportionOfWidth (0.3102f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0690f), 240, 120);
+    editShowKeyNumber->setBounds (proportionOfWidth (0.3102f) + roundToInt (240 * 1.5458f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f), 176, 24);
+    editShowOctaveNum->setBounds ((proportionOfWidth (0.3102f) + roundToInt (240 * 1.5458f)) + 0, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowMidiNote->setBounds ((proportionOfWidth (0.3102f) + roundToInt (240 * 1.5458f)) + 0, ((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowScaleDegree->setBounds ((proportionOfWidth (0.3102f) + roundToInt (240 * 1.5458f)) + 0, (((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -160,6 +193,36 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 
     //[UsercomboBoxChanged_Post]
     //[/UsercomboBoxChanged_Post]
+}
+
+void MainWindow::buttonClicked (Button* buttonThatWasClicked)
+{
+    //[UserbuttonClicked_Pre]
+    //[/UserbuttonClicked_Pre]
+
+    if (buttonThatWasClicked == editShowKeyNumber.get())
+    {
+        //[UserButtonCode_editShowKeyNumber] -- add your button handler code here..
+        //[/UserButtonCode_editShowKeyNumber]
+    }
+    else if (buttonThatWasClicked == editShowOctaveNum.get())
+    {
+        //[UserButtonCode_editShowOctaveNum] -- add your button handler code here..
+        //[/UserButtonCode_editShowOctaveNum]
+    }
+    else if (buttonThatWasClicked == editShowMidiNote.get())
+    {
+        //[UserButtonCode_editShowMidiNote] -- add your button handler code here..
+        //[/UserButtonCode_editShowMidiNote]
+    }
+    else if (buttonThatWasClicked == editShowScaleDegree.get())
+    {
+        //[UserButtonCode_editShowScaleDegree] -- add your button handler code here..
+        //[/UserButtonCode_editShowScaleDegree]
+    }
+
+    //[UserbuttonClicked_Post]
+    //[/UserbuttonClicked_Post]
 }
 
 
@@ -212,24 +275,44 @@ BEGIN_JUCER_METADATA
                  initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="f8a4a0ba2169ed5d" memberName="keyboardView"
-                    virtualName="" explicitFocusOrder="0" pos="2.82% 2.289% 94.007% 66.381%"
+                    virtualName="" explicitFocusOrder="0" pos="0.763% 2.256% 98.379% 66.316%"
                     class="KeyboardViewer" params=""/>
   <SLIDER name="new slider" id="c9338955361b5253" memberName="editPeriod"
-          virtualName="" explicitFocusOrder="0" pos="11.281% 106.897% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="11.249% 106.803% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="1.0" max="400.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <COMBOBOX name="new combo box" id="d2fccf87f53946cd" memberName="editGenerator"
-            virtualName="" explicitFocusOrder="0" pos="11.281% 117.241% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="11.249% 117.234% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="new combo box" id="363a9dc4b5eb4f63" memberName="editKeyboard"
-            virtualName="" explicitFocusOrder="0" pos="11.281% 127.586% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="11.249% 127.664% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <GENERICCOMPONENT name="new component" id="80741f8eece04bb7" memberName="editColorLayout"
-                    virtualName="" explicitFocusOrder="0" pos="31.022% 106.897% 240 120"
+                    virtualName="" explicitFocusOrder="0" pos="30.982% 106.803% 240 120"
                     posRelativeY="f8a4a0ba2169ed5d" class="Component" params=""/>
+  <TOGGLEBUTTON name="new toggle button" id="3fefe6b79e2bbe21" memberName="editShowKeyNumber"
+                virtualName="" explicitFocusOrder="0" pos="154.583% 107.256% 176 24"
+                posRelativeX="80741f8eece04bb7" posRelativeY="f8a4a0ba2169ed5d"
+                buttonText="Full Keyboard Number" connectedEdges="0" needsCallback="1"
+                radioGroupId="10" state="1"/>
+  <TOGGLEBUTTON name="new toggle button" id="d5902f532f1a13b4" memberName="editShowOctaveNum"
+                virtualName="" explicitFocusOrder="0" pos="0 133.333% 176 24"
+                posRelativeX="3fefe6b79e2bbe21" posRelativeY="3fefe6b79e2bbe21"
+                buttonText="Octave Number" connectedEdges="0" needsCallback="1"
+                radioGroupId="10" state="0"/>
+  <TOGGLEBUTTON name="new toggle button" id="cd8f1afc15d93282" memberName="editShowMidiNote"
+                virtualName="" explicitFocusOrder="0" pos="0 133.333% 176 24"
+                posRelativeX="3fefe6b79e2bbe21" posRelativeY="d5902f532f1a13b4"
+                buttonText="MIDI Note" connectedEdges="0" needsCallback="1" radioGroupId="10"
+                state="0"/>
+  <TOGGLEBUTTON name="new toggle button" id="90354e3468042d3e" memberName="editShowScaleDegree"
+                virtualName="" explicitFocusOrder="0" pos="0 133.333% 176 24"
+                posRelativeX="3fefe6b79e2bbe21" posRelativeY="cd8f1afc15d93282"
+                buttonText="Scale Degree" connectedEdges="0" needsCallback="1"
+                radioGroupId="10" state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

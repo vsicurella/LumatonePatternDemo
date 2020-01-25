@@ -37,7 +37,8 @@
 */
 class MainWindow  : public Component,
                     public Slider::Listener,
-                    public ComboBox::Listener
+                    public ComboBox::Listener,
+                    public Button::Listener
 {
 public:
     //==============================================================================
@@ -53,6 +54,7 @@ public:
     void resized() override;
     void sliderValueChanged (Slider* sliderThatWasMoved) override;
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void buttonClicked (Button* buttonThatWasClicked) override;
 
 
 
@@ -67,6 +69,10 @@ private:
     std::unique_ptr<ComboBox> editGenerator;
     std::unique_ptr<ComboBox> editKeyboard;
     std::unique_ptr<Component> editColorLayout;
+    std::unique_ptr<ToggleButton> editShowKeyNumber;
+    std::unique_ptr<ToggleButton> editShowOctaveNum;
+    std::unique_ptr<ToggleButton> editShowMidiNote;
+    std::unique_ptr<ToggleButton> editShowScaleDegree;
 
 
     //==============================================================================
