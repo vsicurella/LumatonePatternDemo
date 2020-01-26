@@ -10,6 +10,7 @@
 #pragma once
 
 #include "JuceHeader.h"
+#include "CommonFunctions.h"
 
 class Ratio
 {
@@ -17,35 +18,24 @@ public:
     
     Ratio(bool doCf=false);
     
-    Ratio(int numeratorIn, int denominatorIn, bool doCf=true);
+    Ratio(int numeratorIn, int denominatorIn, bool doCf=false);
     
-    Ratio(double ratioIn, bool doCf=true);
+    Ratio(double ratioIn, bool doCf=false);
     
     Ratio(const Ratio& rcopy);
     
     //==============================================================================
-    
-    void setNumerator(int numeratorIn, bool doCf=true);
-    
-    void setDenominator(int denominatorIn, bool doCf=true);
-    
+     
     double getNumerator() const;
     
     int getDenominator() const;
-    
-    Array<Ratio> getConvergents() const;
-    
-    Array<Ratio> getApproximations() const;
-    
-    Array<Ratio> getApproximations(bool n);
-
-    
+        
     //==============================================================================
     
     /*
      Returns the reciprocal of this ratio.
      */
-    Ratio reciprocal(bool doCf=true) const;
+    Ratio reciprocal(bool doCf=false) const;
     
     /*
      Returns decimal representation of ratio.
@@ -70,52 +60,15 @@ public:
      */
     Array<int> continuedFraction(int cfDepth=12, double roundingError = 10e-6);
     
-    /*
-     Returns a ratio approximating this ratio.
-     */
-    Ratio getApproximation(int iteration);
-    
-    /*
-     Returns the best ratio approximating this ratio within a certain prime limit
-     with the lowest cents error.
-     */
-    Ratio getApproximation(int primeLimit, const int* primes, size_t primesSize, double centsError=5.0, int maxInt=2000);
-    
-    /*
-     Returns the best ratio approximating this ratio within the depth of continued fraction calculated.
-     */
-    Ratio getClosestApproximation();
-    
-    
-    /*
-     Returns a vector representing the prime factorization of the ratio.
+	/*
+     Calculates if necessary and returns a vector representing the prime factorization of the ratio.
      */
     Array<int> getMonzo();
     
     /*
-     Calculates and returns a vector representing the prime factorization of the ratio.
+     Recalculate the continued fraction and monzo
      */
-    Array<int> getMonzo(const int* primes, size_t primeSize);
-    
-    /*
-     Returns the highest prime number in the ratio's factorization.
-     */
-    int getPrimeLimit(const int* primes, size_t primesSize);
-    
-    /*
-     Returns an array of ints representing the primes that the ratio consists of.
-     */
-    Array<int> getSubgroup(const int* primes, size_t primesSize);
-    
-    /*
-     Recalculate the continued fraction and approximations
-     */
-    void recalculate(int cfDepth=12);
-    
-    /*
-     Recalculate the continued fraction, pproximations, and monzo
-     */
-    void recalculate(const int* primes, size_t primesSize, int cfDepth=12);
+    void recalculate(int cfDepth=12, double roundingError = 10e-6);
     
     //==============================================================================
 
@@ -138,26 +91,10 @@ public:
     String getMonzoString(const int* primes, size_t primesSize);
     
     /*
-     Returns a string representing the prime limit of this ratio
-     */
-    String getLimitString(const int* primes, size_t primesSize);
-    
-    /*
      Returns a string representing this ratio
-     */
-    String getRatioString();
-    
-    /*
-     Returns a string representing this ratio and the continued fraction and approximates
      */
     String toString();
     
-    /*
-     Returns a string representing this ratio and the continued fraction, approximates,
-     the monzo, and the prime limit.
-     */
-    String toString(const int* primes, size_t primesSize, int approximations=0);
-
 	/*
 	 Returns the ratio as a point. A/B -> Point(A, B)
 	*/
@@ -178,9 +115,6 @@ public:
     //==============================================================================
 
 private:
-    
-    void calculateConvergents();
-
     
     double numerator = 1;
     int denominator = 1;

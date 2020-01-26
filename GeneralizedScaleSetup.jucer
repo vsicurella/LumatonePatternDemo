@@ -8,8 +8,6 @@
             file="Source/ScaleStructure.cpp"/>
       <FILE id="yWnhOg" name="ScaleStructure.h" compile="0" resource="0"
             file="Source/ScaleStructure.h"/>
-      <FILE id="zzz45x" name="Shapes.cpp" compile="1" resource="0" file="Source/Shapes.cpp"/>
-      <FILE id="rX8bKA" name="Shapes.h" compile="0" resource="0" file="Source/Shapes.h"/>
       <FILE id="gz7q3q" name="KeyboardViewer.cpp" compile="1" resource="0"
             file="Source/KeyboardViewer.cpp"/>
       <FILE id="Qha98N" name="KeyboardViewer.h" compile="0" resource="0"
@@ -22,7 +20,6 @@
             file="Source/LayoutGenerator.cpp"/>
       <FILE id="xg22Gf" name="LayoutGenerator.h" compile="0" resource="0"
             file="Source/LayoutGenerator.h"/>
-      <FILE id="HzvBh0" name="Primes.h" compile="0" resource="0" file="Source/Primes.h"/>
       <FILE id="jsgcNp" name="Ratio.cpp" compile="1" resource="0" file="Source/Ratio.cpp"/>
       <FILE id="WQTRuD" name="Ratio.h" compile="0" resource="0" file="Source/Ratio.h"/>
       <FILE id="cVrnEU" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

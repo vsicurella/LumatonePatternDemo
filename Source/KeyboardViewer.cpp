@@ -15,7 +15,23 @@
 KeyboardViewer::KeyboardViewer(LayoutGenerator* layoutIn)
  : layout(layoutIn)
 {
+	Point<int> nums(6, 27);
+	DBG("LCM of (" + nums.toString() + ") = " + String(getLCM(nums.x, nums.y)));
+
+	nums = Point<int>(15, 35);
+	DBG("LCM of (" + nums.toString() + ") = " + String(getLCM(nums.x, nums.y)));
 	
+	nums = Point<int>(16, 54);
+	DBG("LCM of (" + nums.toString() + ") = " + String(getLCM(nums.x, nums.y)));
+
+	nums = Point<int>(13, 26);
+	DBG("LCM of (" + nums.toString() + ") = " + String(getLCM(nums.x, nums.y)));
+
+	nums = Point<int>(11, 37);
+	DBG("LCM of (" + nums.toString() + ") = " + String(getLCM(nums.x, nums.y)));
+
+	nums = Point<int>(19, 100);
+	DBG("LCM of (" + nums.toString() + ") = " + String(getLCM(nums.x, nums.y)));
 }
 
 KeyboardViewer::~KeyboardViewer()
@@ -139,5 +155,3 @@ void KeyboardViewer::resized()
 {
 
 }
-
-

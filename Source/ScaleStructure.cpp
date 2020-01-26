@@ -104,7 +104,7 @@ void ScaleStructure::scaleBreakdown()
 	int digit = 0;
 	int kbdInd = 0;
 
-	DBG(String(cf[0]) + ": " + parent1.getRatioString() + " + " + parent2.getRatioString() + " = " + keyboardTypes[kbdInd].getRatioString());
+	DBG(String(cf[0]) + ": " + parent1.toString() + " + " + parent2.toString() + " = " + keyboardTypes[kbdInd].toString());
 	String dbgstr;
 
 	// find keyboard types, and their period/generator coordinates
@@ -131,7 +131,7 @@ void ScaleStructure::scaleBreakdown()
 			kbdInd++;
 			scaleSizes.add(keyboardTypes[kbdInd].getDenominator());
 
-			dbgstr += parent1.getRatioString() + " + " + parent2.getRatioString() + " = " + keyboardTypes[kbdInd].getRatioString() + "\n   ";		
+			dbgstr += parent1.toString() + " + " + parent2.toString() + " = " + keyboardTypes[kbdInd].toString() + "\n   ";		
 		}
 
 		cfInd++;
