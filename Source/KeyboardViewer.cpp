@@ -12,13 +12,19 @@
 #include "KeyboardViewer.h"
 
 //==============================================================================
-KeyboardViewer::KeyboardViewer()
+KeyboardViewer::KeyboardViewer(LayoutGenerator* layoutIn)
+ : layout(layoutIn)
 {
-	scale = kbdScalePattern(129, Point<int>(2, 5), Point<int>(1, 3), 7, 0);
+	
 }
 
 KeyboardViewer::~KeyboardViewer()
 {
+}
+
+void KeyboardViewer::setLayout(LayoutGenerator* layoutIn)
+{
+	layout = layoutIn;
 }
 
 void KeyboardViewer::setScale(Array<int> scaleIn)
@@ -65,7 +71,11 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 	hexes.clear();
 	Path* hex;
 
-	Array<Colour> ac = { Colours::red, Colours::orange, Colours::yellow.darker(), Colours::green, Colours::cornflowerblue };
+	int scalePeriod = layout->getGenPeriodRatio().getDenominator();
+	Array<Array<int>>* generatorNotes = layout->getGeneratorNotes();
+	int modDegree;
+
+	Array<Colour> ac = { Colours::mediumaquamarine, Colours::indianred, Colours::orange, Colours::yellow.darker(), Colours::green, Colours::cornflowerblue, Colours::lavenderblush, Colours::mediumslateblue };
 
 	String keyText;
 
@@ -81,11 +91,16 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 				verticalStep * r + octaveSpacing * octaveNumber, 6, getWidth() * widthMult);
 			hex->applyTransform(transform);
 
-			g.setColour(ac[octaveNumber]);
+			g.setColour(Colours::white);
 
-			if (map != nullptr)
+			if (generatorNotes != nullptr)
 			{
-				
+				modDegree = modulo(map->getUnchecked(key), scalePeriod);
+				for (int t = 0; t < generatorNotes->size(); t++)
+				{
+					if (generatorNotes->getReference(t).contains(modDegree))
+						g.setColour(ac[t]);
+				}
 			}
 
 			g.fillPath(*hex);
@@ -97,17 +112,15 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 					break;
 				case MidiNote:
 				{
-					// TODO
 					if (map != nullptr)
-						keyText = String(map->getUnchecked(key));
+						keyText = String(map->getUnchecked(key) + 60);
 					else
 						keyText = "-1";
 					break;
 				}
 				case ScaleDegree:
 				{
-					//TODO
-					keyText = "-1";
+					keyText = String(map->getUnchecked(key));
 					break;
 				}
 				default:
@@ -126,3 +139,5 @@ void KeyboardViewer::resized()
 {
 
 }
+
+

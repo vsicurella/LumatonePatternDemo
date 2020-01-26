@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CommonFunctions.h"
+#include "LayoutGenerator.h"
 
 
 //==============================================================================
@@ -29,13 +30,17 @@ public:
 		ScaleDegree
 	};
 
-    KeyboardViewer();
+    KeyboardViewer(LayoutGenerator* layoutIn);
     ~KeyboardViewer();
+
+	void refresh();
 
     void paint (Graphics&) override;
     void resized() override;
     
     void drawOctave(Graphics& g, int octaveNumber);
+
+	void setLayout(LayoutGenerator* layoutIn);
 	void setMap(Array<int>* mapIn);
 	void setScale(Array<int> scaleIn);
 
@@ -44,6 +49,7 @@ public:
 private:
    
 	OwnedArray<Path> hexes;
+	LayoutGenerator* layout;
 
 	float widthMult = 0.015;
 	float spacing = 0.1;

@@ -45,6 +45,16 @@ struct PointPair
 	}
 };
 
+static int modulo(int numIn, int mod)
+{
+	int val = 0;
+
+	if (mod != 0)
+		val = ((numIn % mod) + mod) % mod;
+
+	return val;
+}
+
 static int getLCM(int num1, int num2)
 {
 	int L = jmax(num1, num2);
@@ -157,8 +167,6 @@ static int kbdDownRight(int kbdNumIn, int numSteps)
 	int ind = downRightBorder.getReference(0).indexOf(octaveKey);
 	int kbdNumOut;
 
-	if (octaveKey == 52)
-		DBG("Let me know");
 	if (ind > -1)
 	{
 		if (octaveNum == 4)

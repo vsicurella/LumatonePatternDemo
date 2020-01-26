@@ -33,7 +33,7 @@ MainWindow::MainWindow (LayoutGenerator& layoutToUse)
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    keyboardView.reset (new KeyboardViewer());
+    keyboardView.reset (new KeyboardViewer (layout.get()));
     addAndMakeVisible (keyboardView.get());
     keyboardView->setName ("new component");
 
@@ -149,16 +149,16 @@ void MainWindow::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    keyboardView->setBounds (proportionOfWidth (0.0078f), proportionOfHeight (0.0222f), proportionOfWidth (0.9839f), proportionOfHeight (0.6630f));
-    editPeriod->setBounds (proportionOfWidth (0.1125f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0684f), 120, 24);
-    editGenerator->setBounds (proportionOfWidth (0.1146f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.1453f), 112, 24);
-    editKeyboard->setBounds (proportionOfWidth (0.1146f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.3087f), 112, 24);
-    editColorLayout->setBounds (proportionOfWidth (0.3099f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0684f), 240, 120);
-    editShowKeyNumber->setBounds (proportionOfWidth (0.3099f) + roundToInt (240 * 1.5458f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0726f), 176, 24);
-    editShowOctaveNum->setBounds ((proportionOfWidth (0.3099f) + roundToInt (240 * 1.5458f)) + 0, (proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0726f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowMidiNote->setBounds ((proportionOfWidth (0.3099f) + roundToInt (240 * 1.5458f)) + 0, ((proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowScaleDegree->setBounds ((proportionOfWidth (0.3099f) + roundToInt (240 * 1.5458f)) + 0, (((proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editGeneratorOffset->setBounds (proportionOfWidth (0.1146f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.2360f), 120, 24);
+    keyboardView->setBounds (proportionOfWidth (0.0076f), proportionOfHeight (0.0226f), proportionOfWidth (0.9838f), proportionOfHeight (0.6632f));
+    editPeriod->setBounds (proportionOfWidth (0.1125f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f), 120, 24);
+    editGenerator->setBounds (proportionOfWidth (0.1144f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.1451f), 112, 24);
+    editKeyboard->setBounds (proportionOfWidth (0.1144f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.3084f), 112, 24);
+    editColorLayout->setBounds (proportionOfWidth (0.3098f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f), 240, 120);
+    editShowKeyNumber->setBounds (proportionOfWidth (0.3098f) + roundToInt (240 * 1.5458f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f), 176, 24);
+    editShowOctaveNum->setBounds ((proportionOfWidth (0.3098f) + roundToInt (240 * 1.5458f)) + 0, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowMidiNote->setBounds ((proportionOfWidth (0.3098f) + roundToInt (240 * 1.5458f)) + 0, ((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowScaleDegree->setBounds ((proportionOfWidth (0.3098f) + roundToInt (240 * 1.5458f)) + 0, (((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editGeneratorOffset->setBounds (proportionOfWidth (0.1144f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2358f), 120, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -182,12 +182,14 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_editGeneratorOffset] -- add your slider handling code here..
 		genOffset = editGeneratorOffset->getValue();
-		keyboardView->setScale(kbdScalePattern(129, periodHXY, genHXY, size, genOffset));
+		layout->setGeneratorOffset(genOffset);
+		//keyboardView->setScale(kbdScalePattern(129, periodHXY, genHXY, size, genOffset));
         //[/UserSliderCode_editGeneratorOffset]
     }
 
     //[UsersliderValueChanged_Post]
-	layout->mapKeysToNotes();
+	layout->mapKeysToDistance();
+	keyboardView->setLayout(layout.get());
 	keyboardView->setMap(layout->getNoteMap());
     //[/UsersliderValueChanged_Post]
 }
@@ -230,7 +232,8 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     }
 
     //[UsercomboBoxChanged_Post]
-	layout->mapKeysToNotes();
+	layout->refresh();
+	keyboardView->setLayout(layout.get());
 	keyboardView->setMap(layout->getNoteMap());
     //[/UsercomboBoxChanged_Post]
 }
@@ -326,7 +329,7 @@ BEGIN_JUCER_METADATA
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="f8a4a0ba2169ed5d" memberName="keyboardView"
                     virtualName="" explicitFocusOrder="0" pos="0.763% 2.256% 98.379% 66.316%"
-                    class="KeyboardViewer" params=""/>
+                    class="KeyboardViewer" params="layout.get()"/>
   <SLIDER name="new slider" id="c9338955361b5253" memberName="editPeriod"
           virtualName="" explicitFocusOrder="0" pos="11.249% 106.803% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="1.0" max="400.0" int="1.0"

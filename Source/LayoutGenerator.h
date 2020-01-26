@@ -16,15 +16,18 @@
 class LayoutGenerator
 {
     // Attributes
-    int scalePeriod = 0; // total number of notes in scale
-    int generator = 0; // step to generate MOS scale
-    
+    int scalePeriod = 12; // total number of notes in scale
+    int generator = 7; // step to generate MOS scale
+	int generatorOffset = -1; // number of generators to start on
+
 	int kbdType = 0; // the keyboard type index, determining the size of the MOS
 	int scaleSize = 0; // size of MOS scale
     
 	int rootKey = 129;
 
     Ratio gOverP; // the proportion of the generator over the period
+
+	std::unique_ptr<Array<Array<int>>> notesByGenerators; // the notes by number of generators, with separate tiers for different colors
     Array<Colour> scaleColors; // the colors chosen for the scale segments
     
 	ScaleStructure structure; // calculates the properties of the selected scale
@@ -51,16 +54,17 @@ class LayoutGenerator
 	LayoutGenerator(const LayoutGenerator& layoutToCopy);
     ~LayoutGenerator();
 
-	void reset(int periodIn);
-	void reset(int periodIn, int genIn);
-	void reset(int periodIn, int genIn, int kbdTypeIn, int rootIn = -1);
-	void mapKeysToNotes();
+	void refresh();
+	
+	void mapKeysToDistance();
+	void mapGeneratorsToNotes();
 
     Ratio getGenPeriodRatio();
 	int getScaleSize();
 	int getRootKey();
 
 	Array<int>* getNoteMap();
+	Array<Array<int>>* getGeneratorNotes();
 	int getKeyNote(int keyNumIn);
 
     Array<Colour> getScaleColours();
@@ -80,4 +84,5 @@ class LayoutGenerator
 
 	void setKeyboardType(int kbdIndexIn);
 	void setRootKey(int rootKeyIn);
+	void setGeneratorOffset(int genOffsetIn);
 };
