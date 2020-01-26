@@ -4,6 +4,10 @@
               jucerVersion="5.4.5">
   <MAINGROUP id="IsZKgY" name="GeneralizedScaleSetup">
     <GROUP id="{F2189B60-1842-B504-0A30-163E90EF3F1C}" name="Source">
+      <FILE id="Qkz7rl" name="ScaleStructure.cpp" compile="1" resource="0"
+            file="Source/ScaleStructure.cpp"/>
+      <FILE id="yWnhOg" name="ScaleStructure.h" compile="0" resource="0"
+            file="Source/ScaleStructure.h"/>
       <FILE id="zzz45x" name="Shapes.cpp" compile="1" resource="0" file="Source/Shapes.cpp"/>
       <FILE id="rX8bKA" name="Shapes.h" compile="0" resource="0" file="Source/Shapes.h"/>
       <FILE id="gz7q3q" name="KeyboardViewer.cpp" compile="1" resource="0"

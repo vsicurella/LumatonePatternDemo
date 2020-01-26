@@ -15,11 +15,11 @@
 
 static Array<int> octaveRowSizes = { 2, 5, 6, 6, 6, 6, 6, 6, 6, 5, 1 };
 
-static Array<int> octaveRowSpacings = { 2, 6, 6, 7, 6, 7, 6, 7, 5, 2 };
-static Array<int> octaveRowLeads = {0, 2, 7, 13, 19, 25, 31, 37, 43, 49, 54};
+static Array<int> octaveRowSpacings = {  2, 6, 6,  7,  6,  7,  6,  7,  5,  2 };
+static Array<int> octaveRowLeads =   {0, 2, 7, 13, 19, 25, 31, 37, 43, 49, 54};
 
 static Array<Array<int>> downRightBorder = { Array<int>({ 18, 30, 42, 53 }), Array<int>({ 7, 19, 31, 43 }) };
-static Array<Array<int>> rightBorder = { Array<int>({ 12, 18, 30, 36, 42, 48, 53, 54 }), Array<int>({ 0, 2, 7, 13, 19, 25, 31, 37, 43 }) };
+static Array<Array<int>> rightBorder = { Array<int>({ 12, 18, 24, 30, 36, 42, 48, 53, 54 }), Array<int>({ 0, 2, 7, 13, 19, 25, 31, 37, 43 }) };
 
 static Array<int> upLeftEdge = { 0, 1, 4, 5, 6 };
 static Array<int> downRightEdge = { 43, 49, 50, 51, 54 };
@@ -27,6 +27,42 @@ static Array<int> downRightEdge = { 43, 49, 50, 51, 54 };
 static Array<int> leftEdge = { 49, 54 };
 static Array<int> rightEdge = { 1, 6 };
 
+template <class T>
+struct PointPair
+{
+	Point<T> x, y;
+
+	PointPair() {}
+	PointPair(Point<T> xIn, Point<T> yIn)
+	{
+		x = xIn;
+		y = yIn;
+	};
+	PointPair(T x1, T y1, T x2, T y2)
+	{
+		x = Point<T>(x1, y1);
+		y = Point<T>(x2, y2);
+	}
+};
+
+static int getLCM(int num1, int num2)
+{
+	int L = jmax(num1, num2);
+	int s = jmin(num1, num2);
+
+	if (s != 0)
+	{
+		if (L % s == 0)
+			return L / s;
+
+		float q = L / (float)s;
+		while (q == (int)q)
+		{
+			L = q;
+		}
+	}
+	return L * s;
+}
 
 static Array<int> getCoprimes(int numIn)
 {
@@ -121,6 +157,8 @@ static int kbdDownRight(int kbdNumIn, int numSteps)
 	int ind = downRightBorder.getReference(0).indexOf(octaveKey);
 	int kbdNumOut;
 
+	if (octaveKey == 52)
+		DBG("Let me know");
 	if (ind > -1)
 	{
 		if (octaveNum == 4)
@@ -130,13 +168,13 @@ static int kbdDownRight(int kbdNumIn, int numSteps)
 		}
 		else
 		{
-			kbdNumOut = downRightBorder[1][ind] + octaveNum * 55;
+			kbdNumOut = downRightBorder[1][ind] + ++octaveNum * 55;
 		}
 	}
 	else
 	{
 		int rowNum;
-		for (int i = 1; i < octaveRowLeads.size() - 1; i++)
+		for (int i = 1; i < octaveRowLeads.size(); i++)
 		{
 			if (octaveRowLeads[i] < octaveKey)
 				continue;
@@ -184,7 +222,7 @@ static int kbdUpLeft(int kbdNumIn, int numSteps)
 		}
 		else
 		{
-			kbdNumOut = downRightBorder[0][ind] + octaveNum * 55;
+			kbdNumOut = downRightBorder[0][ind] + --octaveNum * 55;
 		}
 	}
 	else
@@ -238,12 +276,12 @@ static int kbdRight(int kbdNumIn, int numSteps)
 		}
 		else
 		{
-			kbdNumOut = rightBorder[1][ind] + octaveNum * 55;
+			kbdNumOut = rightBorder[1][ind] + ++octaveNum * 55;
 		}
 	}
 	else
 	{
-		kbdNumOut = (kbdNumIn + 1) + octaveNum * 55;
+		kbdNumOut = (octaveKey + 1) + octaveNum * 55;
 	}
 
 	return kbdRight(kbdNumOut, --numSteps);
@@ -275,12 +313,12 @@ static int kbdLeft(int kbdNumIn, int numSteps)
 		}
 		else
 		{
-			kbdNumOut = rightBorder[0][ind] + octaveNum * 55;
+			kbdNumOut = rightBorder[0][ind] + --octaveNum * 55;
 		}
 	}
 	else
 	{
-		kbdNumOut = (kbdNumIn - 1) + octaveNum * 55;
+		kbdNumOut = (octaveKey - 1) + octaveNum * 55;
 	}
 
 	return kbdLeft(kbdNumOut, --numSteps);
@@ -288,7 +326,8 @@ static int kbdLeft(int kbdNumIn, int numSteps)
 
 static int kbdMove(int kbdNumIn, Point<int> hexxy)
 {
-	int kbdNumOut = -1;
+	int kbdNumOut = kbdNumIn;
+	Point<int> ogpt = hexxy;
 
 	if (hexxy.x > 0)
 		kbdNumOut = kbdDownRight(kbdNumIn, hexxy.x);
@@ -300,31 +339,78 @@ static int kbdMove(int kbdNumIn, Point<int> hexxy)
 	else if (hexxy.y < 0)
 		kbdNumOut = kbdLeft(kbdNumOut, hexxy.y);
 
+	DBG("Moved " + String(kbdNumIn) + "\tby (" + ogpt.toString() + ") -> (" + hexxy.toString() + ")\tto " + String(kbdNumOut));
 	return kbdNumOut;
 }
 
-static Array<int> kbdScalePattern(Point<int> periodHXY, Point<int> genHXY, int scaleSize, int rootKbdKey)
+static Array<int> kbdScalePattern(int rootKbdKey, Point<int> periodHXY, Point<int> genHXY, int scaleSize, int genOffset=0)
 {
 	Array<int> kbdKeysOut;
+	Array<int> roots;
 	int octaveKeyNum = rootKbdKey % 55;
 	int periodKey = kbdMove(octaveKeyNum, periodHXY);
 	int generatorKey = kbdMove(octaveKeyNum, genHXY);
 
-	Point<int> nextMove;
 	if (periodKey > -1 && generatorKey > -1)
 	{
+		Point<int> nextMove = Point<int>(genHXY.x * genOffset, genHXY.y * genOffset);
+
 		for (int n = 0; n < scaleSize; n++)
 		{
-			nextMove = Point<int>(genHXY.x * n % periodHXY.x, genHXY.y * n % periodHXY.y);
-			kbdKeysOut.add(kbdMove(rootKbdKey, nextMove));
+			Point<int> opgt = nextMove;
+			if (nextMove.y < 0)
+			{
+				int f = jmax(abs(nextMove.x) / periodHXY.x, abs(nextMove.y) / periodHXY.y) + 1;
+				nextMove += (periodHXY * f);
+			}
+			DBG("nextMove = ("+opgt.toString()+") -> (" + nextMove.toString() + ")");
+
+			if (nextMove == periodHXY)
+				nextMove.setXY(0, 0);
+			//else if (nextMove.x > periodHXY.x || nextMove.y > periodHXY.y )
+			else if (nextMove.x + nextMove.y > scaleSize)
+			{
+				// divide by zero possible
+				bool xp = (nextMove.x % periodHXY.x == 0  && nextMove.x / periodHXY.x >= 2) ? true : false;
+				bool yp = nextMove.y % periodHXY.y == 0 ? true : false;
+
+				nextMove.setXY(nextMove.x % periodHXY.x, nextMove.y % periodHXY.y);
+
+				if (xp) nextMove.setX(periodHXY.x);
+				//if (yp) nextMove.setY(periodHXY.y);
+			}
+			
+			//if (nextMove.x < 0 || nextMove.y < 0)
+			//{
+			//	int f = jmax(abs(nextMove.x) / periodHXY.x, abs(nextMove.y) / periodHXY.y);
+			//	nextMove = Point<int>(nextMove.x + periodHXY.x * f, nextMove.y + periodHXY.y * f);
+			//}
+
+			//if (nextMove.x > periodHXY.x)
+			//{
+			//	nextMove = Point<int>(nextMove.x % periodHXY.x, nextMove.y % periodHXY.y);
+			//	if (nextMove.x == 0)
+			//		nextMove.setX(periodHXY.x);
+
+			//}
+			//else if (nextMove.y > periodHXY.y)
+			//{
+			//	nextMove = Point<int>(nextMove.x % periodHXY.x, nextMove.y % periodHXY.y);
+			//	if (nextMove.y == 0)
+			//		nextMove.setY(periodHXY.y);
+			//}
+
+			int keyOut = kbdMove(rootKbdKey, nextMove);				
+			kbdKeysOut.add(keyOut);
+
+			nextMove += genHXY;
 		}
+
+		kbdKeysOut.add(kbdMove(rootKbdKey, periodHXY));
 
 		for (int oct = 1; oct < 5; oct++)
 		{
-			for (int key = 0; key < scaleSize; key++)
-			{
-				kbdKeysOut.add(kbdKeysOut[key] + oct * 55);
-			}
+
 		}
 	}
 

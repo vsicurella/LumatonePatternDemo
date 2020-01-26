@@ -441,6 +441,23 @@ void Ratio::recalculate(const int* primes, size_t primesSize, int cfDepth)
 
 //==============================================================================
 
+Ratio Ratio::operator*(const Ratio& ratioIn)
+{
+	return Ratio(numerator * ratioIn.getNumerator(), denominator * ratioIn.getDenominator(), false);
+}
+
+Ratio Ratio::operator/(const Ratio& ratioIn)
+{
+	return Ratio(numerator * ratioIn.getDenominator(), denominator * ratioIn.getNumerator(), false);
+}
+
+Ratio Ratio::mediant(const Ratio& ratioIn)
+{
+	return Ratio(numerator + ratioIn.getNumerator(), denominator + ratioIn.getDenominator(), false);
+}
+
+//==============================================================================
+
 String Ratio::getCFString()
 {
     continuedFraction();
@@ -509,6 +526,11 @@ String Ratio::toString(const int* primes, size_t primesSize, int approximations)
     }
     
     return out;
+}
+
+Point<int> Ratio::toPoint()
+{
+	return Point<int>(numerator, denominator);
 }
 
 double Ratio::compareCents(Ratio& original, Ratio& approx)

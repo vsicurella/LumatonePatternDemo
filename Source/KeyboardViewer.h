@@ -20,6 +20,15 @@
 class KeyboardViewer    : public Component
 {
 public:
+
+	enum KeyText
+	{
+		KeyNumber = 0,
+		OctaveNumber,
+		MidiNote,
+		ScaleDegree
+	};
+
     KeyboardViewer();
     ~KeyboardViewer();
 
@@ -27,6 +36,10 @@ public:
     void resized() override;
     
     void drawOctave(Graphics& g, int octaveNumber);
+	void setMap(Array<int>* mapIn);
+	void setScale(Array<int> scaleIn);
+
+	void setKeyTextShown(KeyText textTypeIn);
 
 private:
    
@@ -39,8 +52,10 @@ private:
 	Array<int> rowOffsets = { 0, 1, 1, 2, 2, 3, 3, 4, 4, 6, 10 };
 
 	Array<int> notes = { 77, 78, 79, 112, 113, 114, 2, 4, 6, 8, 10 };
-
 	Array<int> scale;
-    
+	Array<int>* map = nullptr;
+
+	int keyTextShown = 0;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (KeyboardViewer)
 };

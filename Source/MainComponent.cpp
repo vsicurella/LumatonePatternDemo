@@ -10,7 +10,7 @@
 
 //==============================================================================
 MainComponent::MainComponent()
-    : layoutGen(12, 7)
+    : layoutGen(12, 7, 7)
 {
         
     gui.reset(new MainWindow(layoutGen));

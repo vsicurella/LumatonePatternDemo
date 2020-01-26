@@ -14,11 +14,29 @@
 //==============================================================================
 KeyboardViewer::KeyboardViewer()
 {
-	scale = kbdScalePattern(Point<int>(2, 5), Point<int>(1, 2), 7, 130);
+	scale = kbdScalePattern(129, Point<int>(2, 5), Point<int>(1, 3), 7, 0);
 }
 
 KeyboardViewer::~KeyboardViewer()
 {
+}
+
+void KeyboardViewer::setScale(Array<int> scaleIn)
+{
+	scale = scaleIn;
+	repaint();
+}
+
+void KeyboardViewer::setMap(Array<int>* mapIn)
+{
+	map = mapIn;
+}
+
+void KeyboardViewer::setKeyTextShown(KeyText textTypeIn)
+{
+	keyTextShown = textTypeIn;
+	DBG(keyTextShown);
+	repaint();
 }
 
 void KeyboardViewer::paint (Graphics& g)
@@ -47,8 +65,9 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 	hexes.clear();
 	Path* hex;
 
-	Array<Colour> ac = { Colours::red, Colours::orange, Colours::yellow, Colours::green, Colours::cornflowerblue };
+	Array<Colour> ac = { Colours::red, Colours::orange, Colours::yellow.darker(), Colours::green, Colours::cornflowerblue };
 
+	String keyText;
 
 	int key = 55 * octaveNumber;
 	for (int r = 0; r < octaveRows.size(); r++)
@@ -57,19 +76,46 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 		{
 			hex = new Path();
 			hexes.add(hex);
-			hex->addPolygon(Point<float>(getWidth()*0.015f, getHeight()*0.11f) + 
-							(horizontalStep * (k + rowOffsets[r])) + 
-							verticalStep * r + octaveSpacing * octaveNumber, 6, getWidth() * widthMult);
+			hex->addPolygon(Point<float>(getWidth() * 0.015f, getHeight() * 0.11f) +
+				(horizontalStep * (k + rowOffsets[r])) +
+				verticalStep * r + octaveSpacing * octaveNumber, 6, getWidth() * widthMult);
 			hex->applyTransform(transform);
-			
-			if (scale.contains(key))
-				g.setColour(Colours::aliceblue);
-			else
-				g.setColour(ac[octaveNumber]);
+
+			g.setColour(ac[octaveNumber]);
+
+			if (map != nullptr)
+			{
+				
+			}
+
 			g.fillPath(*hex);
 
+			switch (keyTextShown)
+			{
+				case OctaveNumber:
+					keyText = String(key % 55);
+					break;
+				case MidiNote:
+				{
+					// TODO
+					if (map != nullptr)
+						keyText = String(map->getUnchecked(key));
+					else
+						keyText = "-1";
+					break;
+				}
+				case ScaleDegree:
+				{
+					//TODO
+					keyText = "-1";
+					break;
+				}
+				default:
+					keyText = String(key);
+			}
+
 			g.setColour(Colours::black);
-			g.drawText(String(key), hex->getBounds(), Justification::centred);
+			g.drawText(keyText, hex->getBounds(), Justification::centred);
 			
 			key++;
 		}

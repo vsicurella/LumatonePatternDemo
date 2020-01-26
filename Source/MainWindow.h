@@ -23,6 +23,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "LayoutGenerator.h"
 #include "KeyboardViewer.h"
+#include "ScaleStructure.h"
 //[/Headers]
 
 
@@ -60,7 +61,14 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    LayoutGenerator& layout;
+    std::unique_ptr<LayoutGenerator> layout;
+
+	int period = 12;
+	int generator = 7;
+	int genOffset = -1;
+	int size = 7;
+	Point<int> periodHXY = Point<int>(2, 5);
+	Point<int> genHXY = Point<int>(1, 3);
     //[/UserVariables]
 
     //==============================================================================
@@ -73,6 +81,7 @@ private:
     std::unique_ptr<ToggleButton> editShowOctaveNum;
     std::unique_ptr<ToggleButton> editShowMidiNote;
     std::unique_ptr<ToggleButton> editShowScaleDegree;
+    std::unique_ptr<Slider> editGeneratorOffset;
 
 
     //==============================================================================

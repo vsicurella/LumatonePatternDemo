@@ -119,6 +119,14 @@ public:
     
     //==============================================================================
 
+	Ratio operator*(const Ratio& ratioIn);
+	Ratio operator/(const Ratio& ratioIn);
+
+	Ratio mediant(const Ratio& ratioIn);
+
+	//==============================================================================
+
+
     /*
      Returns a string representing the continued fraction.
      */
@@ -149,6 +157,11 @@ public:
      the monzo, and the prime limit.
      */
     String toString(const int* primes, size_t primesSize, int approximations=0);
+
+	/*
+	 Returns the ratio as a point. A/B -> Point(A, B)
+	*/
+	Point<int> toPoint();
     
     //==============================================================================
 

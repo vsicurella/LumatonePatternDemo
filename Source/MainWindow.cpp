@@ -28,7 +28,7 @@
 
 //==============================================================================
 MainWindow::MainWindow (LayoutGenerator& layoutToUse)
-    : layout(layoutToUse)
+    : layout(new LayoutGenerator(layoutToUse))
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -89,6 +89,13 @@ MainWindow::MainWindow (LayoutGenerator& layoutToUse)
     editShowScaleDegree->setRadioGroupId (10);
     editShowScaleDegree->addListener (this);
 
+    editGeneratorOffset.reset (new Slider ("new slider"));
+    addAndMakeVisible (editGeneratorOffset.get());
+    editGeneratorOffset->setRange (-6, 6, 1);
+    editGeneratorOffset->setSliderStyle (Slider::IncDecButtons);
+    editGeneratorOffset->setTextBoxStyle (Slider::TextBoxLeft, false, 60, 20);
+    editGeneratorOffset->addListener (this);
+
 
     //[UserPreSize]
     editPeriod->setValue(12);
@@ -100,6 +107,7 @@ MainWindow::MainWindow (LayoutGenerator& layoutToUse)
     //[Constructor] You can add your own custom stuff here..
     refresh();
     editGenerator->setSelectedId(7);
+	keyboardView->setMap(layout->getNoteMap());
     //[/Constructor]
 }
 
@@ -117,6 +125,7 @@ MainWindow::~MainWindow()
     editShowOctaveNum = nullptr;
     editShowMidiNote = nullptr;
     editShowScaleDegree = nullptr;
+    editGeneratorOffset = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -140,15 +149,16 @@ void MainWindow::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    keyboardView->setBounds (proportionOfWidth (0.0076f), proportionOfHeight (0.0226f), proportionOfWidth (0.9838f), proportionOfHeight (0.6632f));
-    editPeriod->setBounds (proportionOfWidth (0.1128f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0690f), 120, 24);
-    editGenerator->setBounds (proportionOfWidth (0.1128f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.1724f), 112, 24);
-    editKeyboard->setBounds (proportionOfWidth (0.1128f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2759f), 112, 24);
-    editColorLayout->setBounds (proportionOfWidth (0.3102f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0690f), 240, 120);
-    editShowKeyNumber->setBounds (proportionOfWidth (0.3102f) + roundToInt (240 * 1.5458f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f), 176, 24);
-    editShowOctaveNum->setBounds ((proportionOfWidth (0.3102f) + roundToInt (240 * 1.5458f)) + 0, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowMidiNote->setBounds ((proportionOfWidth (0.3102f) + roundToInt (240 * 1.5458f)) + 0, ((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowScaleDegree->setBounds ((proportionOfWidth (0.3102f) + roundToInt (240 * 1.5458f)) + 0, (((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    keyboardView->setBounds (proportionOfWidth (0.0078f), proportionOfHeight (0.0222f), proportionOfWidth (0.9839f), proportionOfHeight (0.6630f));
+    editPeriod->setBounds (proportionOfWidth (0.1125f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0684f), 120, 24);
+    editGenerator->setBounds (proportionOfWidth (0.1146f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.1453f), 112, 24);
+    editKeyboard->setBounds (proportionOfWidth (0.1146f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.3087f), 112, 24);
+    editColorLayout->setBounds (proportionOfWidth (0.3099f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0684f), 240, 120);
+    editShowKeyNumber->setBounds (proportionOfWidth (0.3099f) + roundToInt (240 * 1.5458f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0726f), 176, 24);
+    editShowOctaveNum->setBounds ((proportionOfWidth (0.3099f) + roundToInt (240 * 1.5458f)) + 0, (proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0726f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowMidiNote->setBounds ((proportionOfWidth (0.3099f) + roundToInt (240 * 1.5458f)) + 0, ((proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowScaleDegree->setBounds ((proportionOfWidth (0.3099f) + roundToInt (240 * 1.5458f)) + 0, (((proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editGeneratorOffset->setBounds (proportionOfWidth (0.1146f), proportionOfHeight (0.0222f) + roundToInt (proportionOfHeight (0.6630f) * 1.2360f), 120, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -162,12 +172,23 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_editPeriod] -- add your slider handling code here..
         DBG("Period box has changed");
-        layout = LayoutGenerator((int)editPeriod->getValue());
+		period = editPeriod->getValue();
+		layout.reset(new LayoutGenerator(period));
+		keyboardView->setScale(Array<int>());
         refresh();
         //[/UserSliderCode_editPeriod]
     }
+    else if (sliderThatWasMoved == editGeneratorOffset.get())
+    {
+        //[UserSliderCode_editGeneratorOffset] -- add your slider handling code here..
+		genOffset = editGeneratorOffset->getValue();
+		keyboardView->setScale(kbdScalePattern(129, periodHXY, genHXY, size, genOffset));
+        //[/UserSliderCode_editGeneratorOffset]
+    }
 
     //[UsersliderValueChanged_Post]
+	layout->mapKeysToNotes();
+	keyboardView->setMap(layout->getNoteMap());
     //[/UsersliderValueChanged_Post]
 }
 
@@ -180,18 +201,37 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     {
         //[UserComboBoxCode_editGenerator] -- add your combo box handling code here..
         DBG("Generator box has changed");
-        layout = LayoutGenerator((int)editPeriod->getValue(), editGenerator->getSelectedId());
+		generator = editGenerator->getSelectedId();
+        layout.reset(new LayoutGenerator(period, generator));
+		keyboardView->setScale(Array<int>(0));
         refresh(false);
         //[/UserComboBoxCode_editGenerator]
     }
     else if (comboBoxThatHasChanged == editKeyboard.get())
     {
         //[UserComboBoxCode_editKeyboard] -- add your combo box handling code here..
-        DBG("Keyboard box has changed");
+		DBG("Keyboard box has changed");
+		int ind = editKeyboard->getSelectedId() - 1;
+		layout->setKeyboardType(ind);
+		size = layout->getScaleSize();
+		periodHXY = layout->getPGCoord().x;
+		genHXY = layout->getPGCoord().y;
+		// quick crash prevention, bad solution
+		if (periodHXY.x * periodHXY.y * genHXY.x * genHXY.y > 0)
+		{
+			DBG("Delta coordinates are: (" + layout->getXYSteps(ind).toString() + ")");
+			keyboardView->setScale(kbdScalePattern(129, periodHXY, genHXY, size, genOffset));
+		}
+		else
+		{
+			keyboardView->setScale(Array<int>());
+		}
         //[/UserComboBoxCode_editKeyboard]
     }
 
     //[UsercomboBoxChanged_Post]
+	layout->mapKeysToNotes();
+	keyboardView->setMap(layout->getNoteMap());
     //[/UsercomboBoxChanged_Post]
 }
 
@@ -203,25 +243,30 @@ void MainWindow::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == editShowKeyNumber.get())
     {
         //[UserButtonCode_editShowKeyNumber] -- add your button handler code here..
+		keyboardView->setKeyTextShown(KeyboardViewer::KeyText::KeyNumber);
         //[/UserButtonCode_editShowKeyNumber]
     }
     else if (buttonThatWasClicked == editShowOctaveNum.get())
     {
         //[UserButtonCode_editShowOctaveNum] -- add your button handler code here..
+		keyboardView->setKeyTextShown(KeyboardViewer::KeyText::OctaveNumber);
         //[/UserButtonCode_editShowOctaveNum]
     }
     else if (buttonThatWasClicked == editShowMidiNote.get())
     {
         //[UserButtonCode_editShowMidiNote] -- add your button handler code here..
+		keyboardView->setKeyTextShown(KeyboardViewer::KeyText::MidiNote);
         //[/UserButtonCode_editShowMidiNote]
     }
     else if (buttonThatWasClicked == editShowScaleDegree.get())
     {
         //[UserButtonCode_editShowScaleDegree] -- add your button handler code here..
+		keyboardView->setKeyTextShown(KeyboardViewer::KeyText::ScaleDegree);
         //[/UserButtonCode_editShowScaleDegree]
     }
 
     //[UserbuttonClicked_Post]
+	keyboardView->repaint();
     //[/UserbuttonClicked_Post]
 }
 
@@ -234,7 +279,7 @@ void MainWindow::refresh(bool recalculateGenerators)
     {
         editGenerator->clear();
 
-        for (auto g : layout.getValidGenerators())
+        for (auto g : layout->getValidGenerators())
         {
             editGenerator->addItem(String(g), g);
         }
@@ -242,10 +287,15 @@ void MainWindow::refresh(bool recalculateGenerators)
 
     editKeyboard->clear();
 
-    if (layout.isValid())
+    if (layout->isValid())
     {
+		// update gen offset range
+		if (editGenerator->getSelectedId() > 0)
+			editGeneratorOffset->setRange(-(editGenerator->getSelectedId() - 1), editGenerator->getSelectedId() - 1, 1);
+
+		// update keyboard options
         int i = 1;
-        for (auto kbd : layout.getValidKeyboards())
+        for (auto kbd : layout->getValidKeyboards())
         {
             editKeyboard->addItem(String(kbd.getNumerator()) + "/" + String(kbd.getDenominator()), i++);
         }
@@ -270,9 +320,9 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="MainWindow" componentName=""
                  parentClasses="public Component" constructorParams="LayoutGenerator&amp; layoutToUse"
-                 variableInitialisers="layout(layoutToUse)" snapPixels="8" snapActive="1"
-                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
-                 initialHeight="400">
+                 variableInitialisers="layout(new LayoutGenerator(layoutToUse))"
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
+                 fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="f8a4a0ba2169ed5d" memberName="keyboardView"
                     virtualName="" explicitFocusOrder="0" pos="0.763% 2.256% 98.379% 66.316%"
@@ -283,11 +333,11 @@ BEGIN_JUCER_METADATA
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <COMBOBOX name="new combo box" id="d2fccf87f53946cd" memberName="editGenerator"
-            virtualName="" explicitFocusOrder="0" pos="11.249% 117.234% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="11.439% 114.512% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="new combo box" id="363a9dc4b5eb4f63" memberName="editKeyboard"
-            virtualName="" explicitFocusOrder="0" pos="11.249% 127.664% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="11.439% 130.839% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <GENERICCOMPONENT name="new component" id="80741f8eece04bb7" memberName="editColorLayout"
@@ -313,6 +363,11 @@ BEGIN_JUCER_METADATA
                 posRelativeX="3fefe6b79e2bbe21" posRelativeY="cd8f1afc15d93282"
                 buttonText="Scale Degree" connectedEdges="0" needsCallback="1"
                 radioGroupId="10" state="0"/>
+  <SLIDER name="new slider" id="cf8ed030b390dba8" memberName="editGeneratorOffset"
+          virtualName="" explicitFocusOrder="0" pos="11.439% 123.583% 120 24"
+          posRelativeY="f8a4a0ba2169ed5d" min="-6.0" max="6.0" int="1.0"
+          style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
