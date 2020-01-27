@@ -398,9 +398,10 @@ void MainWindow::refreshSelections(bool recalculateGenerators)
 
 		generator = layout->getValidGenerators()[layout->suggestedGenerator()];
 		DBG("Suggested generator: " + String(generator));
-		editGenerator->setSelectedId(generator);
+		editGenerator->setSelectedId(generator, dontSendNotification);
 		DBG("MAIN WINDOW: finished recalulating generators");
 		// gets called again when generator is set
+        comboBoxChanged(editGenerator.get());
 		return;
     }
 

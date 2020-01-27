@@ -172,7 +172,7 @@ String Ratio::getCFString()
 
 String Ratio::getMonzoString(const int* primes, size_t primesSize)
 {
-    return arrayToString(getMonzo(), "", '|', '>');
+    return arrayToString(monzo, "", '|', '>');
 }
 
 String Ratio::toString()
