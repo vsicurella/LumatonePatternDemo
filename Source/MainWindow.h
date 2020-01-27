@@ -67,6 +67,7 @@ private:
 	int generator = 7;
 	int genOffset = -1;
 	int size = 7;
+	int rootKey = 129;
 	Point<int> periodHXY = Point<int>(2, 5);
 	Point<int> genHXY = Point<int>(1, 3);
     //[/UserVariables]
@@ -82,6 +83,14 @@ private:
     std::unique_ptr<ToggleButton> editShowMidiNote;
     std::unique_ptr<ToggleButton> editShowScaleDegree;
     std::unique_ptr<Slider> editGeneratorOffset;
+    std::unique_ptr<Label> periodLbl;
+    std::unique_ptr<Label> genLbl;
+    std::unique_ptr<Label> offsetLbl;
+    std::unique_ptr<Label> ScaleSize;
+    std::unique_ptr<Slider> editRootSld;
+    std::unique_ptr<Label> rootLbl;
+    std::unique_ptr<Label> label;
+    std::unique_ptr<ToggleButton> editScaleFlip;
 
 
     //==============================================================================

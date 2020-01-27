@@ -84,12 +84,12 @@ void ScaleStructure::scaleBreakdown()
 	Ratio gOverP = Ratio(generator, period);
 	Array<int> cf = gOverP.continuedFraction();
 	
-	DBG("P = " + String(period) + ", G = " + String(generator));
+	/*DBG("P = " + String(period) + ", G = " + String(generator));
 	String cfstr = "[";
 	for (auto d : cf)
 		cfstr += String(d) + ", ";
 	cfstr += "]";
-	DBG("CF = " + cfstr);
+	DBG("CF = " + cfstr);*/
 
 	// the seed
 	scaleSizes.add(1);
@@ -104,7 +104,7 @@ void ScaleStructure::scaleBreakdown()
 	int digit = 0;
 	int kbdInd = 0;
 
-	DBG(String(cf[0]) + ": " + parent1.toString() + " + " + parent2.toString() + " = " + keyboardTypes[kbdInd].toString());
+	//DBG(String(cf[0]) + ": " + parent1.toString() + " + " + parent2.toString() + " = " + keyboardTypes[kbdInd].toString());
 	String dbgstr;
 
 	// find keyboard types, and their period/generator coordinates
@@ -135,6 +135,6 @@ void ScaleStructure::scaleBreakdown()
 		}
 
 		cfInd++;
-		DBG(dbgstr.upToLastOccurrenceOf("\n", false, true));
+		//DBG(dbgstr.upToLastOccurrenceOf("\n", false, true));
 	}
 }

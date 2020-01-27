@@ -96,9 +96,74 @@ MainWindow::MainWindow (LayoutGenerator& layoutToUse)
     editGeneratorOffset->setTextBoxStyle (Slider::TextBoxLeft, false, 60, 20);
     editGeneratorOffset->addListener (this);
 
+    periodLbl.reset (new Label ("new label",
+                                TRANS("Period:")));
+    addAndMakeVisible (periodLbl.get());
+    periodLbl->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    periodLbl->setJustificationType (Justification::centredLeft);
+    periodLbl->setEditable (false, false, false);
+    periodLbl->setColour (TextEditor::textColourId, Colours::black);
+    periodLbl->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    genLbl.reset (new Label ("new label",
+                             TRANS("Generator:")));
+    addAndMakeVisible (genLbl.get());
+    genLbl->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    genLbl->setJustificationType (Justification::centredLeft);
+    genLbl->setEditable (false, false, false);
+    genLbl->setColour (TextEditor::textColourId, Colours::black);
+    genLbl->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    offsetLbl.reset (new Label ("new label",
+                                TRANS("Offset:")));
+    addAndMakeVisible (offsetLbl.get());
+    offsetLbl->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    offsetLbl->setJustificationType (Justification::centredLeft);
+    offsetLbl->setEditable (false, false, false);
+    offsetLbl->setColour (TextEditor::textColourId, Colours::black);
+    offsetLbl->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    ScaleSize.reset (new Label ("new label",
+                                TRANS("Scale Size:")));
+    addAndMakeVisible (ScaleSize.get());
+    ScaleSize->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    ScaleSize->setJustificationType (Justification::centredLeft);
+    ScaleSize->setEditable (false, false, false);
+    ScaleSize->setColour (TextEditor::textColourId, Colours::black);
+    ScaleSize->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    editRootSld.reset (new Slider ("new slider"));
+    addAndMakeVisible (editRootSld.get());
+    editRootSld->setRange (0, 274, 1);
+    editRootSld->setSliderStyle (Slider::IncDecButtons);
+    editRootSld->setTextBoxStyle (Slider::TextBoxLeft, false, 60, 20);
+    editRootSld->addListener (this);
+
+    rootLbl.reset (new Label ("new label",
+                              TRANS("Root Key: ")));
+    addAndMakeVisible (rootLbl.get());
+    rootLbl->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    rootLbl->setJustificationType (Justification::centredLeft);
+    rootLbl->setEditable (false, false, false);
+    rootLbl->setColour (TextEditor::textColourId, Colours::black);
+    rootLbl->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    label.reset (new Label ("new label",
+                            TRANS("Color Selection:")));
+    addAndMakeVisible (label.get());
+    label->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    label->setJustificationType (Justification::centredLeft);
+    label->setEditable (false, false, false);
+    label->setColour (TextEditor::textColourId, Colours::black);
+    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    editScaleFlip.reset (new ToggleButton ("new toggle button"));
+    addAndMakeVisible (editScaleFlip.get());
+    editScaleFlip->setButtonText (TRANS("Flip"));
+    editScaleFlip->addListener (this);
+
 
     //[UserPreSize]
-    editPeriod->setValue(12);
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -106,8 +171,13 @@ MainWindow::MainWindow (LayoutGenerator& layoutToUse)
 
     //[Constructor] You can add your own custom stuff here..
     refresh();
-    editGenerator->setSelectedId(7);
-	keyboardView->setMap(layout->getNoteMap());
+
+	// Default values
+	editRootSld->setValue(129);
+	editPeriod->setValue(12);
+	editGenerator->setSelectedId(7);
+	editKeyboard->setSelectedId(7);
+	editGeneratorOffset->setValue(-1);
     //[/Constructor]
 }
 
@@ -126,6 +196,14 @@ MainWindow::~MainWindow()
     editShowMidiNote = nullptr;
     editShowScaleDegree = nullptr;
     editGeneratorOffset = nullptr;
+    periodLbl = nullptr;
+    genLbl = nullptr;
+    offsetLbl = nullptr;
+    ScaleSize = nullptr;
+    editRootSld = nullptr;
+    rootLbl = nullptr;
+    label = nullptr;
+    editScaleFlip = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -150,15 +228,23 @@ void MainWindow::resized()
     //[/UserPreResize]
 
     keyboardView->setBounds (proportionOfWidth (0.0076f), proportionOfHeight (0.0226f), proportionOfWidth (0.9838f), proportionOfHeight (0.6632f));
-    editPeriod->setBounds (proportionOfWidth (0.1125f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f), 120, 24);
-    editGenerator->setBounds (proportionOfWidth (0.1144f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.1451f), 112, 24);
-    editKeyboard->setBounds (proportionOfWidth (0.1144f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.3084f), 112, 24);
-    editColorLayout->setBounds (proportionOfWidth (0.3098f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f), 240, 120);
-    editShowKeyNumber->setBounds (proportionOfWidth (0.3098f) + roundToInt (240 * 1.5458f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f), 176, 24);
-    editShowOctaveNum->setBounds ((proportionOfWidth (0.3098f) + roundToInt (240 * 1.5458f)) + 0, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowMidiNote->setBounds ((proportionOfWidth (0.3098f) + roundToInt (240 * 1.5458f)) + 0, ((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowScaleDegree->setBounds ((proportionOfWidth (0.3098f) + roundToInt (240 * 1.5458f)) + 0, (((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editGeneratorOffset->setBounds (proportionOfWidth (0.1144f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2358f), 120, 24);
+    editPeriod->setBounds (proportionOfWidth (0.1382f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f), 120, 24);
+    editGenerator->setBounds (proportionOfWidth (0.1401f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.1451f), 112, 24);
+    editKeyboard->setBounds (proportionOfWidth (0.1401f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2903f), 112, 24);
+    editColorLayout->setBounds (proportionOfWidth (0.3585f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f), roundToInt (proportionOfWidth (0.9838f) * 0.3323f), 154);
+    editShowKeyNumber->setBounds (proportionOfWidth (0.0076f) + roundToInt (proportionOfWidth (0.9838f) * 0.7200f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0907f), 176, 24);
+    editShowOctaveNum->setBounds ((proportionOfWidth (0.0076f) + roundToInt (proportionOfWidth (0.9838f) * 0.7200f)) + 0, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0907f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowMidiNote->setBounds ((proportionOfWidth (0.0076f) + roundToInt (proportionOfWidth (0.9838f) * 0.7200f)) + 0, ((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0907f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowScaleDegree->setBounds ((proportionOfWidth (0.0076f) + roundToInt (proportionOfWidth (0.9838f) * 0.7200f)) + 0, (((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0907f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editGeneratorOffset->setBounds (proportionOfWidth (0.1401f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2177f), 120, 24);
+    periodLbl->setBounds (proportionOfWidth (0.1382f) + -55, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f)) + 0, 64, 24);
+    genLbl->setBounds (proportionOfWidth (0.1401f) + -81, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.1451f)) + 0, 88, 24);
+    offsetLbl->setBounds (proportionOfWidth (0.1401f) + -56, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2177f)) + 0, 64, 24);
+    ScaleSize->setBounds (proportionOfWidth (0.1401f) + -82, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2903f)) + 0, 88, 24);
+    editRootSld->setBounds (proportionOfWidth (0.1401f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.3651f), 120, 24);
+    rootLbl->setBounds (proportionOfWidth (0.1401f) + -75, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.3651f)) + 0, 80, 24);
+    label->setBounds (proportionOfWidth (0.3585f) + (roundToInt (proportionOfWidth (0.9838f) * 0.3323f)) / 2 - (112 / 2), (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + -22, 112, 24);
+    editScaleFlip->setBounds (proportionOfWidth (0.1401f) + 120 - -6, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2177f)) + 0, roundToInt (proportionOfWidth (0.9838f) * 0.0699f), 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -166,6 +252,7 @@ void MainWindow::resized()
 void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
 {
     //[UsersliderValueChanged_Pre]
+	bool remap = true;
     //[/UsersliderValueChanged_Pre]
 
     if (sliderThatWasMoved == editPeriod.get())
@@ -174,7 +261,7 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
         DBG("Period box has changed");
 		period = editPeriod->getValue();
 		layout.reset(new LayoutGenerator(period));
-		keyboardView->setScale(Array<int>());
+		remap = false;
         refresh();
         //[/UserSliderCode_editPeriod]
     }
@@ -186,11 +273,21 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
 		//keyboardView->setScale(kbdScalePattern(129, periodHXY, genHXY, size, genOffset));
         //[/UserSliderCode_editGeneratorOffset]
     }
+    else if (sliderThatWasMoved == editRootSld.get())
+    {
+        //[UserSliderCode_editRootSld] -- add your slider handling code here..
+		rootKey = editRootSld->getValue();
+		layout->setRootKey(rootKey);
+        //[/UserSliderCode_editRootSld]
+    }
 
     //[UsersliderValueChanged_Post]
-	layout->mapKeysToDistance();
+	if (remap)
+	{
+		layout->mapKeysToDegree();
+	}
+
 	keyboardView->setLayout(layout.get());
-	keyboardView->setMap(layout->getNoteMap());
     //[/UsersliderValueChanged_Post]
 }
 
@@ -205,7 +302,6 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
         DBG("Generator box has changed");
 		generator = editGenerator->getSelectedId();
         layout.reset(new LayoutGenerator(period, generator));
-		keyboardView->setScale(Array<int>(0));
         refresh(false);
         //[/UserComboBoxCode_editGenerator]
     }
@@ -222,11 +318,10 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		if (periodHXY.x * periodHXY.y * genHXY.x * genHXY.y > 0)
 		{
 			DBG("Delta coordinates are: (" + layout->getXYSteps(ind).toString() + ")");
-			keyboardView->setScale(kbdScalePattern(129, periodHXY, genHXY, size, genOffset));
 		}
 		else
 		{
-			keyboardView->setScale(Array<int>());
+			DBG("ERROR: 0 is in either Period: (" + periodHXY.toString() + ") or Gen: (" + genHXY.toString() + "). FIX ME!");
 		}
         //[/UserComboBoxCode_editKeyboard]
     }
@@ -234,7 +329,6 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     //[UsercomboBoxChanged_Post]
 	layout->refresh();
 	keyboardView->setLayout(layout.get());
-	keyboardView->setMap(layout->getNoteMap());
     //[/UsercomboBoxChanged_Post]
 }
 
@@ -267,6 +361,12 @@ void MainWindow::buttonClicked (Button* buttonThatWasClicked)
 		keyboardView->setKeyTextShown(KeyboardViewer::KeyText::ScaleDegree);
         //[/UserButtonCode_editShowScaleDegree]
     }
+    else if (buttonThatWasClicked == editScaleFlip.get())
+    {
+        //[UserButtonCode_editScaleFlip] -- add your button handler code here..
+		layout->setScaleFlipped(editScaleFlip->getToggleState());
+        //[/UserButtonCode_editScaleFlip]
+    }
 
     //[UserbuttonClicked_Post]
 	keyboardView->repaint();
@@ -297,10 +397,9 @@ void MainWindow::refresh(bool recalculateGenerators)
 			editGeneratorOffset->setRange(-(editGenerator->getSelectedId() - 1), editGenerator->getSelectedId() - 1, 1);
 
 		// update keyboard options
-        int i = 1;
-        for (auto kbd : layout->getValidKeyboards())
+        for (int i = 0; i < layout->getValidKeyboards().size() - 2; i++)
         {
-            editKeyboard->addItem(String(kbd.getNumerator()) + "/" + String(kbd.getDenominator()), i++);
+            editKeyboard->addItem(String(layout->getValidSizes()[i]), i+1);
         }
     }
     else
@@ -328,27 +427,28 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="f8a4a0ba2169ed5d" memberName="keyboardView"
-                    virtualName="" explicitFocusOrder="0" pos="0.763% 2.256% 98.379% 66.316%"
+                    virtualName="" explicitFocusOrder="0" pos="0.803% 2.256% 98.394% 66.316%"
                     class="KeyboardViewer" params="layout.get()"/>
   <SLIDER name="new slider" id="c9338955361b5253" memberName="editPeriod"
-          virtualName="" explicitFocusOrder="0" pos="11.249% 106.803% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="13.876% 106.803% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="1.0" max="400.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <COMBOBOX name="new combo box" id="d2fccf87f53946cd" memberName="editGenerator"
-            virtualName="" explicitFocusOrder="0" pos="11.439% 114.512% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="13.991% 114.512% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="new combo box" id="363a9dc4b5eb4f63" memberName="editKeyboard"
-            virtualName="" explicitFocusOrder="0" pos="11.439% 130.839% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="13.991% 129.025% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <GENERICCOMPONENT name="new component" id="80741f8eece04bb7" memberName="editColorLayout"
-                    virtualName="" explicitFocusOrder="0" pos="30.982% 106.803% 240 120"
-                    posRelativeY="f8a4a0ba2169ed5d" class="Component" params=""/>
+                    virtualName="" explicitFocusOrder="0" pos="35.894% 107.256% 33.217% 154"
+                    posRelativeY="f8a4a0ba2169ed5d" posRelativeW="f8a4a0ba2169ed5d"
+                    class="Component" params=""/>
   <TOGGLEBUTTON name="new toggle button" id="3fefe6b79e2bbe21" memberName="editShowKeyNumber"
-                virtualName="" explicitFocusOrder="0" pos="154.583% 107.256% 176 24"
-                posRelativeX="80741f8eece04bb7" posRelativeY="f8a4a0ba2169ed5d"
+                virtualName="" explicitFocusOrder="0" pos="72.028% 109.07% 176 24"
+                posRelativeX="f8a4a0ba2169ed5d" posRelativeY="f8a4a0ba2169ed5d"
                 buttonText="Full Keyboard Number" connectedEdges="0" needsCallback="1"
                 radioGroupId="10" state="1"/>
   <TOGGLEBUTTON name="new toggle button" id="d5902f532f1a13b4" memberName="editShowOctaveNum"
@@ -367,10 +467,56 @@ BEGIN_JUCER_METADATA
                 buttonText="Scale Degree" connectedEdges="0" needsCallback="1"
                 radioGroupId="10" state="0"/>
   <SLIDER name="new slider" id="cf8ed030b390dba8" memberName="editGeneratorOffset"
-          virtualName="" explicitFocusOrder="0" pos="11.439% 123.583% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="13.991% 121.769% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="-6.0" max="6.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <LABEL name="new label" id="8b29c2f0ff851665" memberName="periodLbl"
+         virtualName="" explicitFocusOrder="0" pos="-55 0 64 24" posRelativeX="c9338955361b5253"
+         posRelativeY="c9338955361b5253" edTextCol="ff000000" edBkgCol="0"
+         labelText="Period:" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="new label" id="3e88e9cd29d6aede" memberName="genLbl" virtualName=""
+         explicitFocusOrder="0" pos="-81 0 88 24" posRelativeX="d2fccf87f53946cd"
+         posRelativeY="d2fccf87f53946cd" edTextCol="ff000000" edBkgCol="0"
+         labelText="Generator:" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="new label" id="dc6aebf5407d47e5" memberName="offsetLbl"
+         virtualName="" explicitFocusOrder="0" pos="-56 0 64 24" posRelativeX="cf8ed030b390dba8"
+         posRelativeY="cf8ed030b390dba8" edTextCol="ff000000" edBkgCol="0"
+         labelText="Offset:" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="new label" id="2f4e8da9f66b9c12" memberName="ScaleSize"
+         virtualName="" explicitFocusOrder="0" pos="-82 0 88 24" posRelativeX="363a9dc4b5eb4f63"
+         posRelativeY="363a9dc4b5eb4f63" edTextCol="ff000000" edBkgCol="0"
+         labelText="Scale Size:" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <SLIDER name="new slider" id="c486bd0e1ff65df1" memberName="editRootSld"
+          virtualName="" explicitFocusOrder="0" pos="13.991% 136.508% 120 24"
+          posRelativeY="f8a4a0ba2169ed5d" min="0.0" max="274.0" int="1.0"
+          style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <LABEL name="new label" id="c3f7dd0f5b81a1e9" memberName="rootLbl" virtualName=""
+         explicitFocusOrder="0" pos="-75 0 80 24" posRelativeX="c486bd0e1ff65df1"
+         posRelativeY="c486bd0e1ff65df1" edTextCol="ff000000" edBkgCol="0"
+         labelText="Root Key: " editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="new label" id="9c0e28f4dfed6909" memberName="label" virtualName=""
+         explicitFocusOrder="0" pos="0Cc -22 112 24" posRelativeX="80741f8eece04bb7"
+         posRelativeY="80741f8eece04bb7" edTextCol="ff000000" edBkgCol="0"
+         labelText="Color Selection:" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <TOGGLEBUTTON name="new toggle button" id="f9e862554b787aca" memberName="editScaleFlip"
+                virtualName="" explicitFocusOrder="0" pos="-6R 0 6.993% 24" posRelativeX="cf8ed030b390dba8"
+                posRelativeY="cf8ed030b390dba8" posRelativeW="f8a4a0ba2169ed5d"
+                buttonText="Flip" connectedEdges="0" needsCallback="1" radioGroupId="0"
+                state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

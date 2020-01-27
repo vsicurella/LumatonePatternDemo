@@ -17,6 +17,7 @@ LayoutGenerator::LayoutGenerator(int periodIn)
     scalePeriod = periodIn;
     
     updateValidOptions();
+	resetColours();
 }
 
 LayoutGenerator::LayoutGenerator(int periodIn, int genIn)
@@ -28,6 +29,7 @@ LayoutGenerator::LayoutGenerator(int periodIn, int genIn)
     generator = genIn;
     
     updateValidOptions();
+	resetColours();
 }
 
 LayoutGenerator::LayoutGenerator(int periodIn, int genIn, int kbdTypeIn, int rootIn)
@@ -44,6 +46,7 @@ LayoutGenerator::LayoutGenerator(int periodIn, int genIn, int kbdTypeIn, int roo
 	rootKey = rootIn;
 
 	refresh();
+	resetColours();
 }
 
 LayoutGenerator::LayoutGenerator(const LayoutGenerator& layoutToCopy)
@@ -57,9 +60,10 @@ LayoutGenerator::LayoutGenerator(const LayoutGenerator& layoutToCopy)
 	scaleSize = layoutToCopy.scaleSize;
 	rootKey = layoutToCopy.rootKey;
 
-	scaleColors = layoutToCopy.scaleColors;
+	scaleColours = layoutToCopy.scaleColours;
 
 	refresh();
+	resetColours();
 }
 
 LayoutGenerator::~LayoutGenerator()
@@ -69,7 +73,7 @@ LayoutGenerator::~LayoutGenerator()
 
 void LayoutGenerator::refresh()
 {
-	mapKeysToDistance();
+	mapKeysToDegree();
 	mapGeneratorsToNotes();
 }
   
@@ -103,16 +107,21 @@ void LayoutGenerator::updateValidOptions()
     }
 }
 
-void LayoutGenerator::mapKeysToDistance()
+void LayoutGenerator::mapKeysToDegree()
 {
-	kbdNoteMap.reset(new Array<int>());
-	kbdNoteMap->resize(275);
-	kbdNoteMap->fill(-1);
+	kbdScaleDegrees.reset(new Array<int>());
+	kbdScaleDegrees->resize(275);
+	kbdScaleDegrees->fill(-1);
 	
 	if (pgCoords[kbdType].x.x * pgCoords[kbdType].x.y * pgCoords[kbdType].y.x * pgCoords[kbdType].y.y <= 0)
 		return;
 
 	Point<int> steps = getXYSteps();
+
+	if (flipScale)
+	{
+		steps.setXY(steps.y, steps.x);
+	}
 
 	int xSteps = 0;
 	int ySteps = 0;
@@ -131,7 +140,7 @@ void LayoutGenerator::mapKeysToDistance()
 		while (nextNote > -1)
 		{
 			//DBG("Mapping note " + String(nextNote) + " to " + String(xSteps * steps.x + ySteps * steps.y));
-			kbdNoteMap->set(nextNote, xSteps * steps.x + ySteps * steps.y);
+			kbdScaleDegrees->set(nextNote, xSteps * steps.x + ySteps * steps.y);
 			nextNote = kbdUpLeft(nextNote, 1);
 			xSteps--;
 
@@ -141,7 +150,7 @@ void LayoutGenerator::mapKeysToDistance()
 		while (nextNote > -1)
 		{
 			//DBG("RIGHT Mapping note " + String(nextNote) + " to " + String(xSteps * steps.x + ySteps * steps.y));
-			kbdNoteMap->set(nextNote, xSteps * steps.x + ySteps * steps.y);
+			kbdScaleDegrees->set(nextNote, xSteps * steps.x + ySteps * steps.y);
 			nextNote = kbdDownRight(nextNote, 1);
 			xSteps++;
 
@@ -162,7 +171,7 @@ void LayoutGenerator::mapKeysToDistance()
 		while (nextNote > -1)
 		{
 			//DBG("LEFT Mapping note " + String(nextNote) + " to " + String(xSteps * steps.x + ySteps * steps.y));
-			kbdNoteMap->set(nextNote, xSteps * steps.x + ySteps * steps.y);
+			kbdScaleDegrees->set(nextNote, xSteps * steps.x + ySteps * steps.y);
 			nextNote = kbdUpLeft(nextNote, 1);
 			xSteps--;
 		}
@@ -171,7 +180,7 @@ void LayoutGenerator::mapKeysToDistance()
 		while (nextNote > -1)
 		{
 			//DBG("Mapping note " + String(nextNote) + " to " + String(xSteps * steps.x + ySteps * steps.y));
-			kbdNoteMap->set(nextNote, xSteps * steps.x + ySteps * steps.y);
+			kbdScaleDegrees->set(nextNote, xSteps * steps.x + ySteps * steps.y);
 			nextNote = kbdDownRight(nextNote, 1);
 			xSteps++;
 		}
@@ -259,9 +268,19 @@ void LayoutGenerator::mapGeneratorsToNotes()
 	}
 }
 
-Ratio LayoutGenerator::getGenPeriodRatio()
+Ratio* LayoutGenerator::getGenPeriodRatio()
 {
-    return gOverP;
+    return &gOverP;
+}
+
+int LayoutGenerator::getGeneratorOffset()
+{
+	return generatorOffset;
+}
+
+int LayoutGenerator::getKeyboardType()
+{
+	return kbdType;
 }
 
 int LayoutGenerator::getScaleSize()
@@ -274,9 +293,25 @@ int LayoutGenerator::getRootKey()
 	return rootKey;
 }
 
-Array<int>* LayoutGenerator::getNoteMap()
+bool LayoutGenerator::isScaleFlipped()
 {
-	return kbdNoteMap.get();
+	return flipScale;
+}
+
+void LayoutGenerator::setScaleFlipped(bool doFlip)
+{
+	flipScale = doFlip;
+	refresh();
+}
+
+Array<int>* LayoutGenerator::getKbdDegrees()
+{
+	return kbdScaleDegrees.get();
+}
+
+int LayoutGenerator::getKeyDegree(int keyNumIn)
+{
+	return kbdScaleDegrees->getUnchecked(keyNumIn);
 }
 
 Array<Array<int>>* LayoutGenerator::getGeneratorNotes()
@@ -284,14 +319,9 @@ Array<Array<int>>* LayoutGenerator::getGeneratorNotes()
 	return notesByGenerators.get();
 }
 
-int LayoutGenerator::getKeyNote(int keyNumIn)
-{
-	return kbdNoteMap->getUnchecked(keyNumIn);
-}
-
 Array<Colour> LayoutGenerator::getScaleColours()
 {
-    return Array<Colour>();
+	return scaleColours;
 }
 
 Array<int> LayoutGenerator::getValidGenerators()
@@ -349,11 +379,36 @@ void LayoutGenerator::setKeyboardType(int kbdIndexIn)
 void LayoutGenerator::setRootKey(int rootKeyIn)
 {
 	rootKey = rootKeyIn;
-	mapKeysToDistance();
+	mapKeysToDegree();
 }
 
 void LayoutGenerator::setGeneratorOffset(int genOffsetIn)
 {
 	generatorOffset = genOffsetIn;
 	refresh();
+}
+
+void LayoutGenerator::addColour(Colour colorIn)
+{
+	scaleColours.add(colorIn);
+}
+
+void LayoutGenerator::setColour(int index, Colour colorIn)
+{
+	scaleColours.set(index, colorIn);
+}
+
+void LayoutGenerator::resetColours()
+{
+	// Default colors
+	scaleColours = { 
+		Colours::mediumaquamarine, 
+		Colours::indianred, 
+		Colours::orange, 
+		Colours::yellow.darker(), 
+		Colours::green, 
+		Colours::cornflowerblue, 
+		Colours::lavenderblush, 
+		Colours::mediumslateblue 
+	};
 }
