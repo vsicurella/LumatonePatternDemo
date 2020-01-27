@@ -18,6 +18,7 @@ LayoutGenerator::LayoutGenerator(int periodIn)
     
     updateValidOptions();
 	resetColours();
+	DBG("LAYOUT: Finished constructing.");
 }
 
 LayoutGenerator::LayoutGenerator(int periodIn, int genIn)
@@ -30,6 +31,8 @@ LayoutGenerator::LayoutGenerator(int periodIn, int genIn)
     
     updateValidOptions();
 	resetColours();
+	DBG("LAYOUT: Finished constructing.");
+
 }
 
 LayoutGenerator::LayoutGenerator(int periodIn, int genIn, int kbdTypeIn, int rootIn)
@@ -47,6 +50,8 @@ LayoutGenerator::LayoutGenerator(int periodIn, int genIn, int kbdTypeIn, int roo
 
 	refresh();
 	resetColours();
+	DBG("LAYOUT: Finished constructing.");
+
 }
 
 LayoutGenerator::LayoutGenerator(const LayoutGenerator& layoutToCopy)
@@ -64,6 +69,8 @@ LayoutGenerator::LayoutGenerator(const LayoutGenerator& layoutToCopy)
 
 	refresh();
 	resetColours();
+	DBG("LAYOUT: Finished constructing.");
+
 }
 
 LayoutGenerator::~LayoutGenerator()
@@ -73,8 +80,12 @@ LayoutGenerator::~LayoutGenerator()
 
 void LayoutGenerator::refresh()
 {
+	DBG("LAYOUT: Refreshing...");
 	mapKeysToDegree();
 	mapGeneratorsToNotes();
+
+	if (validLayout)
+		DBG("LAYOUT: I'm feeling refreshed.");
 }
   
 void LayoutGenerator::updateValidOptions()
@@ -83,7 +94,7 @@ void LayoutGenerator::updateValidOptions()
     
     if (!validGenerators.contains(generator))
     {
-        DBG("Error: invalid generator size");
+        DBG("LAYOUT ERROR: invalid generator size");
         validLayout = false;
         return;
     }
@@ -101,7 +112,7 @@ void LayoutGenerator::updateValidOptions()
     }
     else
     {
-        DBG("ERROR: invalid scale size");
+        DBG("LAYOUT ERROR: invalid scale size");
         //TODO: implement size error handling
         validLayout = true;
     }
@@ -113,8 +124,17 @@ void LayoutGenerator::mapKeysToDegree()
 	kbdScaleDegrees->resize(275);
 	kbdScaleDegrees->fill(-1);
 	
-	if (pgCoords[kbdType].x.x * pgCoords[kbdType].x.y * pgCoords[kbdType].y.x * pgCoords[kbdType].y.y <= 0)
+	if (!validLayout)
+	{
+		DBG("ERR: not a valid layout :(");
 		return;
+	}
+
+	if (pgCoords[kbdType].x.x * pgCoords[kbdType].x.y * pgCoords[kbdType].y.x * pgCoords[kbdType].y.y <= 0)
+	{
+		DBG("coordinates have a darned old 0 in it");
+		return;
+	}
 
 	Point<int> steps = getXYSteps();
 
@@ -194,9 +214,17 @@ void LayoutGenerator::mapGeneratorsToNotes()
 {
 	if (scaleSize < 1)
 	{
-		DBG("ERROR: Scale size less than 1.");
+		DBG("ERROR: Scale size is less than one.");
+		validLayout = false;
 		return;
 	}
+
+	if (!validLayout)
+	{
+		DBG("LAYOUT ERROR: Something about this feels invalid.");
+		return;
+	}
+
 	DBG("Period: " + String(scalePeriod) + "\tGen: " + String(generator) + " " + String(generatorOffset) + "\tSize: " + String(scaleSize)); 
 	// Find out how many notes each color tier will have
 	// Can be made to be customized
@@ -212,6 +240,7 @@ void LayoutGenerator::mapGeneratorsToNotes()
 	if (subSizeIdx <= 0)
 	{
 		DBG("ERROR: Bad note segmenting");
+		validLayout = false;
 		return;
 	}
 
@@ -298,8 +327,53 @@ bool LayoutGenerator::isScaleFlipped()
 	return flipScale;
 }
 
+int LayoutGenerator::suggestedGenerator()
+{
+	// suggest the coprime scale degree nearest to a "perfect fifth"
+	int genSug = round(scalePeriod * (0.6));
+	int genDif = 0;
+	int sugDif = 10e4;
+	int ind = 0;
+	for (int g = 0; g < validGenerators.size(); g++)
+	{
+		genDif = genSug - validGenerators[g];
+		if (abs(genDif) < sugDif)
+		{
+			ind = g;
+			sugDif = genDif;
+		}
+	}
+
+	return ind;
+}
+
+int LayoutGenerator::suggestedScaleSize()
+{
+	int ind = -1;
+	int size = 0;
+	Array<int> suggestedSizes = { 7, 5, 6, 8, 9, 10 };
+	DBG(arrayToString(validSizes, "Available Scale Sizes"));
+	while(ind < 0 && size < validSizes.size())
+	{
+		ind = validSizes.indexOf(suggestedSizes[size]);
+		size++;
+	}
+
+	int s = 4;
+	while (ind < 0 && s > 0)
+	{
+		ind = validSizes.indexOf(s--);
+	}
+
+	// all scales should at *least* have sizes of 1 or 2
+	jassert(ind >= 0);
+
+	return ind;
+}
+
 void LayoutGenerator::setScaleFlipped(bool doFlip)
 {
+	DBG("Flipping scale");
 	flipScale = doFlip;
 	refresh();
 }
@@ -382,10 +456,26 @@ void LayoutGenerator::setRootKey(int rootKeyIn)
 	mapKeysToDegree();
 }
 
+void LayoutGenerator::setGenerator(int genIn)
+{
+	if (!validGenerators.contains(genIn))
+	{
+		DBG("LAYOUT ERROR: Invalid generator");
+		validLayout = false;
+		return;
+	}
+
+	generator = genIn;
+	updateValidOptions();
+	// needs to be refreshed
+}
+
 void LayoutGenerator::setGeneratorOffset(int genOffsetIn)
 {
+	DBG("LAYOUT: Setting generator offset");
 	generatorOffset = genOffsetIn;
-	refresh();
+	//refresh();
+	//needs to be refreshed
 }
 
 void LayoutGenerator::addColour(Colour colorIn)

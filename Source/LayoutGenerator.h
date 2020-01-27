@@ -44,10 +44,7 @@ class LayoutGenerator
 
     bool validLayout = false;
     
-    // Methods
-    
-    void updateValidOptions();
-    
+        
   public:
   
     LayoutGenerator(int periodIn);
@@ -59,6 +56,7 @@ class LayoutGenerator
 	void mapKeysToDegree();
 	void mapGeneratorsToNotes();
 	void refresh();
+	void updateValidOptions();
 
 	// Getters
 
@@ -87,8 +85,23 @@ class LayoutGenerator
     
     bool isValid();
 
+	// UI helpers
+
+	/*
+		Returns an index for ValidGenerators that comes closest to a "perfect fifth" in the tuning
+		>>> Perhaps could be better to have "preset" suggestions for each period
+	*/
+	int suggestedGenerator();
+
+	/*
+		Returns an index for ValidKeyboards that comes closest a size of 7, then 5, then 6, then 8, then 9, then 10
+		Will return next smaller scale if those sizes don't exist
+	*/
+	int suggestedScaleSize();
+
 	// Setters
 
+	void setGenerator(int genIn);
 	void setGeneratorOffset(int genOffsetIn);
 	void setKeyboardType(int kbdIndexIn);
 	void setRootKey(int rootKeyIn);

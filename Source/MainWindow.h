@@ -43,12 +43,13 @@ class MainWindow  : public Component,
 {
 public:
     //==============================================================================
-    MainWindow (LayoutGenerator& layoutToUse);
+    MainWindow ();
     ~MainWindow();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void refresh(bool recalculateGenerators=true);
+    void refreshSelections(bool recalculateGenerators=true);
+	void refreshKeyboardView();
     //[/UserMethods]
 
     void paint (Graphics& g) override;

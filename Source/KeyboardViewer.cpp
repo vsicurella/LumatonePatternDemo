@@ -25,6 +25,7 @@ KeyboardViewer::~KeyboardViewer()
 void KeyboardViewer::setLayout(LayoutGenerator* layoutIn)
 {
 	layout = layoutIn;
+	repaint();
 }
 
 void KeyboardViewer::setKeyTextShown(KeyText textTypeIn)
