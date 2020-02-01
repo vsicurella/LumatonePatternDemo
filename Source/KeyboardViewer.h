@@ -27,7 +27,8 @@ public:
 		KeyNumber = 0,
 		OctaveNumber,
 		MidiNote,
-		ScaleDegree
+		ScaleDegree,
+		Blank
 	};
 
     KeyboardViewer(LayoutGenerator* layoutIn);

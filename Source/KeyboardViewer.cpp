@@ -84,8 +84,10 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 			g.setColour(keyColour);
 			g.fillPath(*hex);
 
-			switch (keyTextShown)
+			if (keyTextShown != Blank)
 			{
+				switch (keyTextShown)
+				{
 				case OctaveNumber:
 					keyText = String(key % 55);
 					break;
@@ -104,11 +106,12 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 				}
 				default:
 					keyText = String(key);
+				}
+
+				g.setColour(keyColour.contrasting(1));
+				g.drawText(keyText, hex->getBounds(), Justification::centred);
 			}
 
-			g.setColour(keyColour.contrasting(1));
-			g.drawText(keyText, hex->getBounds(), Justification::centred);
-			
 			key++;
 		}
 	}

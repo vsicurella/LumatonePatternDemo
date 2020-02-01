@@ -114,6 +114,7 @@ private:
     std::unique_ptr<Label> rootLbl;
     std::unique_ptr<Label> label;
     std::unique_ptr<ToggleButton> editScaleFlip;
+    std::unique_ptr<ToggleButton> editBlankKeys;
 
 
     //==============================================================================

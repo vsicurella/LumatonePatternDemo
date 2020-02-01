@@ -164,6 +164,12 @@ MainWindow::MainWindow ()
     editScaleFlip->setButtonText (TRANS("Flip"));
     editScaleFlip->addListener (this);
 
+    editBlankKeys.reset (new ToggleButton ("new toggle button"));
+    addAndMakeVisible (editBlankKeys.get());
+    editBlankKeys->setButtonText (TRANS("Blank"));
+    editBlankKeys->setRadioGroupId (10);
+    editBlankKeys->addListener (this);
+
 
     //[UserPreSize]
 	colourTableModel->setListBoxComponent(editColorLayout.get());
@@ -213,6 +219,7 @@ MainWindow::~MainWindow()
     rootLbl = nullptr;
     label = nullptr;
     editScaleFlip = nullptr;
+    editBlankKeys = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -237,24 +244,25 @@ void MainWindow::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    keyboardView->setBounds (proportionOfWidth (0.0083f), proportionOfHeight (0.0228f), proportionOfWidth (0.9835f), proportionOfHeight (0.6629f));
-    editPeriod->setBounds (proportionOfWidth (0.1389f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.0687f), 120, 24);
-    editGenerator->setBounds (proportionOfWidth (0.1404f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.1443f), 112, 24);
-    editKeyboard->setBounds (proportionOfWidth (0.1404f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.2904f), 112, 24);
-    editColorLayout->setBounds (proportionOfWidth (0.3589f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.0722f), roundToInt (proportionOfWidth (0.9835f) * 0.3321f), 154);
-    editShowKeyNumber->setBounds (proportionOfWidth (0.0083f) + roundToInt (proportionOfWidth (0.9835f) * 0.7198f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.0911f), 176, 24);
-    editShowOctaveNum->setBounds ((proportionOfWidth (0.0083f) + roundToInt (proportionOfWidth (0.9835f) * 0.7198f)) + 0, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.0911f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowMidiNote->setBounds ((proportionOfWidth (0.0083f) + roundToInt (proportionOfWidth (0.9835f) * 0.7198f)) + 0, ((proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.0911f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowScaleDegree->setBounds ((proportionOfWidth (0.0083f) + roundToInt (proportionOfWidth (0.9835f) * 0.7198f)) + 0, (((proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.0911f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editGeneratorOffset->setBounds (proportionOfWidth (0.1404f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.2182f), 120, 24);
-    periodLbl->setBounds (proportionOfWidth (0.1389f) + -55, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.0687f)) + 0, 64, 24);
-    genLbl->setBounds (proportionOfWidth (0.1404f) + -81, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.1443f)) + 0, 88, 24);
-    offsetLbl->setBounds (proportionOfWidth (0.1404f) + -56, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.2182f)) + 0, 64, 24);
-    ScaleSize->setBounds (proportionOfWidth (0.1404f) + -82, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.2904f)) + 0, 88, 24);
-    editRootSld->setBounds (proportionOfWidth (0.1404f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.3643f), 120, 24);
-    rootLbl->setBounds (proportionOfWidth (0.1404f) + -75, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.3643f)) + 0, 80, 24);
-    label->setBounds (proportionOfWidth (0.3589f) + (roundToInt (proportionOfWidth (0.9835f) * 0.3321f)) / 2 - (112 / 2), (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.0722f)) + -22, 112, 24);
-    editScaleFlip->setBounds (proportionOfWidth (0.1404f) + 120 - -6, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6629f) * 1.2182f)) + 0, roundToInt (proportionOfWidth (0.9835f) * 0.0695f), 24);
+    keyboardView->setBounds (proportionOfWidth (0.0081f), proportionOfHeight (0.0226f), proportionOfWidth (0.9839f), proportionOfHeight (0.6632f));
+    editPeriod->setBounds (proportionOfWidth (0.1393f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f), 120, 24);
+    editGenerator->setBounds (proportionOfWidth (0.1403f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.1451f), 112, 24);
+    editKeyboard->setBounds (proportionOfWidth (0.1403f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2903f), 112, 24);
+    editColorLayout->setBounds (proportionOfWidth (0.3592f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f), roundToInt (proportionOfWidth (0.9839f) * 0.3323f), 136);
+    editShowKeyNumber->setBounds (proportionOfWidth (0.0081f) + roundToInt (proportionOfWidth (0.9839f) * 0.7200f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f), 176, 24);
+    editShowOctaveNum->setBounds ((proportionOfWidth (0.0081f) + roundToInt (proportionOfWidth (0.9839f) * 0.7200f)) + 0, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowMidiNote->setBounds ((proportionOfWidth (0.0081f) + roundToInt (proportionOfWidth (0.9839f) * 0.7200f)) + 0, ((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowScaleDegree->setBounds ((proportionOfWidth (0.0081f) + roundToInt (proportionOfWidth (0.9839f) * 0.7200f)) + 0, (((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editGeneratorOffset->setBounds (proportionOfWidth (0.1403f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2177f), 120, 24);
+    periodLbl->setBounds (proportionOfWidth (0.1393f) + -55, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f)) + 0, 64, 24);
+    genLbl->setBounds (proportionOfWidth (0.1403f) + -81, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.1451f)) + 0, 88, 24);
+    offsetLbl->setBounds (proportionOfWidth (0.1403f) + -56, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2177f)) + 0, 64, 24);
+    ScaleSize->setBounds (proportionOfWidth (0.1403f) + -82, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2903f)) + 0, 88, 24);
+    editRootSld->setBounds (proportionOfWidth (0.1403f), proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.3651f), 120, 24);
+    rootLbl->setBounds (proportionOfWidth (0.1403f) + -75, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.3651f)) + 0, 80, 24);
+    label->setBounds (proportionOfWidth (0.3592f) + (roundToInt (proportionOfWidth (0.9839f) * 0.3323f)) / 2 - (112 / 2), (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0726f)) + -22, 112, 24);
+    editScaleFlip->setBounds (proportionOfWidth (0.1403f) + 120 - -6, (proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.2177f)) + 0, roundToInt (proportionOfWidth (0.9839f) * 0.0697f), 24);
+    editBlankKeys->setBounds ((proportionOfWidth (0.0081f) + roundToInt (proportionOfWidth (0.9839f) * 0.7200f)) + 0, (((proportionOfHeight (0.0226f) + roundToInt (proportionOfHeight (0.6632f) * 1.0680f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 2.6667f), 176, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -383,6 +391,12 @@ void MainWindow::buttonClicked (Button* buttonThatWasClicked)
 		layout->setScaleFlipped(editScaleFlip->getToggleState());
         //[/UserButtonCode_editScaleFlip]
     }
+    else if (buttonThatWasClicked == editBlankKeys.get())
+    {
+        //[UserButtonCode_editBlankKeys] -- add your button handler code here..
+		keyboardView->setKeyTextShown(KeyboardViewer::KeyText::Blank);
+        //[/UserButtonCode_editBlankKeys]
+    }
 
     //[UserbuttonClicked_Post]
 	keyboardView->repaint();
@@ -455,27 +469,27 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="f8a4a0ba2169ed5d" memberName="keyboardView"
-                    virtualName="" explicitFocusOrder="0" pos="0.826% 2.278% 98.348% 66.287%"
+                    virtualName="" explicitFocusOrder="0" pos="0.807% 2.256% 98.385% 66.316%"
                     class="KeyboardViewer" params="layout.get()"/>
   <SLIDER name="new slider" id="c9338955361b5253" memberName="editPeriod"
-          virtualName="" explicitFocusOrder="0" pos="13.889% 106.873% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="13.925% 106.803% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="3.0" max="400.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <COMBOBOX name="new combo box" id="d2fccf87f53946cd" memberName="editGenerator"
-            virtualName="" explicitFocusOrder="0" pos="14.039% 114.433% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="14.026% 114.512% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="new combo box" id="363a9dc4b5eb4f63" memberName="editKeyboard"
-            virtualName="" explicitFocusOrder="0" pos="14.039% 129.038% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="14.026% 129.025% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <GENERICCOMPONENT name="new component" id="80741f8eece04bb7" memberName="editColorLayout"
-                    virtualName="" explicitFocusOrder="0" pos="35.886% 107.216% 33.206% 154"
+                    virtualName="" explicitFocusOrder="0" pos="35.923% 107.256% 33.231% 136"
                     posRelativeY="f8a4a0ba2169ed5d" posRelativeW="f8a4a0ba2169ed5d"
                     class="ListBox" params="&quot;Colour Selector&quot;, colourTableModel.get()"/>
   <TOGGLEBUTTON name="new toggle button" id="3fefe6b79e2bbe21" memberName="editShowKeyNumber"
-                virtualName="" explicitFocusOrder="0" pos="71.985% 109.107% 176 24"
+                virtualName="" explicitFocusOrder="0" pos="72% 106.803% 176 24"
                 posRelativeX="f8a4a0ba2169ed5d" posRelativeY="f8a4a0ba2169ed5d"
                 buttonText="Full Keyboard Number" connectedEdges="0" needsCallback="1"
                 radioGroupId="10" state="1"/>
@@ -495,7 +509,7 @@ BEGIN_JUCER_METADATA
                 buttonText="Scale Degree" connectedEdges="0" needsCallback="1"
                 radioGroupId="10" state="0"/>
   <SLIDER name="new slider" id="cf8ed030b390dba8" memberName="editGeneratorOffset"
-          virtualName="" explicitFocusOrder="0" pos="14.039% 121.821% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="14.026% 121.769% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="-6.0" max="6.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
@@ -524,7 +538,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="new slider" id="c486bd0e1ff65df1" memberName="editRootSld"
-          virtualName="" explicitFocusOrder="0" pos="14.039% 136.426% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="14.026% 136.508% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="0.0" max="274.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
@@ -541,9 +555,14 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <TOGGLEBUTTON name="new toggle button" id="f9e862554b787aca" memberName="editScaleFlip"
-                virtualName="" explicitFocusOrder="0" pos="-6R 0 6.947% 24" posRelativeX="cf8ed030b390dba8"
+                virtualName="" explicitFocusOrder="0" pos="-6R 0 6.974% 24" posRelativeX="cf8ed030b390dba8"
                 posRelativeY="cf8ed030b390dba8" posRelativeW="f8a4a0ba2169ed5d"
                 buttonText="Flip" connectedEdges="0" needsCallback="1" radioGroupId="0"
+                state="0"/>
+  <TOGGLEBUTTON name="new toggle button" id="eb5b9b780ba3f90c" memberName="editBlankKeys"
+                virtualName="" explicitFocusOrder="0" pos="0 266.667% 176 24"
+                posRelativeX="3fefe6b79e2bbe21" posRelativeY="cd8f1afc15d93282"
+                buttonText="Blank" connectedEdges="0" needsCallback="1" radioGroupId="10"
                 state="0"/>
 </JUCER_COMPONENT>
 
