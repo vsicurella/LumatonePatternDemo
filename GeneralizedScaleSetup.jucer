@@ -4,6 +4,8 @@
               jucerVersion="5.4.5">
   <MAINGROUP id="IsZKgY" name="GeneralizedScaleSetup">
     <GROUP id="{F2189B60-1842-B504-0A30-163E90EF3F1C}" name="Source">
+      <FILE id="A3PUrt" name="ColorTable.cpp" compile="1" resource="0" file="Source/ColorTable.cpp"/>
+      <FILE id="J7IAeS" name="ColorTable.h" compile="0" resource="0" file="Source/ColorTable.h"/>
       <FILE id="Qkz7rl" name="ScaleStructure.cpp" compile="1" resource="0"
             file="Source/ScaleStructure.cpp"/>
       <FILE id="yWnhOg" name="ScaleStructure.h" compile="0" resource="0"

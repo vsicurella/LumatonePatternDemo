@@ -26,8 +26,7 @@ class LayoutGenerator
 	int rootKey = 129;
 	bool flipScale = false;
 
-	Array<Colour> scaleColours; // the colors chosen for the scale segments
-
+	Array<Colour>* scaleColours; // the colors chosen for the scale segments
 
 	// Dependent Properties
     Ratio gOverP; // the proportion of the generator over the period
@@ -67,7 +66,7 @@ class LayoutGenerator
 	int getRootKey();
 	bool isScaleFlipped();
 
-	Array<Colour> getScaleColours();
+	Array<Colour>* getScaleColours();
 
 	Array<int>* getKbdDegrees();
 	int getKeyDegree(int keyNumIn);
@@ -109,5 +108,5 @@ class LayoutGenerator
 
 	void addColour(Colour colorIn);
 	void setColour(int index, Colour colorIn);
-	void resetColours();
+	void setColours(Array<Colour>* coloursIn);
 };

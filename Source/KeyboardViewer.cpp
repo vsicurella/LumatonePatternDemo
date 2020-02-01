@@ -69,7 +69,7 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 				verticalStep * r + octaveSpacing * octaveNumber, 6, getWidth() * widthMult);
 			hex->applyTransform(transform);
 
-			g.setColour(Colours::white);
+			Colour keyColour = Colours::white;
 
 			if (generatorNotes != nullptr)
 			{
@@ -77,10 +77,11 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 				for (int t = 0; t < generatorNotes->size(); t++)
 				{
 					if (generatorNotes->getReference(t).contains(modDegree))
-						g.setColour(layout->getScaleColours()[t]);
+						keyColour = layout->getScaleColours()->getUnchecked(t);
 				}
 			}
 
+			g.setColour(keyColour);
 			g.fillPath(*hex);
 
 			switch (keyTextShown)
@@ -105,7 +106,7 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 					keyText = String(key);
 			}
 
-			g.setColour(Colours::black);
+			g.setColour(keyColour.contrasting(1));
 			g.drawText(keyText, hex->getBounds(), Justification::centred);
 			
 			key++;

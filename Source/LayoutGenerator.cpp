@@ -17,7 +17,6 @@ LayoutGenerator::LayoutGenerator(int periodIn)
     scalePeriod = periodIn;
     
     updateValidOptions();
-	resetColours();
 	DBG("LAYOUT: Finished constructing.");
 }
 
@@ -30,7 +29,6 @@ LayoutGenerator::LayoutGenerator(int periodIn, int genIn)
     generator = genIn;
     
     updateValidOptions();
-	resetColours();
 	DBG("LAYOUT: Finished constructing.");
 
 }
@@ -49,7 +47,6 @@ LayoutGenerator::LayoutGenerator(int periodIn, int genIn, int kbdTypeIn, int roo
 	rootKey = rootIn;
 
 	refresh();
-	resetColours();
 	DBG("LAYOUT: Finished constructing.");
 
 }
@@ -68,7 +65,6 @@ LayoutGenerator::LayoutGenerator(const LayoutGenerator& layoutToCopy)
 	scaleColours = layoutToCopy.scaleColours;
 
 	refresh();
-	resetColours();
 	DBG("LAYOUT: Finished constructing.");
 
 }
@@ -393,7 +389,7 @@ Array<Array<int>>* LayoutGenerator::getGeneratorNotes()
 	return notesByGenerators.get();
 }
 
-Array<Colour> LayoutGenerator::getScaleColours()
+Array<Colour>* LayoutGenerator::getScaleColours()
 {
 	return scaleColours;
 }
@@ -480,25 +476,15 @@ void LayoutGenerator::setGeneratorOffset(int genOffsetIn)
 
 void LayoutGenerator::addColour(Colour colorIn)
 {
-	scaleColours.add(colorIn);
+	scaleColours->add(colorIn);
 }
 
 void LayoutGenerator::setColour(int index, Colour colorIn)
 {
-	scaleColours.set(index, colorIn);
+	scaleColours->set(index, colorIn);
 }
 
-void LayoutGenerator::resetColours()
+void LayoutGenerator::setColours(Array<Colour>* coloursIn)
 {
-	// Default colors
-	scaleColours = { 
-		Colours::mediumaquamarine, 
-		Colours::indianred, 
-		Colours::orange, 
-		Colours::yellow.darker(), 
-		Colours::green, 
-		Colours::cornflowerblue, 
-		Colours::lavenderblush, 
-		Colours::mediumslateblue 
-	};
+	scaleColours = coloursIn;
 }

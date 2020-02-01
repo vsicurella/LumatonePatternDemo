@@ -24,6 +24,7 @@
 #include "LayoutGenerator.h"
 #include "KeyboardViewer.h"
 #include "ScaleStructure.h"
+#include "ColorTable.h"
 //[/Headers]
 
 
@@ -62,7 +63,8 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    std::unique_ptr<LayoutGenerator> layout;
+	std::unique_ptr<LayoutGenerator> layout;
+	std::unique_ptr<ColourTableModel> colourTableModel;
 
 	int period = 12;
 	int generator = 7;
@@ -71,6 +73,26 @@ private:
 	int rootKey = 129;
 	Point<int> periodHXY = Point<int>(2, 5);
 	Point<int> genHXY = Point<int>(1, 3);
+
+	// default colors
+	Array<Colour> scaleColours = {
+		Colours::mediumvioletred,
+		Colours::indianred,
+		Colours::orange,
+		Colours::green,
+		Colours::yellow.darker(),
+		Colours::cornflowerblue,
+		Colours::lavenderblush,
+		Colours::mediumslateblue,
+		Colours::mediumvioletred.withBrightness(0.8),
+		Colours::indianred.withBrightness(0.8),
+		Colours::orange.withBrightness(0.8),
+		Colours::green.withBrightness(0.8),
+		Colours::yellow.darker().withBrightness(0.8),
+		Colours::cornflowerblue.withBrightness(0.8),
+		Colours::lavenderblush.withBrightness(0.8),
+		Colours::mediumslateblue.withBrightness(0.8)
+	};
     //[/UserVariables]
 
     //==============================================================================
@@ -78,7 +100,7 @@ private:
     std::unique_ptr<Slider> editPeriod;
     std::unique_ptr<ComboBox> editGenerator;
     std::unique_ptr<ComboBox> editKeyboard;
-    std::unique_ptr<Component> editColorLayout;
+    std::unique_ptr<ListBox> editColorLayout;
     std::unique_ptr<ToggleButton> editShowKeyNumber;
     std::unique_ptr<ToggleButton> editShowOctaveNum;
     std::unique_ptr<ToggleButton> editShowMidiNote;
