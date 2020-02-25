@@ -10,19 +10,23 @@
 
 #include "ScaleStructure.h"
 
-ScaleStructure::ScaleStructure(Ratio generatorOverPeriod)
+ScaleStructure::ScaleStructure(int periodIn)
 {
-	period = generatorOverPeriod.getDenominator();
-	generator = generatorOverPeriod.getNumerator();
-	calculateProperties();
+	period = periodIn;
+	validGenerators = getCoprimes(period);
 }
 
-ScaleStructure::ScaleStructure(int periodIn, int generatorIn)
+ScaleStructure::ScaleStructure(int periodIn, int generatorIndex, int sizeIndex, Array<int> degreeGroups)
 {
-	// TODO: valid input checking
 	period = periodIn;
-	generator = generatorIn;
+	validGenerators = getCoprimes(period);
+	generator = validGenerators[generatorIndex];
+
+	// TODO: check for valid input
 	calculateProperties();
+
+	currentSizeSelected = sizeIndex;
+	degreeGroupings = degreeGroups;
 }
 
 Array<int> ScaleStructure::getScaleSizes()
@@ -35,12 +39,12 @@ int ScaleStructure::getScaleSize(int ind)
 	return scaleSizes[ind];
 }
 
-Array<Ratio> ScaleStructure::getKeyboardTypes()
+Array<Point<int>> ScaleStructure::getKeyboardTypes()
 {
 	return keyboardTypes;
 }
 
-Ratio ScaleStructure::getKeyboardType(int ind)
+Point<int> ScaleStructure::getKeyboardType(int ind)
 {
 	return keyboardTypes[ind];
 }
@@ -55,36 +59,27 @@ PointPair<int> ScaleStructure::getPGCoord(int ind)
 	return pgCoords[ind];
 }
 
+void ScaleStructure::setGeneratorIndex(int index)
+{
+	generator = validGenerators[index];
+	calculateProperties();
+}
+
+void ScaleStructure::setSizeIndex(int index)
+{
+	currentSizeSelected = index;
+	// TODO: recalculate degree groups
+}
+
+void ScaleStructure::setGeneratorOffset(int offsetIn)
+{
+	generatorOffset = offsetIn;
+	// TODO: recalculate degree groups
+}
+
 Point<int> ScaleStructure::getStepSizes(int kbdTypeIn)
 {
-	Point<int> stepSizesOut;
-	Point<int> periodCoordinate = pgCoords[kbdTypeIn].x;
-	Point<int> generatorCoordinate = pgCoords[kbdTypeIn].y;
-
-	generatorCoordinate = Point<int>(pgCoords[kbdTypeIn].x.x, pgCoords[kbdTypeIn].y.x);
-	periodCoordinate = Point<int>(pgCoords[kbdTypeIn].x.y, pgCoords[kbdTypeIn].y.y);
-
-	// find horiztonal step size (X)
-	if (periodCoordinate.y == generatorCoordinate.y)
-		stepSizesOut.setX(period - generator);
-	else if (periodCoordinate.y == 0)
-		stepSizesOut.setX(period);
-	else if (generatorCoordinate.y == 0)
-		stepSizesOut.setX(generator);
-	else
-		stepSizesOut.setX(abs(period * generatorCoordinate.y - generator * periodCoordinate.y));
-
-	// find upward right step size (Y)
-	if (periodCoordinate.x == generatorCoordinate.x)
-		stepSizesOut.setY(period - generator);
-	else if (periodCoordinate.x == 0)
-		stepSizesOut.setX(period);
-	else if (generatorCoordinate.y == 0)
-		stepSizesOut.setX(generator);
-	else
-		stepSizesOut.setY(abs(period * generatorCoordinate.x - generator * periodCoordinate.x));
-
-	return stepSizesOut;
+	return stepSizes[kbdTypeIn];
 }
 
 void ScaleStructure::calculateProperties()
@@ -110,7 +105,7 @@ void ScaleStructure::calculateProperties()
 		for (int d = 0; d < cf[i]; d++)
 		{
 			pgCoords.add(PointPair<int>(packet[0], packet[1]));
-			keyboardTypes.add(Ratio(packet[2]));
+			keyboardTypes.add(packet[2]);
 			scaleSizes.add(packet[2].y);
 
 			parent1 = packet[0];
@@ -126,5 +121,53 @@ void ScaleStructure::calculateProperties()
 
 			packet = { parent1, parent2, parent1 + parent2 };
 		}
+	}
+
+	calculateStepSizes();
+	calculateGeneratorChain();
+}
+
+void ScaleStructure::calculateStepSizes()
+{
+	Point<int> stepSizesOut;
+	Point<int> periodCoordinate;
+	Point<int> generatorCoordinate;
+
+	for (int i = 0; i < scaleSizes.size(); i++)
+	{
+		generatorCoordinate = Point<int>(pgCoords[i].x.x, pgCoords[i].y.x);
+		periodCoordinate = Point<int>(pgCoords[i].x.y, pgCoords[i].y.y);
+
+		// find horiztonal step size (X)
+		if (periodCoordinate.y == generatorCoordinate.y)
+			stepSizesOut.setX(period - generator);
+		else if (periodCoordinate.y == 0)
+			stepSizesOut.setX(period);
+		else if (generatorCoordinate.y == 0)
+			stepSizesOut.setX(generator);
+		else
+			stepSizesOut.setX(abs(period * generatorCoordinate.y - generator * periodCoordinate.y));
+
+		// find upward right step size (Y)
+		if (periodCoordinate.x == generatorCoordinate.x)
+			stepSizesOut.setY(period - generator);
+		else if (periodCoordinate.x == 0)
+			stepSizesOut.setX(period);
+		else if (generatorCoordinate.y == 0)
+			stepSizesOut.setX(generator);
+		else
+			stepSizesOut.setY(abs(period * generatorCoordinate.x - generator * periodCoordinate.x));
+
+		stepSizes.add(stepSizesOut);
+	}
+}
+
+void ScaleStructure::calculateGeneratorChain()
+{
+	generatorChain.clear();
+
+	for (int i = 0; i < period; i++)
+	{
+		generatorChain.add(i * generator);
 	}
 }

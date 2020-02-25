@@ -17,29 +17,45 @@
 class ScaleStructure
 {
 	int period;
-	int generator;
+	int generator = 0;
+
+	Array<int> validGenerators;
 
 	Array<int> scaleSizes;
-	Array<Ratio> keyboardTypes;
+	Array<Point<int>> keyboardTypes;
 	Array<PointPair<int>> pgCoords;
+	Array<Point<int>> stepSizes;
+
+	Array<int> degreeGroupings;
+	Array<int> generatorChain;
+
+	int currentSizeSelected = -1;
+	int generatorOffset = 0;
 
 	// calculates all the necessary things in one big swoop
 	void calculateProperties();
+	void calculateStepSizes();
+	void calculateGeneratorChain();
 
 public:
 
-	ScaleStructure() {};
-	ScaleStructure(Ratio generatorOverPeriod);
-	ScaleStructure(int periodIn, int generatorIn);
+	ScaleStructure(int periodIn) {};
+	ScaleStructure(int periodIn, int generatorIndex, int sizeIndex, Array<int> degreeGroups=Array<int>());
+	ScaleStructure(const ScaleStructure& scaleToCopy);
+	ScaleStructure(ValueTree scaleStructureProperties);
 
 	Array<int> getScaleSizes();
 	int getScaleSize(int ind);
 
-	Array<Ratio> getKeyboardTypes();
-	Ratio getKeyboardType(int ind);
+	Array<Point<int>> getKeyboardTypes();
+	Point<int> getKeyboardType(int ind);
 
 	Array<PointPair<int>> getPGCoords();
 	PointPair<int> getPGCoord(int ind);
 
 	Point<int> getStepSizes(int kbdTypeIn);
+
+	void setGeneratorIndex(int index);
+	void setSizeIndex(int index);
+	void setGeneratorOffset(int offsetIn);
 };
