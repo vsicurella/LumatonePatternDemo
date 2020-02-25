@@ -26,7 +26,7 @@ ScaleStructure::ScaleStructure(int periodIn, int generatorIndex, int sizeIndex, 
 	calculateProperties();
 
 	currentSizeSelected = sizeIndex;
-	degreeGroupings = degreeGroups;
+	sizeGroupings = degreeGroups;
 }
 
 Array<int> ScaleStructure::getScaleSizes()
@@ -58,6 +58,20 @@ PointPair<int> ScaleStructure::getPGCoord(int ind)
 {
 	return pgCoords[ind];
 }
+
+
+
+int ScaleStructure::getGroupOfDegree(int scaleDegreeIn)
+{
+	for (int g = 0; g < sizeGroupings.size(); g++)
+	{
+		if (degreeGroupings.getReference(g).contains(scaleDegreeIn))
+			return g;
+	}
+
+	return -1;
+}
+
 
 void ScaleStructure::setGeneratorIndex(int index)
 {
@@ -170,4 +184,80 @@ void ScaleStructure::calculateGeneratorChain()
 	{
 		generatorChain.add(i * generator);
 	}
+}
+
+void ScaleStructure::fillDegreeGroupings()
+{
+	degreeGroupings.clear();
+	degreeGroupings.resize(sizeGroupings.size());
+	int indexOffset;
+
+	for (int g = 0; g < sizeGroupings.size(); g++)
+	{
+		int groupSize = scaleSizes[sizeGroupings[g]];
+		for (int s = 0; s < groupSize; s++)
+		{
+			indexOffset = modulo(groupSize + s + generatorOffset, period);
+			degreeGroupings.getReference(g).add(generatorChain[indexOffset]);
+		}
+	}
+}
+
+int ScaleStructure::useSuggestedGeneratorIndex()
+{
+	// suggest the coprime scale degree nearest to a "perfect fifth"
+	int genSug = round(period * (0.6));
+	int genDif = 0;
+	int sugDif = 10e4;
+	int ind = 0;
+
+	for (int g = 0; g < validGenerators.size(); g++)
+	{
+		genDif = genSug - validGenerators[g];
+		if (abs(genDif) < sugDif)
+		{
+			ind = g;
+			sugDif = genDif;
+		}
+	}
+
+	generator = validGenerators[ind];
+	calculateProperties();
+
+	return ind;
+}
+
+int ScaleStructure::useSuggestedSizeIndex()
+{
+	int ind = -1;
+	int size = 0;
+	Array<int> suggestedSizes = { 7, 5, 6, 8, 9, 10 };
+	while (ind < 0 && size < scaleSizes.size())
+	{
+		ind = scaleSizes.indexOf(suggestedSizes[size]);
+		size++;
+	}
+
+	int s = 4;
+	while (ind < 0 && s > 0)
+	{
+		ind = scaleSizes.indexOf(s--);
+	}
+
+	// all scales should at *least* have sizes of 1 or 2
+	jassert(ind >= 0);
+
+	currentSizeSelected = ind;
+
+	return ind;
+}
+
+void ScaleStructure::useSimpleSizeStructure()
+{
+
+}
+
+void ScaleStructure::useCascadingSizeStructure()
+{
+
 }

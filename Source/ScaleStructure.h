@@ -26,7 +26,8 @@ class ScaleStructure
 	Array<PointPair<int>> pgCoords;
 	Array<Point<int>> stepSizes;
 
-	Array<int> degreeGroupings;
+	Array<int> sizeGroupings;
+	Array<Array<int>> degreeGroupings;
 	Array<int> generatorChain;
 
 	int currentSizeSelected = -1;
@@ -36,6 +37,7 @@ class ScaleStructure
 	void calculateProperties();
 	void calculateStepSizes();
 	void calculateGeneratorChain();
+	void fillDegreeGroupings();
 
 public:
 
@@ -54,8 +56,14 @@ public:
 	PointPair<int> getPGCoord(int ind);
 
 	Point<int> getStepSizes(int kbdTypeIn);
+	int getGroupOfDegree(int scaleDegreeIn);
 
 	void setGeneratorIndex(int index);
 	void setSizeIndex(int index);
 	void setGeneratorOffset(int offsetIn);
+
+	int useSuggestedGeneratorIndex();
+	int useSuggestedSizeIndex();
+	void useSimpleSizeStructure();
+	void useCascadingSizeStructure();
 };
