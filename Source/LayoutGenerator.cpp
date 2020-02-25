@@ -132,7 +132,7 @@ void LayoutGenerator::mapKeysToDegree()
 		return;
 	}
 
-	Point<int> steps = getXYSteps();
+	Point<int> steps = getStepSizes();
 
 	if (flipScale)
 	{
@@ -426,13 +426,13 @@ PointPair<int> LayoutGenerator::getPGCoord(int kbdInd)
 	return pgCoords[kbdInd];
 }
 
-Point<int> LayoutGenerator::getXYSteps()
+Point<int> LayoutGenerator::getStepSizes()
 {
-	return structure.getXYSteps(kbdType);
+	return structure.getStepSizes(kbdType);
 }
-Point<int> LayoutGenerator::getXYSteps(int kbdInd)
+Point<int> LayoutGenerator::getStepSizes(int kbdInd)
 {
-	return structure.getXYSteps(kbdInd);
+	return structure.getStepSizes(kbdInd);
 }
 
 bool LayoutGenerator::isValid()

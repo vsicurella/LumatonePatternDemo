@@ -100,37 +100,25 @@ static Array<int> getPrimeFactorization(int numIn)
 	return factorsout;
 }
 
-// could probably be more efficent without doing the whole prime factorization
 static int getGCD(int num1, int num2)
 {
-	int dummy = 0;
-	Array<int> pf1 = getPrimeFactorization(num1);
-	Array<int> pf2 = getPrimeFactorization(num2);
+	if (num1 == 0 || num2 == 0)
+		return num1 + num2;
+	else if (num1 == 1 || num2 == 1)
+		return 1;
+	else if (num1 == num2)
+		return num1;
 
-	int size = jmin(pf1.size(), pf2.size());
-	int m;
-	int numOut = 1;
-
-	for (int p = 0; p < size; p++)
-	{
-		m = jmin(pf1[p], pf2[p]);
-		numOut *= pow(PRIMES[p], m);
-	}
-
-	return numOut;
+	return getGCD(num2, num1 % num2);
 }
 
 static int getLCM(int num1, int num2)
 {
-	long gcd = getGCD(num1, num2);
-	// overflow precautions; not necessary in this app, but good practice
-	int L, s;
-	L = jmax(num1, num2);
-	s = jmin(num1, num2);
-		
-	long lcm = L / gcd * s;
+	if (num1 == 0 || num2 == 0)
+		return 0;
 
-	return (int)lcm;
+	long gcd = getGCD(num1, num2);
+	return (int)(jmax(num1, num2) / gcd * (jmin(num1, num2)));
 }
 
 static Array<int> getCoprimes(int numIn)

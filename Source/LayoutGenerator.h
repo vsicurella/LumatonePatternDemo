@@ -79,8 +79,8 @@ class LayoutGenerator
 	PointPair<int> getPGCoord();
 	PointPair<int> getPGCoord(int kbdInd);
 
-	Point<int> getXYSteps();
-	Point<int> getXYSteps(int kbdInd);
+	Point<int> getStepSizes();
+	Point<int> getStepSizes(int kbdInd);
     
     bool isValid();
 

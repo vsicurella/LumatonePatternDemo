@@ -24,7 +24,7 @@ class ScaleStructure
 	Array<PointPair<int>> pgCoords;
 
 	// calculates all the necessary things in one big swoop
-	void scaleBreakdown();
+	void calculateProperties();
 
 public:
 
@@ -41,5 +41,5 @@ public:
 	Array<PointPair<int>> getPGCoords();
 	PointPair<int> getPGCoord(int ind);
 
-	Point<int> getXYSteps(int kbdTypeIn);
+	Point<int> getStepSizes(int kbdTypeIn);
 };

@@ -14,7 +14,7 @@ ScaleStructure::ScaleStructure(Ratio generatorOverPeriod)
 {
 	period = generatorOverPeriod.getDenominator();
 	generator = generatorOverPeriod.getNumerator();
-	scaleBreakdown();
+	calculateProperties();
 }
 
 ScaleStructure::ScaleStructure(int periodIn, int generatorIn)
@@ -22,7 +22,7 @@ ScaleStructure::ScaleStructure(int periodIn, int generatorIn)
 	// TODO: valid input checking
 	period = periodIn;
 	generator = generatorIn;
-	scaleBreakdown();
+	calculateProperties();
 }
 
 Array<int> ScaleStructure::getScaleSizes()
@@ -55,86 +55,76 @@ PointPair<int> ScaleStructure::getPGCoord(int ind)
 	return pgCoords[ind];
 }
 
-Point<int> ScaleStructure::getXYSteps(int kbdTypeIn)
+Point<int> ScaleStructure::getStepSizes(int kbdTypeIn)
 {
-	Point<int> xyOut;
-	Point<int> periodHXY = pgCoords[kbdTypeIn].x;
-	Point<int> generatorHXY = pgCoords[kbdTypeIn].y;
+	Point<int> stepSizesOut;
+	Point<int> periodCoordinate = pgCoords[kbdTypeIn].x;
+	Point<int> generatorCoordinate = pgCoords[kbdTypeIn].y;
 
-	int gMult;
-	int pMult;
+	generatorCoordinate = Point<int>(pgCoords[kbdTypeIn].x.x, pgCoords[kbdTypeIn].y.x);
+	periodCoordinate = Point<int>(pgCoords[kbdTypeIn].x.y, pgCoords[kbdTypeIn].y.y);
 
-	// find delta x
-	int lcmy = getLCM(periodHXY.y, generatorHXY.y);
-	gMult = (lcmy / generatorHXY.y) * generator;
-	pMult = (lcmy / periodHXY.y) * period;
-	xyOut.setX(jmax(pMult, gMult) - jmin(pMult, gMult));
+	// find horiztonal step size (X)
+	if (periodCoordinate.y == generatorCoordinate.y)
+		stepSizesOut.setX(period - generator);
+	else if (periodCoordinate.y == 0)
+		stepSizesOut.setX(period);
+	else if (generatorCoordinate.y == 0)
+		stepSizesOut.setX(generator);
+	else
+		stepSizesOut.setX(abs(period * generatorCoordinate.y - generator * periodCoordinate.y));
 
-	// find delta y
-	int lcmx = getLCM(periodHXY.x, generatorHXY.x);
-	gMult = (lcmx / generatorHXY.x) * generator;
-	pMult = (lcmx / periodHXY.x) * period;
-	xyOut.setY(jmax(pMult, gMult) - jmin(pMult, gMult));
+	// find upward right step size (Y)
+	if (periodCoordinate.x == generatorCoordinate.x)
+		stepSizesOut.setY(period - generator);
+	else if (periodCoordinate.x == 0)
+		stepSizesOut.setX(period);
+	else if (generatorCoordinate.y == 0)
+		stepSizesOut.setX(generator);
+	else
+		stepSizesOut.setY(abs(period * generatorCoordinate.x - generator * periodCoordinate.x));
 
-	return xyOut;
+	return stepSizesOut;
 }
 
-void ScaleStructure::scaleBreakdown()
+void ScaleStructure::calculateProperties()
 {
-	Ratio gOverP = Ratio(generator, period);
-	Array<int> cf = gOverP.continuedFraction();
-	
-	/*DBG("P = " + String(period) + ", G = " + String(generator));
-	String cfstr = "[";
-	for (auto d : cf)
-		cfstr += String(d) + ", ";
-	cfstr += "]";
-	DBG("CF = " + cfstr);*/
+	scaleSizes.clear();
+	keyboardTypes.clear();
+	pgCoords.clear();
 
-	// the seed
-	scaleSizes.add(1);
-	keyboardTypes.add(Ratio(1, 1));
-	pgCoords.add(PointPair<int>(1, 0, 0, 1));
+	Ratio goverp = Ratio(generator, period);
 
-	// should just use Points instead
-	Ratio parent1 = Ratio(0, 1);
-	Ratio parent2 = Ratio(1, 0);
+	Array<int> cf = goverp.continuedFraction();
 
-	int cfInd = 1;
-	int digit = 0;
-	int kbdInd = 0;
+	// seed the sequence
+	Point<int> parent1 = Point<int>(-1 + cf[0], 1);
+	Point<int> parent2 = Point<int>(1, 0);
+	Point<int> gp = Point<int>(cf[0], 1);
 
-	//DBG(String(cf[0]) + ": " + parent1.toString() + " + " + parent2.toString() + " = " + keyboardTypes[kbdInd].toString());
-	String dbgstr;
+	Array<Point<int>> packet = { gp, parent2, gp + parent2 }; // makes for cleaner code
 
 	// find keyboard types, and their period/generator coordinates
-	while (cfInd <= cf.size())
+	for (int i = 1; i < cf.size(); i++)
 	{
-		digit = cf[cfInd];
-		dbgstr = String(digit) + ": ";
-
-		for (int d = 0; d < digit; d++)
+		for (int d = 0; d < cf[i]; d++)
 		{
+			pgCoords.add(PointPair<int>(packet[0], packet[1]));
+			keyboardTypes.add(Ratio(packet[2]));
+			scaleSizes.add(packet[2].y);
+
+			parent1 = packet[0];
+			parent2 = packet[1];
+			gp = packet[2];
+
 			// if previous continued fraction index is even,
 			// set parent2 to previous result
-			if ((cfInd - 1) % 2 == 0)
-			{
-				parent2 = keyboardTypes[kbdInd];
-			}
+			if (i % 2 == 0)
+				parent1 = gp;
 			else // if odd, set parent1 to previous result
-			{
-				parent1 = keyboardTypes[kbdInd];
-			}
+				parent2 = gp;
 
-			keyboardTypes.add(parent1.mediant(parent2));
-			pgCoords.add(PointPair<int>(parent1.getDenominator(), parent2.getDenominator(), parent1.getNumerator(), parent2.getNumerator()));
-			kbdInd++;
-			scaleSizes.add(keyboardTypes[kbdInd].getDenominator());
-
-			dbgstr += parent1.toString() + " + " + parent2.toString() + " = " + keyboardTypes[kbdInd].toString() + "\n   ";		
+			packet = { parent1, parent2, parent1 + parent2 };
 		}
-
-		cfInd++;
-		//DBG(dbgstr.upToLastOccurrenceOf("\n", false, true));
 	}
 }

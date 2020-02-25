@@ -21,6 +21,8 @@ public:
     Ratio(int numeratorIn, int denominatorIn, bool doCf=false);
     
     Ratio(double ratioIn, bool doCf=false);
+
+	Ratio(Point<int> ptIn, bool doCf=false);
     
     Ratio(const Ratio& rcopy);
     

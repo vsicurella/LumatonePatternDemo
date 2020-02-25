@@ -37,6 +37,15 @@ Ratio::Ratio(double ratioIn, bool doCf)
         continuedFraction();
 }
 
+Ratio::Ratio(Point<int> ptIn, bool doCf)
+{
+	numerator = ptIn.x;
+	denominator = ptIn.y;
+
+	if (doCf)
+		continuedFraction();
+}
+
 Ratio::Ratio(const Ratio& rcopy)
 {
     numerator = rcopy.getNumerator();
