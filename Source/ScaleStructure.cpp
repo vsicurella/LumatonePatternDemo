@@ -29,39 +29,39 @@ ScaleStructure::ScaleStructure(int periodIn, int generatorIndex, int sizeIndex, 
 	sizeGroupings = degreeGroups;
 }
 
-Array<int> ScaleStructure::getScaleSizes()
+Array<int> ScaleStructure::getScaleSizes() const
 {
 	return scaleSizes;
 }
 
-int ScaleStructure::getScaleSize(int ind)
+int ScaleStructure::getScaleSize(int ind) const
 {
 	return scaleSizes[ind];
 }
 
-Array<Point<int>> ScaleStructure::getKeyboardTypes()
+Array<Point<int>> ScaleStructure::getKeyboardTypes() const
 {
 	return keyboardTypes;
 }
 
-Point<int> ScaleStructure::getKeyboardType(int ind)
+Point<int> ScaleStructure::getKeyboardType(int ind) const
 {
 	return keyboardTypes[ind];
 }
 
-Array<PointPair<int>> ScaleStructure::getPGCoords()
+Array<PointPair<int>> ScaleStructure::getPGCoords() const
 {
 	return pgCoords;
 }
 
-PointPair<int> ScaleStructure::getPGCoord(int ind)
+PointPair<int> ScaleStructure::getPGCoord(int ind) const
 {
 	return pgCoords[ind];
 }
 
 
 
-int ScaleStructure::getGroupOfDegree(int scaleDegreeIn)
+int ScaleStructure::getGroupOfDegree(int scaleDegreeIn) const
 {
 	for (int g = 0; g < sizeGroupings.size(); g++)
 	{
@@ -91,9 +91,19 @@ void ScaleStructure::setGeneratorOffset(int offsetIn)
 	// TODO: recalculate degree groups
 }
 
-Point<int> ScaleStructure::getStepSizes(int kbdTypeIn)
+Point<int> ScaleStructure::getStepSizes(int kbdTypeIn) const
 {
 	return stepSizes[kbdTypeIn];
+}
+
+Array<int> ScaleStructure::getSizeGrouping() const
+{
+	return sizeGroupings;
+}
+
+Point<int> ScaleStructure::getCurrentStepSize() const
+{
+	return stepSizes[currentSizeSelected];
 }
 
 void ScaleStructure::calculateProperties()
@@ -254,10 +264,109 @@ int ScaleStructure::useSuggestedSizeIndex()
 
 void ScaleStructure::useSimpleSizeStructure()
 {
+	// Find out how many notes each color tier will have
+	// Can be made to be customized
+	int scaleSize = scaleSizes[currentSizeSelected];
 
+	Array<int> noteSegments = { scaleSize };
+
+	int notesLeft = period - scaleSize;
+	int subSizeIdx = currentSizeSelected - 1;
+	int subSize = scaleSizes[subSizeIdx];
+
+	while (subSize > notesLeft && subSizeIdx > 0)
+		subSize = scaleSizes[--subSizeIdx];
+
+	if (subSizeIdx <= 0)
+	{
+		DBG("ERROR: Bad note segmenting");
+		return;
+	}
+
+	int f = notesLeft / subSize;
+	for (int i = 0; i < f; i++)
+	{
+		noteSegments.add(subSize);
+	}
+
+	int remainder = notesLeft % subSize;
+	if (remainder > 0)
+		noteSegments.add(remainder);
+
+	// Cycle through the scale by generators and 
+	// separate the tiers symmetrically
+
+	int degreeForward = modulo(generator * generatorOffset, period);
+	int degreeBackward = degreeForward;
+	int index;
+	for (int t = 0; t < noteSegments.size(); t++)
+	{
+		notesByGenerators->add(Array<int>());
+		for (int n = 0; n < noteSegments[t]; n++)
+		{
+			if (t % 2 == 0)
+			{
+				if (degreeForward < 0 || degreeForward >= period)
+					degreeForward = modulo(degreeForward, period);
+
+				notesByGenerators->getReference(t).add(degreeForward);
+				degreeForward += generator;
+			}
+			else
+			{
+				degreeBackward -= generator;
+				if (degreeBackward < 0 || degreeBackward >= period)
+					degreeBackward = modulo(degreeBackward, period);
+
+				notesByGenerators->getReference(t).add(degreeBackward);
+			}
+		}
+	}
+
+	DBG("Scale created: ");
+	for (int t = 0; t < notesByGenerators->size(); t++)
+	{
+		String notes;
+		for (auto n : notesByGenerators->getReference(t))
+		{
+			notes += String(n) + ", ";
+		}
+		DBG("Tier " + String(t + 1) + ":\t" + notes);
+	}
 }
 
 void ScaleStructure::useCascadingSizeStructure()
 {
 
+}
+
+bool ScaleStructure::isValid() const
+{	
+	bool valid = true;
+
+	if (!validGenerators.contains(generator))
+	{
+		DBG("Invalid generator");
+		valid = false;
+	}
+
+	if (currentSizeSelected < 0 || currentSizeSelected >= scaleSizes.size())
+	{
+		DBG("Invalid scale size");
+		valid = false;
+	}
+
+	int sum = 0;
+	for (int s = 0; s < sizeGroupings.size(); s++)
+	{
+		sum += scaleSizes[sizeGroupings[s]];
+	}
+	
+	if (sum != period)
+	{
+		DBG("Invalid scale groupings");
+		valid = false;
+	}
+
+	return valid;
 }

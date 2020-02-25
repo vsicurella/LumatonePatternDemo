@@ -33,7 +33,6 @@ class ScaleStructure
 	int currentSizeSelected = -1;
 	int generatorOffset = 0;
 
-	// calculates all the necessary things in one big swoop
 	void calculateProperties();
 	void calculateStepSizes();
 	void calculateGeneratorChain();
@@ -46,17 +45,22 @@ public:
 	ScaleStructure(const ScaleStructure& scaleToCopy);
 	ScaleStructure(ValueTree scaleStructureProperties);
 
-	Array<int> getScaleSizes();
-	int getScaleSize(int ind);
+	Array<int> getScaleSizes() const;
+	int getScaleSize(int ind) const;
 
-	Array<Point<int>> getKeyboardTypes();
-	Point<int> getKeyboardType(int ind);
+	Array<Point<int>> getKeyboardTypes() const;
+	Point<int> getKeyboardType(int ind) const;
 
-	Array<PointPair<int>> getPGCoords();
-	PointPair<int> getPGCoord(int ind);
+	Array<PointPair<int>> getPGCoords() const;
+	PointPair<int> getPGCoord(int ind) const;
 
-	Point<int> getStepSizes(int kbdTypeIn);
-	int getGroupOfDegree(int scaleDegreeIn);
+	Point<int> getStepSizes(int kbdTypeIn) const;
+	int getGroupOfDegree(int scaleDegreeIn) const;
+
+	Array<int> getSizeGrouping() const;
+	Point<int> getCurrentStepSize() const;
+
+	bool isValid() const;
 
 	void setGeneratorIndex(int index);
 	void setSizeIndex(int index);
