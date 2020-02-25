@@ -30,7 +30,7 @@
 MainWindow::MainWindow ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
-	layout.reset(new LayoutGenerator(12));
+	layout.reset(new LayoutHelper(12));
 	layout->setColours(&scaleColours);
 	colourTableModel.reset(new ColourTableModel(layout->getScaleColours()));
     //[/Constructor_pre]
@@ -277,7 +277,7 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_editPeriod] -- add your slider handling code here..
 		period = editPeriod->getValue();
 		DBG("Period box has changed to " + String(period));
-		layout.reset(new LayoutGenerator(period));
+		layout.reset(new LayoutHelper(period));
 		layout->setColours(&scaleColours);
 		colourTableModel->setColours(&scaleColours);
 		refreshSelections();

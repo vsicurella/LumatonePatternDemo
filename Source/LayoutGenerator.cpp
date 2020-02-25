@@ -10,129 +10,51 @@
 
 #include "LayoutGenerator.h"
 
-
-LayoutGenerator::LayoutGenerator(int periodIn)
+LayoutHelper::LayoutHelper(const ScaleStructure& structureIn, int rootIn)
+	: structure(structureIn)
 {
-    // TODO: add validity checks
-    scalePeriod = periodIn;
-    
-    updateValidOptions();
-	DBG("LAYOUT: Finished constructing.");
-}
-
-LayoutGenerator::LayoutGenerator(int periodIn, int genIn)
-{
-    
-    // TODO: add validity checks
-
-    scalePeriod = periodIn;
-    generator = genIn;
-    
-    updateValidOptions();
-	DBG("LAYOUT: Finished constructing.");
-
-}
-
-LayoutGenerator::LayoutGenerator(int periodIn, int genIn, int kbdTypeIn, int rootIn)
-{
-    // TODO: add validity checks
-
-    scalePeriod = periodIn;
-    generator = genIn;
-    
-    updateValidOptions();
-
-	kbdType = kbdTypeIn;
-	scaleSize = validKeyboards[kbdType].getDenominator();
 	rootKey = rootIn;
 
 	refresh();
 	DBG("LAYOUT: Finished constructing.");
-
 }
 
-LayoutGenerator::LayoutGenerator(const LayoutGenerator& layoutToCopy)
+LayoutHelper::LayoutHelper(const LayoutHelper& layoutToCopy)
+	: structure(layoutToCopy.structure)
 {
-	scalePeriod = layoutToCopy.scalePeriod;
-	generator = layoutToCopy.generator;
-
-	updateValidOptions();
-
-	kbdType = layoutToCopy.kbdType;
-	scaleSize = layoutToCopy.scaleSize;
 	rootKey = layoutToCopy.rootKey;
 
 	scaleColours = layoutToCopy.scaleColours;
 
 	refresh();
 	DBG("LAYOUT: Finished constructing.");
-
 }
 
-LayoutGenerator::~LayoutGenerator()
+LayoutHelper::~LayoutHelper()
 {
     
 }
 
-void LayoutGenerator::refresh()
+void LayoutHelper::refresh()
 {
 	DBG("LAYOUT: Refreshing...");
 	mapKeysToDegree();
 	mapGeneratorsToNotes();
-
-	if (validLayout)
-		DBG("LAYOUT: I'm feeling refreshed.");
-}
-  
-void LayoutGenerator::updateValidOptions()
-{
-    validGenerators = getCoprimes(scalePeriod);
-    
-    if (!validGenerators.contains(generator))
-    {
-        DBG("LAYOUT ERROR: invalid generator size");
-        validLayout = false;
-        return;
-    }
-    
-	structure = ScaleStructure(scalePeriod, generator);
-    gOverP = Ratio(generator, scalePeriod);
-
-	validKeyboards = structure.getKeyboardTypes();
-	validSizes = structure.getScaleSizes();
-	pgCoords = structure.getPGCoords();
-    
-    if (validSizes.contains(scaleSize))
-    {
-        validLayout = true;
-    }
-    else
-    {
-        DBG("LAYOUT ERROR: invalid scale size");
-        //TODO: implement size error handling
-        validLayout = true;
-    }
 }
 
-void LayoutGenerator::mapKeysToDegree()
+void LayoutHelper::mapKeysToDegree()
 {
 	kbdScaleDegrees.reset(new Array<int>());
 	kbdScaleDegrees->resize(275);
 	kbdScaleDegrees->fill(-1);
 	
-	if (!validLayout)
+	if (!structure.isValid())
 	{
-		DBG("ERR: not a valid layout :(");
+		DBG("ERROR: not a valid layout :(");
 		return;
 	}
 
-	if (pgCoords[kbdType].x.x * pgCoords[kbdType].x.y * pgCoords[kbdType].y.x * pgCoords[kbdType].y.y <= 0)
-	{
-		DBG("coordinates have a darned old 0 in it");
-		return;
-	}
-
-	Point<int> steps = getStepSizes();
+	Point<int> steps = structure.getCurrentStepSize();
 
 	if (flipScale)
 	{
@@ -206,285 +128,50 @@ void LayoutGenerator::mapKeysToDegree()
 	}
 }
 
-void LayoutGenerator::mapGeneratorsToNotes()
-{
-	if (scaleSize < 1)
-	{
-		DBG("ERROR: Scale size is less than one.");
-		validLayout = false;
-		return;
-	}
-
-	if (!validLayout)
-	{
-		DBG("LAYOUT ERROR: Something about this feels invalid.");
-		return;
-	}
-
-	DBG("Period: " + String(scalePeriod) + "\tGen: " + String(generator) + " " + String(generatorOffset) + "\tSize: " + String(scaleSize)); 
-	// Find out how many notes each color tier will have
-	// Can be made to be customized
-	Array<int> noteSegments = { scaleSize };
-	
-	int noteLeft = scalePeriod - scaleSize;
-	int subSizeIdx = kbdType - 1;
-	int subSize = validSizes[subSizeIdx];
-
-	while (subSize > noteLeft && subSizeIdx > 0)
-		subSize = validSizes[--subSizeIdx];
-
-	if (subSizeIdx <= 0)
-	{
-		DBG("ERROR: Bad note segmenting");
-		validLayout = false;
-		return;
-	}
-
-	int f = noteLeft / subSize;
-	for (int i = 0; i < f; i++)
-	{
-		noteSegments.add(subSize);
-	}
-
-	int remainder = noteLeft % subSize;
-	if (remainder > 0)
-		noteSegments.add(remainder);
-
-	notesByGenerators.reset(new Array<Array<int>>());
-	// Cycle through the scale by generators and 
-	// separate the tiers symmetrically
-
-	int degreeForward = modulo(generator * generatorOffset, scalePeriod);
-	int degreeBackward = degreeForward;
-	int index;
-	for (int t = 0; t < noteSegments.size(); t++)
-	{
-		notesByGenerators->add(Array<int>());
-		for (int n = 0; n < noteSegments[t]; n++)
-		{
-			if (t % 2 == 0)
-			{
-				if (degreeForward < 0 || degreeForward >= scalePeriod)
-					degreeForward = modulo(degreeForward, scalePeriod);
-
-				notesByGenerators->getReference(t).add(degreeForward);
-				degreeForward += generator;
-			}
-			else
-			{
-				degreeBackward -= generator;
-				if (degreeBackward < 0 || degreeBackward >= scalePeriod)
-					degreeBackward = modulo(degreeBackward, scalePeriod);
-
-				notesByGenerators->getReference(t).add(degreeBackward);
-			}
-		}
-	}
-
-	DBG("Scale created: ");
-	for (int t = 0; t < notesByGenerators->size(); t++)
-	{
-		String notes;
-		for (auto n : notesByGenerators->getReference(t))
-		{
-			notes += String(n) + ", ";
-		}
-		DBG("Tier " + String(t + 1) +":\t" + notes);
-	}
-}
-
-Ratio* LayoutGenerator::getGenPeriodRatio()
-{
-    return &gOverP;
-}
-
-int LayoutGenerator::getGeneratorOffset()
-{
-	return generatorOffset;
-}
-
-int LayoutGenerator::getKeyboardType()
-{
-	return kbdType;
-}
-
-int LayoutGenerator::getScaleSize()
-{
-	return scaleSize;
-}
-
-int LayoutGenerator::getRootKey()
+int LayoutHelper::getRootKey()
 {
 	return rootKey;
 }
 
-bool LayoutGenerator::isScaleFlipped()
+bool LayoutHelper::isScaleFlipped()
 {
 	return flipScale;
 }
 
-int LayoutGenerator::suggestedGenerator()
-{
-	// suggest the coprime scale degree nearest to a "perfect fifth"
-	int genSug = round(scalePeriod * (0.6));
-	int genDif = 0;
-	int sugDif = 10e4;
-	int ind = 0;
-	for (int g = 0; g < validGenerators.size(); g++)
-	{
-		genDif = genSug - validGenerators[g];
-		if (abs(genDif) < sugDif)
-		{
-			ind = g;
-			sugDif = genDif;
-		}
-	}
-
-	return ind;
-}
-
-int LayoutGenerator::suggestedScaleSize()
-{
-	int ind = -1;
-	int size = 0;
-	Array<int> suggestedSizes = { 7, 5, 6, 8, 9, 10 };
-	DBG(arrayToString(validSizes, "Available Scale Sizes"));
-	while(ind < 0 && size < validSizes.size())
-	{
-		ind = validSizes.indexOf(suggestedSizes[size]);
-		size++;
-	}
-
-	int s = 4;
-	while (ind < 0 && s > 0)
-	{
-		ind = validSizes.indexOf(s--);
-	}
-
-	// all scales should at *least* have sizes of 1 or 2
-	jassert(ind >= 0);
-
-	return ind;
-}
-
-void LayoutGenerator::setScaleFlipped(bool doFlip)
+void LayoutHelper::setScaleFlipped(bool doFlip)
 {
 	DBG("Flipping scale");
 	flipScale = doFlip;
 	refresh();
 }
 
-Array<int>* LayoutGenerator::getKbdDegrees()
+Array<int>* LayoutHelper::getKbdDegrees()
 {
 	return kbdScaleDegrees.get();
 }
 
-int LayoutGenerator::getKeyDegree(int keyNumIn)
+int LayoutHelper::getKeyDegree(int keyNumIn)
 {
 	return kbdScaleDegrees->getUnchecked(keyNumIn);
 }
 
-Array<Array<int>>* LayoutGenerator::getGeneratorNotes()
-{
-	return notesByGenerators.get();
-}
-
-Array<Colour>* LayoutGenerator::getScaleColours()
-{
-	return scaleColours;
-}
-
-Array<int> LayoutGenerator::getValidGenerators()
-{
-    return validGenerators;
-
-}
-
-Array<int> LayoutGenerator::getValidSizes()
-{
-    return validSizes;
-
-}
-
-Array<Ratio> LayoutGenerator::getValidKeyboards()
-{
-    return validKeyboards;
-}
-
-Array<PointPair<int>> LayoutGenerator::getPGCoords()
-{
-	return pgCoords;
-}
-
-PointPair<int> LayoutGenerator::getPGCoord()
-{
-	return pgCoords[kbdType];
-}
-
-PointPair<int> LayoutGenerator::getPGCoord(int kbdInd)
-{
-	return pgCoords[kbdInd];
-}
-
-Point<int> LayoutGenerator::getStepSizes()
-{
-	return structure.getStepSizes(kbdType);
-}
-Point<int> LayoutGenerator::getStepSizes(int kbdInd)
-{
-	return structure.getStepSizes(kbdInd);
-}
-
-bool LayoutGenerator::isValid()
-{
-    return validLayout;
-}
-
-void LayoutGenerator::setKeyboardType(int kbdIndexIn)
-{
-	kbdType = kbdIndexIn;
-	scaleSize = validKeyboards[kbdType].getDenominator();
-}
-
-void LayoutGenerator::setRootKey(int rootKeyIn)
+void LayoutHelper::setRootKey(int rootKeyIn)
 {
 	rootKey = rootKeyIn;
 	mapKeysToDegree();
 }
 
-void LayoutGenerator::setGenerator(int genIn)
-{
-	if (!validGenerators.contains(genIn))
-	{
-		DBG("LAYOUT ERROR: Invalid generator");
-		validLayout = false;
-		return;
-	}
-
-	generator = genIn;
-	updateValidOptions();
-	// needs to be refreshed
-}
-
-void LayoutGenerator::setGeneratorOffset(int genOffsetIn)
-{
-	DBG("LAYOUT: Setting generator offset");
-	generatorOffset = genOffsetIn;
-	//refresh();
-	//needs to be refreshed
-}
-
-void LayoutGenerator::addColour(Colour colorIn)
+void LayoutHelper::addColour(Colour colorIn)
 {
 	scaleColours->add(colorIn);
 }
 
-void LayoutGenerator::setColour(int index, Colour colorIn)
+void LayoutHelper::setColour(int index, Colour colorIn)
 {
 	scaleColours->set(index, colorIn);
 }
 
-void LayoutGenerator::setColours(Array<Colour>* coloursIn)
+void LayoutHelper::setColours(Array<Colour>* coloursIn)
 {
 	scaleColours = coloursIn;
 }

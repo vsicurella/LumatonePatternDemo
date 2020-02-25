@@ -12,7 +12,7 @@
 #include "KeyboardViewer.h"
 
 //==============================================================================
-KeyboardViewer::KeyboardViewer(LayoutGenerator* layoutIn)
+KeyboardViewer::KeyboardViewer(LayoutHelper* layoutIn)
  : layout(layoutIn)
 {
 	
@@ -22,7 +22,7 @@ KeyboardViewer::~KeyboardViewer()
 {
 }
 
-void KeyboardViewer::setLayout(LayoutGenerator* layoutIn)
+void KeyboardViewer::setLayout(LayoutHelper* layoutIn)
 {
 	layout = layoutIn;
 	repaint();

@@ -63,7 +63,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-	std::unique_ptr<LayoutGenerator> layout;
+	std::unique_ptr<LayoutHelper> layout;
 	std::unique_ptr<ColourTableModel> colourTableModel;
 
 	int period = 12;

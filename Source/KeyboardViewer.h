@@ -31,7 +31,7 @@ public:
 		Blank
 	};
 
-    KeyboardViewer(LayoutGenerator* layoutIn);
+    KeyboardViewer(LayoutHelper* layoutIn);
     ~KeyboardViewer();
 
     void paint (Graphics&) override;
@@ -39,14 +39,14 @@ public:
     
     void drawOctave(Graphics& g, int octaveNumber);
 
-	void setLayout(LayoutGenerator* layoutIn);
+	void setLayout(LayoutHelper* layoutIn);
 	void setKeyTextShown(KeyText textTypeIn);
 
 private:
    
 	// Functionality Attributes
 	OwnedArray<Path> hexes;
-	LayoutGenerator* layout;
+	LayoutHelper* layout;
 
 	Point<float> horizontalStep;
 	Point<float> verticalStep;
