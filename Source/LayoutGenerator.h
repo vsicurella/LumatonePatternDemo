@@ -9,7 +9,6 @@
 */
 
 #pragma once
-#include "CommonFunctions.h"
 #include "ScaleStructure.h"
 
 class LayoutHelper

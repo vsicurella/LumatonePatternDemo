@@ -9,8 +9,6 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-
-#include "LayoutGenerator.h"
 #include "MainWindow.h"
 
 //==============================================================================

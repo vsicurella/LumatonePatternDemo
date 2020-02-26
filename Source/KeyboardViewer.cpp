@@ -52,7 +52,7 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 	Path* hex;
 
 	Array<int>* map = layout->getKbdDegrees();
-	Array<Array<int>>* generatorNotes = layout->getGeneratorNotes();
+	Array<Array<int>> generatorNotes = layout->getDegreeGroupings();
 	int modDegree;
 
 	String keyText;
@@ -71,12 +71,12 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 
 			Colour keyColour = Colours::white;
 
-			if (generatorNotes != nullptr)
+			if (generatorNotes.size() > 0)
 			{
 				modDegree = modulo(map->getUnchecked(key), scalePeriod);
-				for (int t = 0; t < generatorNotes->size(); t++)
+				for (int t = 0; t < generatorNotes.size(); t++)
 				{
-					if (generatorNotes->getReference(t).contains(modDegree))
+					if (generatorNotes.getReference(t).contains(modDegree))
 						keyColour = layout->getScaleColours()->getUnchecked(t);
 				}
 			}

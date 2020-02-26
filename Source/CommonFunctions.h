@@ -118,7 +118,7 @@ static Array<int> getFactors(int numIn)
     return factors;
 }
 
-Array<int> getContinuedFraction(double num, int maxDepth=20, double round0Thresh=10e-8)
+static Array<int> getContinuedFraction(double num, int maxDepth=20, double round0Thresh=10e-8)
 {
     Array<int> cf;
     double f = num;

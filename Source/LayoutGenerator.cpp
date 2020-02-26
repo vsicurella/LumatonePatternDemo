@@ -147,6 +147,11 @@ int LayoutHelper::getRootKey()
 	return rootKey;
 }
 
+Array<Colour>* LayoutHelper::getScaleColours()
+{
+	return scaleColours;
+}
+
 bool LayoutHelper::isScaleFlipped()
 {
 	return flipScale;

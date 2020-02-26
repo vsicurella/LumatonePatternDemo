@@ -320,7 +320,7 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		DBG("Generator box has changed, generator is " + String(validGenerators[generator-1]));
 		scaleStructure->setGeneratorIndex(generator - 1);
         validSizes = scaleStructure->getScaleSizes();
-        
+
 		refreshSelections(false);
 
         int suggestedKbd = scaleStructure->useSuggestedSizeIndex();

@@ -21,9 +21,7 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "LayoutGenerator.h"
 #include "KeyboardViewer.h"
-#include "ScaleStructure.h"
 #include "ColorTable.h"
 //[/Headers]
 
@@ -69,7 +67,7 @@ private:
 
     Array<int> validGenerators;
     Array<int> validSizes;
-    
+
 	int period = 12;
 	int generator = 2;
 	int genOffset = -1;
