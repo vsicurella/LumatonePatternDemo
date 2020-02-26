@@ -69,12 +69,13 @@ public:
 
 	bool isValid() const;
 
+	void resetToPeriod(int periodIn);
 	void setGeneratorIndex(int index);
 	void setSizeIndex(int index);
 	void setGeneratorOffset(int offsetIn);
 
-	int useSuggestedGeneratorIndex();
-	int useSuggestedSizeIndex();
+	int getSuggestedGeneratorIndex();
+	int getSuggestedSizeIndex();
 	void useSimpleSizeStructure();
 	void useCascadingSizeStructure();
 };

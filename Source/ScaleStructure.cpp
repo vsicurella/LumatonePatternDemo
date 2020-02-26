@@ -85,6 +85,18 @@ int ScaleStructure::getGroupOfDegree(int scaleDegreeIn) const
 	return -1;
 }
 
+void ScaleStructure::resetToPeriod(int periodIn)
+{
+	period = periodIn;
+	validGenerators = getCoprimes(period);
+	generator = -1;
+	currentSizeSelected = -1;
+
+	scaleSizes.clear();
+	keyboardTypes.clear();
+	pgCoords.clear();
+	stepSizes.clear();
+}
 
 void ScaleStructure::setGeneratorIndex(int index)
 {
@@ -220,7 +232,7 @@ void ScaleStructure::calculateGeneratorChain()
     int gen = validGenerators[generator];
 	for (int i = 0; i < period; i++)
 	{
-		generatorChain.add(i * gen);
+		generatorChain.add(modulo(i * gen, period));
 	}
 }
 
@@ -232,7 +244,7 @@ void ScaleStructure::fillDegreeGroupings()
     // Fill degree groups symmetrically
 
     int indexForward = generatorOffset;
-    int indexBackwards = period - 1 - generatorOffset;
+    int indexBackwards = period - 1 + generatorOffset;
     int indexOffset;
     
     for (int t = 0; t < sizeGroupings.size(); t++)
@@ -253,9 +265,34 @@ void ScaleStructure::fillDegreeGroupings()
             degreeGroupings.getReference(t).add(generatorChain[indexOffset]);
         }
     }
+
+	String dbgstr = "";
+	int size, sum = 0;
+	for (int i = 0; i < sizeGroupings.size(); i++) {
+		size = scaleSizes[sizeGroupings[i]];
+		dbgstr += String(size) + ", ";
+		sum += size;
+	}
+	dbgstr += " = " + String(sum);
+	DBG("Using this size grouping: " + dbgstr);
+
+	dbgstr = "";
+	for (int group = 0; group < sizeGroupings.size(); group++)
+	{
+		Array<int> degreeGroup = degreeGroupings[group];
+		dbgstr += "Tier " + String(group) + ": ";
+		for (int deg = 0; deg < degreeGroup.size(); deg++)
+		{
+			dbgstr += String(degreeGroup[deg]) + ", ";
+		}
+		dbgstr += "\n";
+	}
+
+	DBG("Degree groupings: ");
+	DBG(dbgstr);
 }
 
-int ScaleStructure::useSuggestedGeneratorIndex()
+int ScaleStructure::getSuggestedGeneratorIndex()
 {
 	// suggest the coprime scale degree nearest to a "perfect fifth"
 	int genSug = round(period * (0.6));
@@ -273,13 +310,10 @@ int ScaleStructure::useSuggestedGeneratorIndex()
 		}
 	}
 
-    generator = ind;
-	calculateProperties();
-
 	return ind;
 }
 
-int ScaleStructure::useSuggestedSizeIndex()
+int ScaleStructure::getSuggestedSizeIndex()
 {
 	int ind = -1;
 	int size = 0;
@@ -299,9 +333,6 @@ int ScaleStructure::useSuggestedSizeIndex()
 	// all scales should at *least* have sizes of 1 or 2
 	jassert(ind >= 0);
 
-	currentSizeSelected = ind;
-    useSimpleSizeStructure();
-    
 	return ind;
 }
 
@@ -311,30 +342,31 @@ void ScaleStructure::useSimpleSizeStructure()
 	// Can be made to be customized
 	int scaleSize = scaleSizes[currentSizeSelected];
 
-	Array<int> noteSegments = { scaleSize };
+	sizeGroupings = { currentSizeSelected };
 
 	int notesLeft = period - scaleSize;
 	int subSizeIdx = currentSizeSelected - 1;
 	int subSize = scaleSizes[subSizeIdx];
 
-	while (subSize > notesLeft && subSizeIdx > 0)
-		subSize = scaleSizes[--subSizeIdx];
-
-	if (subSizeIdx <= 0)
+	while (notesLeft > 0)
 	{
-		DBG("ERROR: Bad note segmenting");
-		return;
-	}
+		while (subSize > notesLeft && subSizeIdx > 0)
+			subSize = scaleSizes[--subSizeIdx];
 
-	int f = notesLeft / subSize;
-	for (int i = 0; i < f; i++)
-	{
-		noteSegments.add(subSize);
-	}
+		if (subSizeIdx < 0)
+		{
+			DBG("ERROR: Bad note segmenting");
+			return;
+		}
 
-	int remainder = notesLeft % subSize;
-	if (remainder > 0)
-		noteSegments.add(remainder);
+		int f = notesLeft / subSize;
+		for (int i = 0; i < f; i++)
+		{
+			sizeGroupings.add(subSizeIdx);
+		}
+
+		notesLeft -= (f * subSize);
+	}
     
     fillDegreeGroupings();
 }
