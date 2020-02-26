@@ -10,7 +10,7 @@
 
 #include "LayoutGenerator.h"
 
-LayoutHelper::LayoutHelper(const ScaleStructure& structureIn, int rootIn)
+LayoutHelper::LayoutHelper(const ScaleStructure* structureIn, int rootIn)
 	: structure(structureIn)
 {
 	rootKey = rootIn;
@@ -39,7 +39,21 @@ void LayoutHelper::refresh()
 {
 	DBG("LAYOUT: Refreshing...");
 	mapKeysToDegree();
-	mapGeneratorsToNotes();
+}
+
+int LayoutHelper::getPeriod()
+{
+    return structure->getPeriod();
+}
+
+int LayoutHelper::getGenerator()
+{
+    return structure->getGenerator(structure->getGeneratorIndex());
+}
+
+int LayoutHelper::getSize()
+{
+    return structure->getScaleSize(structure->getSizeIndex());
 }
 
 void LayoutHelper::mapKeysToDegree()
@@ -48,13 +62,13 @@ void LayoutHelper::mapKeysToDegree()
 	kbdScaleDegrees->resize(275);
 	kbdScaleDegrees->fill(-1);
 	
-	if (!structure.isValid())
+	if (!structure->isValid())
 	{
 		DBG("ERROR: not a valid layout :(");
 		return;
 	}
 
-	Point<int> steps = structure.getCurrentStepSize();
+	Point<int> steps = structure->getCurrentStepSize();
 
 	if (flipScale)
 	{

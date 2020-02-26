@@ -22,14 +22,14 @@ class LayoutHelper
 	Array<Colour>* scaleColours; // the colors chosen for the scale segments
 
 	// Dependent Properties
-	const ScaleStructure& structure; // calculates the properties of the selected scale
+	const ScaleStructure* structure; // calculates the properties of the selected scale
 
 	std::unique_ptr<Array<int>> kbdScaleDegrees; // array of root-note-offsets per keyboard key number
 	std::unique_ptr<Array<Array<int>>> notesByGenerators; // the notes by number of generators, with separate tiers for different colors
     
   public:
   
-    LayoutHelper(const ScaleStructure& scaleStructureIn, int rootIn=129);
+    LayoutHelper(const ScaleStructure* scaleStructureIn, int rootIn=129);
 	LayoutHelper(const LayoutHelper& layoutToCopy);
     ~LayoutHelper();
 	
@@ -37,6 +37,10 @@ class LayoutHelper
 	void refresh();
 
 	// Getters
+    
+    int getPeriod();
+    int getGenerator();
+    int getSize();
 
 	int getRootKey();
 	bool isScaleFlipped();
