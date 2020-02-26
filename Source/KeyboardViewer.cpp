@@ -41,7 +41,7 @@ void KeyboardViewer::paint (Graphics& g)
     g.setColour (Colours::grey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
-	scalePeriod = layout->getGenPeriodRatio()->getDenominator();
+	scalePeriod = layout->getPeriod();
 	for (int i = 0; i < 5; i++)
 		drawOctave(g, i);
 }

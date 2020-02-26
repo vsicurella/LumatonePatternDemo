@@ -63,13 +63,17 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    std::unique_ptr<ScaleStructure> scaleStructure;
 	std::unique_ptr<LayoutHelper> layout;
 	std::unique_ptr<ColourTableModel> colourTableModel;
 
+    Array<int> validGenerators;
+    Array<int> validSizes;
+    
 	int period = 12;
-	int generator = 7;
+	int generator = 2;
 	int genOffset = -1;
-	int size = 7;
+	int size = 4;
 	int rootKey = 129;
 	Point<int> periodHXY = Point<int>(2, 5);
 	Point<int> genHXY = Point<int>(1, 3);

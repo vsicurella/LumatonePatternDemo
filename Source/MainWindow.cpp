@@ -30,7 +30,8 @@
 MainWindow::MainWindow ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
-	layout.reset(new LayoutHelper(12));
+    scaleStructure.reset(new ScaleStructure(12));
+	layout.reset(new LayoutHelper(scaleStructure.get()));
 	layout->setColours(&scaleColours);
 	colourTableModel.reset(new ColourTableModel(layout->getScaleColours()));
     //[/Constructor_pre]
@@ -277,7 +278,7 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_editPeriod] -- add your slider handling code here..
 		period = editPeriod->getValue();
 		DBG("Period box has changed to " + String(period));
-		layout.reset(new LayoutHelper(period));
+		scaleStructure.reset(new ScaleStructure(period));
 		layout->setColours(&scaleColours);
 		colourTableModel->setColours(&scaleColours);
 		refreshSelections();
@@ -287,7 +288,7 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_editGeneratorOffset] -- add your slider handling code here..
 		genOffset = editGeneratorOffset->getValue();
-		layout->setGeneratorOffset(genOffset);
+		scaleStructure->setGeneratorOffset(genOffset);
 		layout->refresh();
 		refreshKeyboardView();
 		//keyboardView->setScale(kbdScalePattern(129, periodHXY, genHXY, size, genOffset));
@@ -316,13 +317,14 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     {
         //[UserComboBoxCode_editGenerator] -- add your combo box handling code here..
 		generator = editGenerator->getSelectedId();
-		DBG("Generator box has changed, generator is " + String(generator));
-		layout->setGenerator(generator);
-
+		DBG("Generator box has changed, generator is " + String(validGenerators[generator-1]));
+		scaleStructure->setGeneratorIndex(generator - 1);
+        validSizes = scaleStructure->getScaleSizes();
+        
 		refreshSelections(false);
 
-		int suggestedKbd = layout->suggestedScaleSize();
-		DBG("Suggested scale size: " + String(layout->getValidSizes()[suggestedKbd]));
+        int suggestedKbd = scaleStructure->useSuggestedSizeIndex();
+		DBG("Suggested scale size: " + String(validSizes[suggestedKbd]));
 		editKeyboard->setSelectedId(suggestedKbd + 1, dontSendNotification);
         //[/UserComboBoxCode_editGenerator]
     }
@@ -334,22 +336,8 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     }
 
     //[UsercomboBoxChanged_Post]
-
-	int ind = editKeyboard->getSelectedId() - 1;
-	layout->setKeyboardType(ind);
-	size = layout->getScaleSize();
-	periodHXY = layout->getPGCoord().x;
-	genHXY = layout->getPGCoord().y;
-
-	// quick crash prevention, bad solution
-	if (periodHXY.x * periodHXY.y * genHXY.x * genHXY.y > 0)
-	{
-		DBG("Delta coordinates are: (" + layout->getStepSizes(ind).toString() + ")");
-	}
-	else
-	{
-		DBG("ERROR: 0 is in either Period: (" + periodHXY.toString() + ") or Gen: (" + genHXY.toString() + "). FIX ME!");
-	}
+    size = editKeyboard->getSelectedId() - 1;
+    scaleStructure->setSizeIndex(size);
 
 	layout->refresh();
 	keyboardView->setLayout(layout.get());
@@ -411,15 +399,15 @@ void MainWindow::refreshSelections(bool recalculateGenerators)
     if (recalculateGenerators)
     {
         editGenerator->clear(dontSendNotification);
-
-        for (auto g : layout->getValidGenerators())
+        validGenerators = scaleStructure->getValidGenerators();
+        for (int i = 0; i < validGenerators.size(); i++)
         {
-            editGenerator->addItem(String(g), g);
+            editGenerator->addItem(String(validGenerators[i]), i+1);
         }
 
-		generator = layout->getValidGenerators()[layout->suggestedGenerator()];
+        generator = scaleStructure->useSuggestedGeneratorIndex();
 		DBG("Suggested generator: " + String(generator));
-		editGenerator->setSelectedId(generator, dontSendNotification);
+		editGenerator->setSelectedId(generator+1, dontSendNotification);
 		DBG("MAIN WINDOW: finished recalulating generators");
 		// gets called again when generator is set
         comboBoxChanged(editGenerator.get());
@@ -428,17 +416,20 @@ void MainWindow::refreshSelections(bool recalculateGenerators)
 
     editKeyboard->clear(dontSendNotification);
 
-    if (layout->isValid())
+    if (scaleStructure->isValid())
     {
 		DBG("Updating Generator Offsets and Keyboard Sizes");
 		// update gen offset range
 		if (editGenerator->getSelectedId() > 0)
-			editGeneratorOffset->setRange(-(editGenerator->getSelectedId()), editGenerator->getSelectedId(), 1);
+        {
+            int max = validGenerators[editGenerator->getSelectedId() - 1];
+			editGeneratorOffset->setRange(-max, max, 1);
+        }
 
 		// update keyboard options
-        for (int i = 0; i < layout->getValidKeyboards().size() - 2; i++)
+        for (int i = 0; i < validSizes.size(); i++)
         {
-            editKeyboard->addItem(String(layout->getValidSizes()[i]), i+1);
+            editKeyboard->addItem(String(validSizes[i]), i+1);
         }
     }
     else
