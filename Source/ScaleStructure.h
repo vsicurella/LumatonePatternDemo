@@ -17,7 +17,7 @@
 class ScaleStructure
 {
 	int period;
-	int generator = 0;
+	int generator = -1;
 
 	Array<int> validGenerators;
 
@@ -40,10 +40,15 @@ class ScaleStructure
 
 public:
 
-	ScaleStructure(int periodIn) {};
+	ScaleStructure(int periodIn);
 	ScaleStructure(int periodIn, int generatorIndex, int sizeIndex, Array<int> degreeGroups=Array<int>());
 	ScaleStructure(const ScaleStructure& scaleToCopy);
 	ScaleStructure(ValueTree scaleStructureProperties);
+    
+    int getPeriod() const;
+    
+    Array<int> getValidGenerators() const;
+    int getGenerator(int genIndex) const;
 
 	Array<int> getScaleSizes() const;
 	int getScaleSize(int ind) const;
@@ -58,6 +63,9 @@ public:
 	int getGroupOfDegree(int scaleDegreeIn) const;
 
 	Array<int> getSizeGrouping() const;
+    
+    int getGeneratorIndex() const;
+    int getSizeIndex() const;
 	Point<int> getCurrentStepSize() const;
 
 	bool isValid() const;
