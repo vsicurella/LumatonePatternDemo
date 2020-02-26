@@ -10,7 +10,6 @@
 
 #pragma once
 #include "CommonFunctions.h"
-#include "Ratio.h"
 #include "ScaleStructure.h"
 
 class LayoutHelper
@@ -49,6 +48,8 @@ class LayoutHelper
 
 	Array<int>* getKbdDegrees();
 	int getKeyDegree(int keyNumIn);
+    
+    Array<Array<int>> getDegreeGroupings();
 
 	// Setters
 

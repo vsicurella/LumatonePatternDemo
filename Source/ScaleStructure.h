@@ -11,8 +11,6 @@
 #pragma once
 
 #include "CommonFunctions.h"
-#include "Ratio.h"
-
 
 class ScaleStructure
 {
@@ -63,6 +61,7 @@ public:
 	int getGroupOfDegree(int scaleDegreeIn) const;
 
 	Array<int> getSizeGrouping() const;
+    Array<Array<int>> getDegreeGroupings() const;
     
     int getGeneratorIndex() const;
     int getSizeIndex() const;

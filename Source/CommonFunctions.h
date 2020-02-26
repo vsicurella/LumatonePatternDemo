@@ -118,6 +118,25 @@ static Array<int> getFactors(int numIn)
     return factors;
 }
 
+Array<int> getContinuedFraction(double num, int maxDepth=20, double round0Thresh=10e-8)
+{
+    Array<int> cf;
+    double f = num;
+    double nextF;
+
+    for (int i = 0; i < maxDepth; i++)
+    {
+        cf.add((int)f);
+        nextF = f - cf[i];
+        if (nextF > round0Thresh)
+            f = 1.0 / nextF;
+        else
+            break;
+    }
+
+    return cf;
+}
+
 static int kbdDownRight(int kbdNumIn, int numSteps)
 {
 	if (numSteps < 1)

@@ -169,6 +169,11 @@ int LayoutHelper::getKeyDegree(int keyNumIn)
 	return kbdScaleDegrees->getUnchecked(keyNumIn);
 }
 
+Array<Array<int>> LayoutHelper::getDegreeGroupings()
+{
+    return structure->getDegreeGroupings();
+}
+
 void LayoutHelper::setRootKey(int rootKeyIn)
 {
 	rootKey = rootKeyIn;

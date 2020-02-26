@@ -114,6 +114,11 @@ Array<int> ScaleStructure::getSizeGrouping() const
 	return sizeGroupings;
 }
 
+Array<Array<int>> ScaleStructure::getDegreeGroupings() const
+{
+    return degreeGroupings;
+}
+
 int ScaleStructure::getGeneratorIndex() const
 {
     return generator;
@@ -135,9 +140,7 @@ void ScaleStructure::calculateProperties()
 	keyboardTypes.clear();
 	pgCoords.clear();
 
-	Ratio goverp = Ratio(validGenerators[generator], period);
-
-	Array<int> cf = goverp.continuedFraction();
+    Array<int> cf = getContinuedFraction((double)validGenerators[generator] / period);
 
 	// seed the sequence
 	Point<int> parent1 = Point<int>(-1 + cf[0], 1);

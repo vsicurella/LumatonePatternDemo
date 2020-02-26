@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="IwNky8" name="GeneralizedScaleSetup" projectType="guiapp"
-              jucerVersion="5.4.7">
+              jucerVersion="5.4.5">
   <MAINGROUP id="IsZKgY" name="GeneralizedScaleSetup">
     <GROUP id="{F2189B60-1842-B504-0A30-163E90EF3F1C}" name="Source">
       <FILE id="A3PUrt" name="ColorTable.cpp" compile="1" resource="0" file="Source/ColorTable.cpp"/>
@@ -22,8 +22,6 @@
             file="Source/LayoutGenerator.cpp"/>
       <FILE id="xg22Gf" name="LayoutGenerator.h" compile="0" resource="0"
             file="Source/LayoutGenerator.h"/>
-      <FILE id="jsgcNp" name="Ratio.cpp" compile="1" resource="0" file="Source/Ratio.cpp"/>
-      <FILE id="WQTRuD" name="Ratio.h" compile="0" resource="0" file="Source/Ratio.h"/>
       <FILE id="cVrnEU" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="jHSfeo" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
