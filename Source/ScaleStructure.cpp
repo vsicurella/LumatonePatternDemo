@@ -107,13 +107,15 @@ void ScaleStructure::setGeneratorIndex(int index)
 void ScaleStructure::setSizeIndex(int index)
 {
 	currentSizeSelected = index;
-    useSimpleSizeStructure();
+    //useSimpleSizeStructure();
+	useCascadingSizeStructure();
 }
 
 void ScaleStructure::setGeneratorOffset(int offsetIn)
 {
 	generatorOffset = offsetIn;
-    useSimpleSizeStructure();
+	//useSimpleSizeStructure();
+	useCascadingSizeStructure();
 }
 
 Point<int> ScaleStructure::getStepSizes(int kbdTypeIn) const
@@ -359,13 +361,13 @@ void ScaleStructure::useSimpleSizeStructure()
 			return;
 		}
 
-		int f = notesLeft / subSize;
-		for (int i = 0; i < f; i++)
+		int q = notesLeft / subSize;
+		for (int i = 0; i < q; i++)
 		{
 			sizeGroupings.add(subSizeIdx);
 		}
 
-		notesLeft -= (f * subSize);
+		notesLeft -= (q * subSize);
 	}
     
     fillDegreeGroupings();
@@ -374,6 +376,34 @@ void ScaleStructure::useSimpleSizeStructure()
 void ScaleStructure::useCascadingSizeStructure()
 {
     // TODO
+	int scaleSize = scaleSizes[currentSizeSelected];
+	sizeGroupings = { currentSizeSelected };
+
+	int notesLeft = period - scaleSize;
+	int subSizeIdx = currentSizeSelected;
+	int subSize = scaleSize;
+
+	while (notesLeft > 0)
+	{
+		int q = notesLeft / subSize;
+		if (notesLeft <= subSize && scaleSizes.contains(notesLeft))
+		{
+			sizeGroupings.add(scaleSizes.indexOf(notesLeft));
+			break;
+		}
+		else if (q >= 2)
+		{
+			int iterations = notesLeft % subSize == 0 ? q : q - (q % 2);
+			for (int i = 0; i < iterations; i++)
+			{
+				sizeGroupings.add(subSizeIdx);
+				notesLeft -= subSize;
+			}
+		}
+
+		subSize = scaleSizes[--subSizeIdx];
+	}
+
     fillDegreeGroupings();
 }
 

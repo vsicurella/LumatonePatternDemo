@@ -338,7 +338,7 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 
     //[UsercomboBoxChanged_Post]
     scaleStructure->setSizeIndex(size);
-
+	DBG("Step sizes: " + scaleStructure->getCurrentStepSize().toString());
 	layout->refresh();
 	keyboardView->setLayout(layout.get());
     //[/UsercomboBoxChanged_Post]
