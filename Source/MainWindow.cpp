@@ -171,7 +171,6 @@ MainWindow::MainWindow ()
     editBlankKeys->setRadioGroupId (10);
     editBlankKeys->addListener (this);
 
-
     //[UserPreSize]
 	colourTableModel->setListBoxComponent(editColorLayout.get());
 	editColorLayout->updateContent();
@@ -179,7 +178,6 @@ MainWindow::MainWindow ()
     //[/UserPreSize]
 
     setSize (600, 400);
-
 
     //[Constructor] You can add your own custom stuff here..
 	DBG("MAIN WINDOW: Constructed! Refreshing options...");
@@ -191,8 +189,6 @@ MainWindow::MainWindow ()
 	editPeriod->setValue(12);
 	editGeneratorOffset->setValue(-1);
 	editGenerator->setSelectedId(7);
-	//editKeyboard->setSelectedId(7);
-
 	DBG("MAIN WINDOW: Done. Moving on.");
     //[/Constructor]
 }

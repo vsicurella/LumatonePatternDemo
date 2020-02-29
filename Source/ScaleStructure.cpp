@@ -372,7 +372,6 @@ void ScaleStructure::useSimpleSizeStructure()
 
 void ScaleStructure::useCascadingSizeStructure()
 {
-    // TODO
 	int scaleSize = scaleSizes[currentSizeSelected];
 	sizeGroupings = { currentSizeSelected };
 

@@ -137,6 +137,102 @@ static Array<int> getContinuedFraction(double num, int maxDepth=20, double round
     return cf;
 }
 
+// TODO: make with template class
+/*
+	Takes an array and tries to arrange it symmetrically, such that the array can be wrapped into a symmetric circle
+	If array cannot be arranged symmetrically, function will return an empty array
+	This algorithm prefers higher values closer to the center (the "top" of the circle).
+	ex. [7, 7, 7, 5, 5] => [7, 7, 5, 5, 7]
+*/
+static Array<int> arrangeSymmetrically(Array<int> arrayOfValues, int centerIndex=0)
+{
+	Array<int> symmetricArray = { arrayOfValues[centerIndex] };
+	arrayOfValues.remove(centerIndex);
+
+	int arrangeSize = arrayOfValues.size();
+	bool isOdd = arrangeSize % 2;
+	Array<Point<int>> groupings; // [(unique value, number of appearances),...]
+	Array<int> values;
+
+	// find unique values and how many times they appear
+	for (auto num : arrayOfValues)
+	{
+		int valInd = values.indexOf(num);
+
+		if (valInd < 0)
+		{
+			groupings.add(Point<int>(num, 1));
+			values.add(num);
+		}
+		else
+		{
+			Point<int>& pt = groupings.getReference(valInd);
+			pt.setY(pt.y + 1);
+		}
+	}
+
+	Array<int> oddGroupIdx;
+	for (int i = 0; i < values.size(); i++)
+	{
+		if (groupings[i].y % 2 == 1)
+			oddGroupIdx.add(i);
+	}
+
+	// determine if symmetry is possible; true if not possible
+	if ((isOdd && oddGroupIdx.size() != 1) || (!isOdd && oddGroupIdx.size() > 0))
+	{
+		return Array<int>();
+	}
+
+	int oddGroupValue;
+	if (isOdd)
+		oddGroupValue = values[oddGroupIdx[0]];
+
+	// sort by increasing value, but we will use this in reverse
+	Array<int> sortedValues = values;
+	sortedValues.sort();
+
+	// move odd group to first index
+	if (isOdd)
+	{
+		sortedValues.removeFirstMatchingValue(oddGroupValue);
+		sortedValues.insert(0, oddGroupValue);
+	}
+
+	// rebuild groupings with sorted order
+	Array<Point<int>> sortedGroupings;
+	for (auto val : sortedValues)
+	{
+		sortedGroupings.add(groupings.getReference(values.indexOf(val)));
+	}
+
+	// populate symmetric array
+	int i = 0;
+	int valInd = values.size() - 1;
+	bool increment = false;
+	while (i < arrayOfValues.size())
+	{
+		int num = sortedGroupings.getReference(valInd).y;
+		if (valInd != 0)
+			num = num / 2;
+		else
+			increment = true;
+
+		for (int n = 0; n < num; n++)
+		{
+			symmetricArray.add(sortedValues[valInd]);
+			i++;
+		}
+
+		if (increment)
+			valInd++;
+		else
+			valInd--;
+	}
+
+	return symmetricArray;
+}
+
 static int kbdDownRight(int kbdNumIn, int numSteps)
 {
 	if (numSteps < 1)
