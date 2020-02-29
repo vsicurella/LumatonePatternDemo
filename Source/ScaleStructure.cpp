@@ -193,6 +193,8 @@ void ScaleStructure::calculateProperties()
 
 void ScaleStructure::calculateStepSizes()
 {
+	stepSizes.clear();
+
 	Point<int> stepSizesOut;
 	Point<int> periodCoordinate;
 	Point<int> generatorCoordinate;
@@ -212,7 +214,7 @@ void ScaleStructure::calculateStepSizes()
 		else if (generatorCoordinate.y == 0)
 			stepSizesOut.setX(gen);
 		else
-			stepSizesOut.setX(abs(period * generatorCoordinate.y - gen * periodCoordinate.y));
+			stepSizesOut.setX(period * generatorCoordinate.y - gen * periodCoordinate.y);	
 
 		// find upward right step size (Y)
 		if (periodCoordinate.x == generatorCoordinate.x)
@@ -222,7 +224,7 @@ void ScaleStructure::calculateStepSizes()
 		else if (generatorCoordinate.y == 0)
 			stepSizesOut.setX(gen);
 		else
-			stepSizesOut.setY(abs(period * generatorCoordinate.x - gen * periodCoordinate.x));
+			stepSizesOut.setY(gen * periodCoordinate.x - period * generatorCoordinate.x);
 
 		stepSizes.add(stepSizesOut);
 	}
