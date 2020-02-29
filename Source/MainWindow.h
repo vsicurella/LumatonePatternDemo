@@ -78,9 +78,10 @@ private:
 
 	// default colors
 	Array<Colour> scaleColours = {
-		Colours::mediumvioletred,
+		Colours::aliceblue,
+		Colours::mediumpurple,
 		Colours::indianred,
-		Colours::orange,
+		Colours::cadetblue,
 		Colours::green,
 		Colours::yellow.darker(),
 		Colours::cornflowerblue,
