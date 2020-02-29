@@ -74,8 +74,12 @@ public:
 	void setSizeIndex(int index);
 	void setGeneratorOffset(int offsetIn);
 
+	// returns the index whose generator is closest to a perfect fifth
 	int getSuggestedGeneratorIndex();
+
+	// returns the index whose size is closest to 7
 	int getSuggestedSizeIndex();
+
 	void useSimpleSizeStructure();
 	void useCascadingSizeStructure();
 };

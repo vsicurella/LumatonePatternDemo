@@ -298,46 +298,41 @@ void ScaleStructure::fillDegreeGroupings()
 
 int ScaleStructure::getSuggestedGeneratorIndex()
 {
-	// suggest the coprime scale degree nearest to a "perfect fifth"
-	int genSug = round(period * (0.6));
-	int genDif = 0;
-	int sugDif = 10e4;
-	int ind = 0;
+	int index = -1;
+	float dif1, dif2 = 10e6;
+	float interval = 1200 / period;
 
-	for (int g = 0; g < validGenerators.size(); g++)
+	for (int i = 1; i < validGenerators.size(); i++)
 	{
-		genDif = genSug - validGenerators[g];
-		if (abs(genDif) < sugDif)
+		dif1 = abs(700 - interval * validGenerators[i]);
+
+		if (dif1 < dif2)
 		{
-			ind = g;
-			sugDif = genDif;
+			dif2 = dif1;
+			index = i;
 		}
 	}
 
-	return ind;
+	return index;
 }
 
 int ScaleStructure::getSuggestedSizeIndex()
 {
-	int ind = -1;
-	int size = 0;
-	Array<int> suggestedSizes = { 7, 5, 6, 8, 9, 10 };
-	while (ind < 0 && size < scaleSizes.size())
+	int index = -1;
+	int dif1, dif2 = INT_MAX;
+
+	for (int i = 0; i < scaleSizes.size(); i++)
 	{
-		ind = scaleSizes.indexOf(suggestedSizes[size]);
-		size++;
+		dif1 = abs(7 - scaleSizes[i]);
+
+		if (dif1 < dif2)
+		{
+			dif2 = dif1;
+			index = i;
+		}
 	}
 
-	int s = 4;
-	while (ind < 0 && s > 0)
-	{
-		ind = scaleSizes.indexOf(s--);
-	}
-
-	// all scales should at *least* have sizes of 1 or 2
-	jassert(ind >= 0);
-
-	return ind;
+	return index;
 }
 
 void ScaleStructure::useSimpleSizeStructure()
