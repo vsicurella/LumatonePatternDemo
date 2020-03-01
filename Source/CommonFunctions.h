@@ -233,6 +233,33 @@ static Array<int> arrangeSymmetrically(Array<int> arrayOfValues, int centerIndex
 	return symmetricArray;
 }
 
+template <class T>
+static bool isSymmetric(Array<T> arrayIn)
+{
+	int indNext, indPrev, symCount;
+	int halfSize = arrayIn.size();
+
+	for (int i = 0; i < arrayIn.size(); i++)
+	{
+		symCount = 0;
+		for (int j = 1; j <= halfSize; j++)
+		{
+			indNext = (i + j) % arrayIn.size();
+			indPrev = (i - j);
+			indPrev += indPrev < 0 ? arrayIn.size() : 0;
+
+			if (arrayIn[indNext] == arrayIn[indPrev])
+			{
+				symCount++;
+			}
+		}
+
+		if (symCount == halfSize)
+			return true;
+	}
+	return false;
+}
+
 static int kbdDownRight(int kbdNumIn, int numSteps)
 {
 	if (numSteps < 1)
