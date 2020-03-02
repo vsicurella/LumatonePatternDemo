@@ -35,6 +35,7 @@ class ScaleStructure
 	void calculateStepSizes();
 	void calculateGeneratorChain();
 	void fillDegreeGroupings();
+	void fillGroupingsSymmetrically();
 
 public:
 
@@ -79,7 +80,9 @@ public:
 
 	// returns the index whose size is closest to 7
 	int getSuggestedSizeIndex();
+	int getPrefferedSizeIndex(int prefferedSize, bool preferLarger = true);
 
-	void useSimpleSizeStructure();
-	void useCascadingSizeStructure();
+	Array<int> getNestedSizeGrouping();
+	Array<int> getComplimentarySizeGrouping();
+	void useSuggestedSizeGrouping();
 };

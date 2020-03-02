@@ -107,15 +107,13 @@ void ScaleStructure::setGeneratorIndex(int index)
 void ScaleStructure::setSizeIndex(int index)
 {
 	currentSizeSelected = index;
-    //useSimpleSizeStructure();
-	useCascadingSizeStructure();
+	useSuggestedSizeGrouping();
 }
 
 void ScaleStructure::setGeneratorOffset(int offsetIn)
 {
 	generatorOffset = offsetIn;
-	//useSimpleSizeStructure();
-	useCascadingSizeStructure();
+	useSuggestedSizeGrouping();
 }
 
 Point<int> ScaleStructure::getStepSizes(int kbdTypeIn) const
@@ -162,6 +160,9 @@ void ScaleStructure::calculateProperties()
 	Point<int> gp = Point<int>(cf[0], 1);
 
 	Array<Point<int>> packet = { gp, parent2, gp + parent2 }; // makes for cleaner code
+	pgCoords.add(PointPair<int>(packet[0], packet[1]));
+	keyboardTypes.add(packet[2]);
+	scaleSizes.add(packet[2].y);
 
 	// find keyboard types, and their period/generator coordinates
 	for (int i = 1; i < cf.size(); i++)
@@ -186,6 +187,14 @@ void ScaleStructure::calculateProperties()
 			packet = { parent1, parent2, parent1 + parent2 };
 		}
 	}
+
+	String dbgstr = "";
+	for (auto s : keyboardTypes)
+	{
+		dbgstr += "(" + s.toString() + "), ";
+	}
+
+	DBG("Sizes available: " + dbgstr);
 
 	calculateStepSizes();
 	calculateGeneratorChain();
@@ -296,6 +305,51 @@ void ScaleStructure::fillDegreeGroupings()
 	DBG(dbgstr);
 }
 
+void ScaleStructure::fillGroupingsSymmetrically()
+{
+	degreeGroupings.clear();
+	degreeGroupings.resize(sizeGroupings.size());
+
+	// Fill degree groups symmetrically
+
+	int indexOffset = modulo(generatorOffset, period);
+
+	for (int t = 0; t < sizeGroupings.size(); t++)
+	{
+		for (int n = 0; n < scaleSizes[sizeGroupings[t]]; n++)
+		{
+			degreeGroupings.getReference(t).add(generatorChain[indexOffset]);
+			indexOffset = modulo(indexOffset + 1, period);
+		}
+	}
+
+	String dbgstr = "";
+	int size, sum = 0;
+	for (int i = 0; i < sizeGroupings.size(); i++) {
+		size = scaleSizes[sizeGroupings[i]];
+		dbgstr += String(size) + ", ";
+		sum += size;
+	}
+	dbgstr += " = " + String(sum);
+	DBG("Using this size grouping: " + dbgstr);
+
+	dbgstr = "";
+	for (int group = 0; group < sizeGroupings.size(); group++)
+	{
+		Array<int> degreeGroup = degreeGroupings[group];
+		dbgstr += "Tier " + String(group) + ": ";
+		for (int deg = 0; deg < degreeGroup.size(); deg++)
+		{
+			dbgstr += String(degreeGroup[deg]) + ", ";
+		}
+		dbgstr += "\n";
+	}
+
+	DBG("Degree groupings: ");
+	DBG(dbgstr);
+}
+
+
 int ScaleStructure::getSuggestedGeneratorIndex()
 {
 	int index = -1;
@@ -335,72 +389,175 @@ int ScaleStructure::getSuggestedSizeIndex()
 	return index;
 }
 
-void ScaleStructure::useSimpleSizeStructure()
-{
-	// Find out how many notes each color tier will have
-	// Can be made to be customized
-	int scaleSize = scaleSizes[currentSizeSelected];
-
-	sizeGroupings = { currentSizeSelected };
-
-	int notesLeft = period - scaleSize;
-	int subSizeIdx = currentSizeSelected - 1;
-	int subSize = scaleSizes[subSizeIdx];
-
-	while (notesLeft > 0)
-	{
-		while (subSize > notesLeft && subSizeIdx > 0)
-			subSize = scaleSizes[--subSizeIdx];
-
-		if (subSizeIdx < 0)
-		{
-			DBG("ERROR: Bad note segmenting");
-			return;
-		}
-
-		int q = notesLeft / subSize;
-		for (int i = 0; i < q; i++)
-		{
-			sizeGroupings.add(subSizeIdx);
-		}
-
-		notesLeft -= (q * subSize);
-	}
-    
-    fillDegreeGroupings();
-}
-
-void ScaleStructure::useCascadingSizeStructure()
+Array<int> ScaleStructure::getNestedSizeGrouping()
 {
 	int scaleSize = scaleSizes[currentSizeSelected];
-	sizeGroupings = { currentSizeSelected };
+	Array<int> grouping = { currentSizeSelected };
 
 	int notesLeft = period - scaleSize;
-	int subSizeIdx = currentSizeSelected;
+	int subSizeInd = currentSizeSelected;
 	int subSize = scaleSize;
 
 	while (notesLeft > 0)
 	{
 		int q = notesLeft / subSize;
+
 		if (notesLeft <= subSize && scaleSizes.contains(notesLeft))
 		{
-			sizeGroupings.add(scaleSizes.indexOf(notesLeft));
-			break;
+			grouping.add(scaleSizes.indexOf(notesLeft));
+			notesLeft = 0;
 		}
 		else if (q >= 2)
 		{
-			int iterations = notesLeft % subSize == 0 ? q : q - (q % 2);
-			for (int i = 0; i < iterations; i++)
+			int numToAdd = notesLeft % subSize == 0 ? q : q - (q % 2);
+			for (int n = 0; n < numToAdd; n++)
 			{
-				sizeGroupings.add(subSizeIdx);
+				grouping.add(subSizeInd);
 				notesLeft -= subSize;
+
+				// check if notesLeft can be divided equally by next size
+				if (subSizeInd > 0)
+				{
+					int stagedSubInd = subSizeInd - 1;
+					int stagedSubSize = scaleSizes[stagedSubInd];
+					int q2 = notesLeft / stagedSubSize;
+
+					if (notesLeft % stagedSubSize == 0)
+					{
+						// extra check for symmetry
+						if (q2 % 2 == 0)
+						{
+							for (int qn = 0; qn < q2; qn++)
+							{
+								grouping.add(stagedSubInd);
+								notesLeft -= stagedSubSize;
+							}
+
+							break;
+						}
+					}
+				}
 			}
 		}
 
-		subSize = scaleSizes[--subSizeIdx];
+		subSize = scaleSizes[--subSizeInd];
 	}
 
-    fillDegreeGroupings();
+	DBG("Nested group:");
+	String dbgstr = "";
+	for (int i = 0; i < grouping.size(); i++)
+		dbgstr += String(scaleSizes[grouping[i]]) + ", ";
+	DBG(dbgstr);
+
+	return grouping;
+}
+
+// TODO: possibility for improving large scales groupings.
+// When checking the "staged" sizes, there could be an additional check to see if
+// a different configuration of those two sizes produce a smaller grouping
+// ex. with this algorithm, "Schismatic" 69/118 scale gives (7 * 4) + (5 * 18) or 22 groups
+// but this could be reduced to (7 * 14) + (5 * 4) for 18 groups
+Array<int> ScaleStructure::getComplimentarySizeGrouping()
+{
+	int scaleSize = scaleSizes[currentSizeSelected];
+	Array<int> grouping = { currentSizeSelected };
+
+	int notesLeft = period - scaleSize;
+	int subSizeInd = currentSizeSelected;
+	int subSize = scaleSize;
+
+	int q = notesLeft / subSize;
+	int numToAdd = notesLeft % subSize == 0 ? q : q - (q % 2);
+	int num = 0;
+
+	while (notesLeft > 0)
+	{
+		// check if notesLeft can be divided equally by next size
+		if (subSizeInd > 0)
+		{
+			int stagedSubInd = subSizeInd - 1;
+			int stagedSubSize = scaleSizes[stagedSubInd];
+			int q2 = notesLeft / stagedSubSize;
+
+			if (notesLeft % stagedSubSize == 0)
+			{
+				// extra check for symmetry
+				int groupSize = grouping.size() - 1;
+				if (groupSize == 0 || q2 % 2 == 0)
+				{
+					for (int qn = 0; qn < q2; qn++)
+					{
+						grouping.add(stagedSubInd);
+						notesLeft -= stagedSubSize;
+					}
+
+					break;
+				}
+			}
+		}
+
+		if (notesLeft <= subSize && scaleSizes.contains(notesLeft))
+		{
+			grouping.add(scaleSizes.indexOf(notesLeft));
+			notesLeft = 0;
+		}
+		else if (q >= 0 && num < numToAdd)
+		{
+			grouping.add(subSizeInd);
+			notesLeft -= subSize;
+			num++;
+		}
+		else if (notesLeft > 0)
+		{
+			subSize = scaleSizes[--subSizeInd];
+			q = notesLeft / subSize;
+			numToAdd = notesLeft % subSize == 0 ? q : q - (q % 2);
+			num = 0;
+		}
+	}
+
+	DBG("Complimentary group:");
+	String dbgstr = "";
+	for (int i = 0; i < grouping.size(); i++)
+		dbgstr += String(scaleSizes[grouping[i]]) + ", ";
+	DBG(dbgstr);
+
+	return grouping;
+}
+
+void ScaleStructure::useSuggestedSizeGrouping()
+{
+	Array<Array<int>> groupings;
+	groupings.add(getNestedSizeGrouping());
+	groupings.add(getComplimentarySizeGrouping());
+
+	Array<float> groupingScores;
+
+	// create score by averaging range and length of group
+	for (auto g : groupings)
+	{
+		int range = g[0] - g[g.size() - 1];
+		groupingScores.add((range + g.size()) / (float) groupings.size());
+	}
+
+	// find lowest score and return respective group
+	int index = 0;
+	for (int s = 0; s < groupings.size(); s++)
+	{
+		if (groupingScores[s] < groupingScores[index])
+			index = s;
+	}
+
+	// make symmetric and fill degree groupings
+	sizeGroupings = arrangeSymmetrically(groupings[index]);
+
+	DBG("Symmetric group:");
+	String dbgstr = "";
+	for (int i = 0; i < sizeGroupings.size(); i++)
+		dbgstr += String(scaleSizes[sizeGroupings[i]]) + ", ";
+	DBG(dbgstr);
+
+	fillGroupingsSymmetrically();
 }
 
 bool ScaleStructure::isValid() const
