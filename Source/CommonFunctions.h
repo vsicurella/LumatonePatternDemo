@@ -171,6 +171,13 @@ static Array<int> arrangeSymmetrically(Array<int> arrayOfValues, int centerIndex
 		}
 	}
 
+	// already symmetric if only one type of value
+	if (groupings.size() == 1)
+	{
+		symmetricArray.addArray(arrayOfValues);
+		return symmetricArray;
+	}
+
 	Array<int> oddGroupIdx;
 	for (int i = 0; i < values.size(); i++)
 	{
@@ -178,8 +185,9 @@ static Array<int> arrangeSymmetrically(Array<int> arrayOfValues, int centerIndex
 			oddGroupIdx.add(i);
 	}
 
-	// determine if symmetry is possible; true if not possible
-	if ((isOdd && oddGroupIdx.size() != 1) || (!isOdd && oddGroupIdx.size() > 0))
+	// determine if symmetry is possible
+	// odd needs ONE odd group, even needs ZERO odd groups
+	if ((isOdd && oddGroupIdx.size() != 1) || (!isOdd && oddGroupIdx.size() > 0)) 
 	{
 		return Array<int>();
 	}
