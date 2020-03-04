@@ -17,6 +17,7 @@ class ScaleStructure
 	int period;
 	int generator = -1;
 
+	Array<int> fractionalPeriods;
 	Array<int> validGenerators;
 
 	Array<int> scaleSizes;
@@ -28,6 +29,7 @@ class ScaleStructure
 	Array<Array<int>> degreeGroupings;
 	Array<int> generatorChain;
 
+	int fractionalPeriodSelected = 0;
 	int currentSizeSelected = -1;
 	int generatorOffset = 0;
 
@@ -45,6 +47,7 @@ public:
 	ScaleStructure(ValueTree scaleStructureProperties);
     
     int getPeriod() const;
+	Array<int> getFractionalPeriods() const;
     
     Array<int> getValidGenerators() const;
     int getGenerator(int genIndex) const;
@@ -71,6 +74,8 @@ public:
 	bool isValid() const;
 
 	void resetToPeriod(int periodIn);
+
+	void setFractionalPeriodIndex(int index);
 	void setGeneratorIndex(int index);
 	void setSizeIndex(int index);
 	void setGeneratorOffset(int offsetIn);

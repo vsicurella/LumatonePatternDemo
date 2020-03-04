@@ -109,7 +109,7 @@ static Array<int> getFactors(int numIn)
 {
     Array<int> factors;
     
-    for (int i = 2; i < numIn / 2; i++)
+    for (int i = 1; i < numIn / 2; i++)
     {
         if (numIn % i == 0)
             factors.add(i);

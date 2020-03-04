@@ -47,6 +47,7 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+	void refreshPeriods();
     void refreshSelections(bool recalculateGenerators=true);
 	void refreshKeyboardView();
     //[/UserMethods]
@@ -65,14 +66,17 @@ private:
 	std::unique_ptr<LayoutHelper> layout;
 	std::unique_ptr<ColourTableModel> colourTableModel;
 
+	Array<int> fractionalPeriods;
     Array<int> validGenerators;
     Array<int> validSizes;
 
 	int period = 12;
+	int fractionalPeriod = 1;
 	int generator = 2;
 	int genOffset = -1;
 	int size = 4;
 	int rootKey = 129;
+
 	Point<int> periodHXY = Point<int>(2, 5);
 	Point<int> genHXY = Point<int>(1, 3);
 
@@ -118,6 +122,9 @@ private:
     std::unique_ptr<Label> label;
     std::unique_ptr<ToggleButton> editScaleFlip;
     std::unique_ptr<ToggleButton> editBlankKeys;
+    std::unique_ptr<ToggleButton> negateXBtn;
+    std::unique_ptr<ToggleButton> negateYBtn;
+    std::unique_ptr<ComboBox> fractionalPeriodBox;
 
 
     //==============================================================================
