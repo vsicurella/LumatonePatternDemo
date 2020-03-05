@@ -264,21 +264,15 @@ void ScaleStructure::calculateStepSizes()
 
 void ScaleStructure::calculateGeneratorChain()
 {
-	Array<int> chain;
+	generatorChain.clear();
     int gen = validGenerators[generator];
 	int fractionalPeriod = period / fractionalPeriods[fractionalPeriodSelected];
 
 	for (int i = 0; i < fractionalPeriod; i++)
 	{
-		chain.add(modulo(i * gen, fractionalPeriod));
+		generatorChain.add(modulo(i * gen, fractionalPeriod));
 	}
-	
-	generatorChain.clear();
-	for (int i = 0; i < fractionalPeriods.size(); i++)
-	{
-		for (auto d : chain)
-			generatorChain.add(d + fractionalPeriod * i);
-	}
+
 }
 
 void ScaleStructure::fillDegreeGroupings()
@@ -347,33 +341,31 @@ void ScaleStructure::fillDegreeGroupings()
 
 void ScaleStructure::fillGroupingsSymmetrically()
 {
+	int periodFactor = fractionalPeriods[fractionalPeriodSelected];
+	int fractionalPeriod = period / periodFactor;
 	degreeGroupings.clear();
-
-	Array<int> grouping;
-	for (int i = 0; i < fractionalPeriods[fractionalPeriodSelected]; i++)
-	{
-		grouping.addArray(sizeGroupings);
-	}
-
-	degreeGroupings.resize(grouping.size());
+	degreeGroupings.resize(sizeGroupings.size() * periodFactor);
 
 	// Fill degree groups symmetrically
 
-	int indexOffset = modulo(generatorOffset, period);
+	int indexOffset = modulo(generatorOffset, fractionalPeriod);
 
-	for (int t = 0; t < grouping.size(); t++)
+	for (int t = 0; t < sizeGroupings.size(); t++)
 	{
-		for (int n = 0; n < scaleSizes[grouping[t]]; n++)
+		for (int n = 0; n < scaleSizes[sizeGroupings[t]]; n++)
 		{
-			degreeGroupings.getReference(t).add(generatorChain[indexOffset]);
-			indexOffset = modulo(indexOffset + 1, period);
+			for (int f = 0; f < periodFactor; f++)
+			{
+				degreeGroupings.getReference(t).add(generatorChain[indexOffset] + fractionalPeriod * f);
+			}
+			indexOffset = modulo(indexOffset + 1, fractionalPeriod);
 		}
 	}
 
 	String dbgstr = "";
 	int size, sum = 0;
-	for (int i = 0; i < grouping.size(); i++) {
-		size = scaleSizes[grouping[i]];
+	for (int i = 0; i < sizeGroupings.size(); i++) {
+		size = scaleSizes[sizeGroupings[i]];
 		dbgstr += String(size) + ", ";
 		sum += size;
 	}
@@ -381,7 +373,7 @@ void ScaleStructure::fillGroupingsSymmetrically()
 	DBG("Using this size grouping: " + dbgstr);
 
 	dbgstr = "";
-	for (int group = 0; group < grouping.size(); group++)
+	for (int group = 0; group < sizeGroupings.size(); group++)
 	{
 		Array<int> degreeGroup = degreeGroupings[group];
 		dbgstr += "Tier " + String(group) + ": ";
@@ -402,8 +394,8 @@ int ScaleStructure::getSuggestedGeneratorIndex()
 	int index = -1;
 	float dif1, dif2 = 10e6;
 	int fractionalPeriod = fractionalPeriods[fractionalPeriodSelected];
-	float interval = 1200 / period / fractionalPeriod;
-	int suggestedCents = 700 / fractionalPeriod;
+	float interval = 1200.0f / (period / fractionalPeriod);
+	int suggestedCents = 700;
 
 	for (int i = 1; i < validGenerators.size(); i++)
 	{
@@ -423,12 +415,33 @@ int ScaleStructure::getSuggestedSizeIndex()
 {
 	int index = -1;
 	int dif1, dif2 = INT_MAX;
+	int scaleSize = 7 / fractionalPeriods[fractionalPeriodSelected];
 
 	for (int i = 0; i < scaleSizes.size(); i++)
 	{
-		dif1 = abs(7 - scaleSizes[i]);
+		dif1 = abs(scaleSize - scaleSizes[i]);
 
 		if (dif1 < dif2)
+		{
+			dif2 = dif1;
+			index = i;
+		}
+	}
+
+	return index;
+}
+
+int ScaleStructure::getPrefferedSizeIndex(int prefferedSize, bool preferLarger)
+{
+	int index = -1;
+	int dif1, dif2 = INT_MAX;
+	int scaleSize = prefferedSize / fractionalPeriods[fractionalPeriodSelected];
+
+	for (int i = 0; i < scaleSizes.size(); i++)
+	{
+		dif1 = abs(scaleSize - scaleSizes[i]);
+
+		if (dif1 < dif2 || (preferLarger && dif1 == dif2))
 		{
 			dif2 = dif1;
 			index = i;

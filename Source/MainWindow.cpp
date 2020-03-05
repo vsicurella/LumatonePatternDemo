@@ -265,28 +265,28 @@ void MainWindow::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    keyboardView->setBounds (proportionOfWidth (0.0084f), proportionOfHeight (0.0233f), proportionOfWidth (0.9843f), proportionOfHeight (0.6637f));
-    editPeriod->setBounds (proportionOfWidth (0.1224f), proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0674f), 120, 24);
-    editGenerator->setBounds (proportionOfWidth (0.1234f), proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.1456f), 112, 24);
-    editKeyboard->setBounds (proportionOfWidth (0.1234f), proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.2911f), 112, 24);
-    editColorLayout->setBounds (proportionOfWidth (0.3588f), proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0728f), roundToInt (proportionOfWidth (0.9843f) * 0.3326f), 136);
-    editShowKeyNumber->setBounds (proportionOfWidth (0.0084f) + roundToInt (proportionOfWidth (0.9843f) * 0.7205f), proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0647f), 176, 24);
-    editShowOctaveNum->setBounds ((proportionOfWidth (0.0084f) + roundToInt (proportionOfWidth (0.9843f) * 0.7205f)) + 0, (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0647f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowMidiNote->setBounds ((proportionOfWidth (0.0084f) + roundToInt (proportionOfWidth (0.9843f) * 0.7205f)) + 0, ((proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0647f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowScaleDegree->setBounds ((proportionOfWidth (0.0084f) + roundToInt (proportionOfWidth (0.9843f) * 0.7205f)) + 0, (((proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0647f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.0000f), 176, 24);
-    editGeneratorOffset->setBounds (proportionOfWidth (0.1234f), proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.2183f), 120, 24);
-    periodLbl->setBounds (proportionOfWidth (0.1224f) + -55, (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0674f)) + 0, 64, 24);
-    genLbl->setBounds (proportionOfWidth (0.1234f) + -81, (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.1456f)) + 0, 88, 24);
-    offsetLbl->setBounds (proportionOfWidth (0.1234f) + -56, (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.2183f)) + 0, 64, 24);
-    ScaleSize->setBounds (proportionOfWidth (0.1234f) + -82, (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.2911f)) + 0, 88, 24);
-    editRootSld->setBounds (proportionOfWidth (0.1234f), proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.3639f), 120, 24);
-    rootLbl->setBounds (proportionOfWidth (0.1234f) + -75, (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.3639f)) + 0, 80, 24);
-    label->setBounds (proportionOfWidth (0.3588f) + (roundToInt (proportionOfWidth (0.9843f) * 0.3326f)) / 2 - (112 / 2), (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0728f)) + -22, 112, 24);
-    editScaleFlip->setBounds (proportionOfWidth (0.1234f) + 120 - -3, (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.2183f)) + 0, roundToInt (proportionOfWidth (0.9843f) * 0.0702f), 24);
-    editBlankKeys->setBounds ((proportionOfWidth (0.0084f) + roundToInt (proportionOfWidth (0.9843f) * 0.7205f)) + 0, (((proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0647f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 2.3333f), 176, 24);
-    negateXBtn->setBounds (proportionOfWidth (0.1234f) + roundToInt (112 * 1.0982f), (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.1456f)) + roundToInt (24 * -0.2917f), 88, 24);
-    negateYBtn->setBounds (proportionOfWidth (0.1234f) + roundToInt (112 * 1.0982f), (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.1456f)) + roundToInt (24 * 0.7083f), 88, 24);
-    fractionalPeriodBox->setBounds (proportionOfWidth (0.1224f) + roundToInt (120 * 1.0667f), (proportionOfHeight (0.0233f) + roundToInt (proportionOfHeight (0.6637f) * 1.0674f)) + roundToInt (24 * 0.0000f), 80, 24);
+    keyboardView->setBounds (proportionOfWidth (0.0083f), proportionOfHeight (0.0228f), proportionOfWidth (0.9842f), proportionOfHeight (0.6640f));
+    editPeriod->setBounds (proportionOfWidth (0.1224f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0669f), 120, 24);
+    editGenerator->setBounds (proportionOfWidth (0.1231f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.1458f), 112, 24);
+    editKeyboard->setBounds (proportionOfWidth (0.1231f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.2916f), 112, 24);
+    editColorLayout->setBounds (proportionOfWidth (0.3589f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0720f), roundToInt (proportionOfWidth (0.9842f) * 0.3326f), 136);
+    editShowKeyNumber->setBounds (proportionOfWidth (0.0083f) + roundToInt (proportionOfWidth (0.9842f) * 0.7208f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0652f), 176, 24);
+    editShowOctaveNum->setBounds ((proportionOfWidth (0.0083f) + roundToInt (proportionOfWidth (0.9842f) * 0.7208f)) + 0, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0652f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowMidiNote->setBounds ((proportionOfWidth (0.0083f) + roundToInt (proportionOfWidth (0.9842f) * 0.7208f)) + 0, ((proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0652f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowScaleDegree->setBounds ((proportionOfWidth (0.0083f) + roundToInt (proportionOfWidth (0.9842f) * 0.7208f)) + 0, (((proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0652f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.0000f), 176, 24);
+    editGeneratorOffset->setBounds (proportionOfWidth (0.1231f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.2178f), 120, 24);
+    periodLbl->setBounds (proportionOfWidth (0.1224f) + -55, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0669f)) + 0, 64, 24);
+    genLbl->setBounds (proportionOfWidth (0.1231f) + -81, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.1458f)) + 0, 88, 24);
+    offsetLbl->setBounds (proportionOfWidth (0.1231f) + -56, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.2178f)) + 0, 64, 24);
+    ScaleSize->setBounds (proportionOfWidth (0.1231f) + -82, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.2916f)) + 0, 88, 24);
+    editRootSld->setBounds (proportionOfWidth (0.1231f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.3636f), 120, 24);
+    rootLbl->setBounds (proportionOfWidth (0.1231f) + -75, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.3636f)) + 0, 80, 24);
+    label->setBounds (proportionOfWidth (0.3589f) + (roundToInt (proportionOfWidth (0.9842f) * 0.3326f)) / 2 - (112 / 2), (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0720f)) + -22, 112, 24);
+    editScaleFlip->setBounds (proportionOfWidth (0.1231f) + 120 - -3, (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.2178f)) + 0, roundToInt (proportionOfWidth (0.9842f) * 0.0702f), 24);
+    editBlankKeys->setBounds ((proportionOfWidth (0.0083f) + roundToInt (proportionOfWidth (0.9842f) * 0.7208f)) + 0, (((proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0652f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 2.3333f), 176, 24);
+    negateXBtn->setBounds (proportionOfWidth (0.1231f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.1328f), 88, 24);
+    negateYBtn->setBounds (proportionOfWidth (0.1231f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.1784f), 88, 24);
+    fractionalPeriodBox->setBounds (proportionOfWidth (0.1224f) + roundToInt (120 * 1.0667f), (proportionOfHeight (0.0228f) + roundToInt (proportionOfHeight (0.6640f) * 1.0669f)) + roundToInt (24 * 0.0000f), 80, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -505,27 +505,27 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="f8a4a0ba2169ed5d" memberName="keyboardView"
-                    virtualName="" explicitFocusOrder="0" pos="0.826% 2.278% 98.423% 66.401%"
+                    virtualName="" explicitFocusOrder="0" pos="0.863% 2.27% 98.466% 66.456%"
                     class="KeyboardViewer" params="layout.get()"/>
   <SLIDER name="editPeriod" id="c9338955361b5253" memberName="editPeriod"
-          virtualName="" explicitFocusOrder="0" pos="12.237% 106.69% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="12.272% 106.641% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="3.0" max="400.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <COMBOBOX name="editGenerator" id="d2fccf87f53946cd" memberName="editGenerator"
-            virtualName="" explicitFocusOrder="0" pos="12.312% 114.58% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="12.272% 114.611% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="editKeyboard" id="363a9dc4b5eb4f63" memberName="editKeyboard"
-            virtualName="" explicitFocusOrder="0" pos="12.312% 129.16% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="12.272% 129.222% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <GENERICCOMPONENT name="new component" id="80741f8eece04bb7" memberName="editColorLayout"
-                    virtualName="" explicitFocusOrder="0" pos="35.886% 107.204% 33.257% 136"
+                    virtualName="" explicitFocusOrder="0" pos="35.858% 107.211% 33.301% 136"
                     posRelativeY="f8a4a0ba2169ed5d" posRelativeW="f8a4a0ba2169ed5d"
                     class="ListBox" params="&quot;Colour Selector&quot;, colourTableModel.get()"/>
   <TOGGLEBUTTON name="new toggle button" id="3fefe6b79e2bbe21" memberName="editShowKeyNumber"
-                virtualName="" explicitFocusOrder="0" pos="72.082% 106.518% 176 24"
+                virtualName="" explicitFocusOrder="0" pos="72.055% 106.452% 176 24"
                 posRelativeX="f8a4a0ba2169ed5d" posRelativeY="f8a4a0ba2169ed5d"
                 buttonText="Full Keyboard Number" connectedEdges="0" needsCallback="1"
                 radioGroupId="10" state="1"/>
@@ -544,7 +544,7 @@ BEGIN_JUCER_METADATA
                 posRelativeY="cd8f1afc15d93282" buttonText="Scale Degree" connectedEdges="0"
                 needsCallback="1" radioGroupId="10" state="0"/>
   <SLIDER name="editGeneratorOffset" id="cf8ed030b390dba8" memberName="editGeneratorOffset"
-          virtualName="" explicitFocusOrder="0" pos="12.312% 121.784% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="12.272% 121.822% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="-6.0" max="6.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
@@ -573,7 +573,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="editRootSld" id="c486bd0e1ff65df1" memberName="editRootSld"
-          virtualName="" explicitFocusOrder="0" pos="12.312% 136.364% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="12.272% 136.433% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="0.0" max="274.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
@@ -590,7 +590,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <TOGGLEBUTTON name="editScaleFlip" id="f9e862554b787aca" memberName="editScaleFlip"
-                virtualName="" explicitFocusOrder="0" pos="-3R 0 7.018% 24" posRelativeX="cf8ed030b390dba8"
+                virtualName="" explicitFocusOrder="0" pos="-3R 0 7.011% 24" posRelativeX="cf8ed030b390dba8"
                 posRelativeY="cf8ed030b390dba8" posRelativeW="f8a4a0ba2169ed5d"
                 buttonText="Flip" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
@@ -600,13 +600,13 @@ BEGIN_JUCER_METADATA
                 buttonText="Blank" connectedEdges="0" needsCallback="1" radioGroupId="10"
                 state="0"/>
   <TOGGLEBUTTON name="negateXBtn" id="fe6ffcda9917ff6" memberName="negateXBtn"
-                virtualName="" explicitFocusOrder="0" pos="109.821% -29.167% 88 24"
-                posRelativeX="d2fccf87f53946cd" posRelativeY="d2fccf87f53946cd"
+                virtualName="" explicitFocusOrder="0" pos="109.821% 113.283% 88 24"
+                posRelativeX="d2fccf87f53946cd" posRelativeY="f8a4a0ba2169ed5d"
                 buttonText="Negate X" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <TOGGLEBUTTON name="negateYBtn" id="91bd59afec743d5b" memberName="negateYBtn"
-                virtualName="" explicitFocusOrder="0" pos="109.821% 70.833% 88 24"
-                posRelativeX="d2fccf87f53946cd" posRelativeY="d2fccf87f53946cd"
+                virtualName="" explicitFocusOrder="0" pos="109.821% 117.837% 88 24"
+                posRelativeX="d2fccf87f53946cd" posRelativeY="f8a4a0ba2169ed5d"
                 buttonText="Negate Y" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <COMBOBOX name="fractionalPeriodBox" id="83ef104a8936f9d5" memberName="fractionalPeriodBox"
