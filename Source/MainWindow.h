@@ -119,12 +119,17 @@ private:
     std::unique_ptr<Label> ScaleSize;
     std::unique_ptr<Slider> editRootSld;
     std::unique_ptr<Label> rootLbl;
-    std::unique_ptr<Label> label;
+    std::unique_ptr<Label> colorSelectionLbl;
     std::unique_ptr<ToggleButton> editScaleFlip;
     std::unique_ptr<ToggleButton> editBlankKeys;
     std::unique_ptr<ToggleButton> negateXBtn;
     std::unique_ptr<ToggleButton> negateYBtn;
     std::unique_ptr<ComboBox> fractionalPeriodBox;
+    std::unique_ptr<ComboBox> modMosDegreeBox;
+    std::unique_ptr<Label> numPeriodsLabel;
+    std::unique_ptr<Label> modMosDegreeLbl;
+    std::unique_ptr<Slider> modMosChromaSld;
+    std::unique_ptr<Label> modMosChromaLbl;
 
 
     //==============================================================================

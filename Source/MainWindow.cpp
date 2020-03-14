@@ -151,14 +151,14 @@ MainWindow::MainWindow ()
     rootLbl->setColour (TextEditor::textColourId, Colours::black);
     rootLbl->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    label.reset (new Label ("new label",
-                            TRANS("Color Selection:")));
-    addAndMakeVisible (label.get());
-    label->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-    label->setJustificationType (Justification::centredLeft);
-    label->setEditable (false, false, false);
-    label->setColour (TextEditor::textColourId, Colours::black);
-    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    colorSelectionLbl.reset (new Label ("colorSelectionLbl",
+                                        TRANS("Color Selection\n")));
+    addAndMakeVisible (colorSelectionLbl.get());
+    colorSelectionLbl->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    colorSelectionLbl->setJustificationType (Justification::centredLeft);
+    colorSelectionLbl->setEditable (false, false, false);
+    colorSelectionLbl->setColour (TextEditor::textColourId, Colours::black);
+    colorSelectionLbl->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     editScaleFlip.reset (new ToggleButton ("editScaleFlip"));
     addAndMakeVisible (editScaleFlip.get());
@@ -189,6 +189,48 @@ MainWindow::MainWindow ()
     fractionalPeriodBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     fractionalPeriodBox->addItem (TRANS("1"), 1);
     fractionalPeriodBox->addListener (this);
+
+    modMosDegreeBox.reset (new ComboBox ("modMosDegreeBox"));
+    addAndMakeVisible (modMosDegreeBox.get());
+    modMosDegreeBox->setEditableText (false);
+    modMosDegreeBox->setJustificationType (Justification::centredLeft);
+    modMosDegreeBox->setTextWhenNothingSelected (String());
+    modMosDegreeBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    modMosDegreeBox->addListener (this);
+
+    numPeriodsLabel.reset (new Label ("numPeriodsLabel",
+                                      TRANS("Num Periods")));
+    addAndMakeVisible (numPeriodsLabel.get());
+    numPeriodsLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    numPeriodsLabel->setJustificationType (Justification::centredLeft);
+    numPeriodsLabel->setEditable (false, false, false);
+    numPeriodsLabel->setColour (TextEditor::textColourId, Colours::black);
+    numPeriodsLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    modMosDegreeLbl.reset (new Label ("modMosDegreeLbl",
+                                      TRANS("MODMOS Degree Selector")));
+    addAndMakeVisible (modMosDegreeLbl.get());
+    modMosDegreeLbl->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    modMosDegreeLbl->setJustificationType (Justification::centredLeft);
+    modMosDegreeLbl->setEditable (false, false, false);
+    modMosDegreeLbl->setColour (TextEditor::textColourId, Colours::black);
+    modMosDegreeLbl->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    modMosChromaSld.reset (new Slider ("modMosChromaSld"));
+    addAndMakeVisible (modMosChromaSld.get());
+    modMosChromaSld->setRange (-1, 1, 1);
+    modMosChromaSld->setSliderStyle (Slider::IncDecButtons);
+    modMosChromaSld->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    modMosChromaSld->addListener (this);
+
+    modMosChromaLbl.reset (new Label ("modMosChromaLbl",
+                                      TRANS("MODMOS Chroma Amount")));
+    addAndMakeVisible (modMosChromaLbl.get());
+    modMosChromaLbl->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    modMosChromaLbl->setJustificationType (Justification::centredLeft);
+    modMosChromaLbl->setEditable (false, false, false);
+    modMosChromaLbl->setColour (TextEditor::textColourId, Colours::black);
+    modMosChromaLbl->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
 
     //[UserPreSize]
@@ -235,12 +277,17 @@ MainWindow::~MainWindow()
     ScaleSize = nullptr;
     editRootSld = nullptr;
     rootLbl = nullptr;
-    label = nullptr;
+    colorSelectionLbl = nullptr;
     editScaleFlip = nullptr;
     editBlankKeys = nullptr;
     negateXBtn = nullptr;
     negateYBtn = nullptr;
     fractionalPeriodBox = nullptr;
+    modMosDegreeBox = nullptr;
+    numPeriodsLabel = nullptr;
+    modMosDegreeLbl = nullptr;
+    modMosChromaSld = nullptr;
+    modMosChromaLbl = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -266,27 +313,32 @@ void MainWindow::resized()
     //[/UserPreResize]
 
     keyboardView->setBounds (proportionOfWidth (0.0086f), proportionOfHeight (0.0227f), proportionOfWidth (0.9847f), proportionOfHeight (0.6646f));
-    editPeriod->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0664f), 120, 24);
+    editPeriod->setBounds (proportionOfWidth (0.1232f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0665f), 120, 24);
     editGenerator->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.1461f), 112, 24);
     editKeyboard->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.2922f), 112, 24);
-    editColorLayout->setBounds ((proportionOfWidth (0.1227f) + roundToInt (120 * 1.0667f)) + 91, proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0713f), roundToInt (proportionOfWidth (0.9847f) * 0.3330f), 136);
-    editShowKeyNumber->setBounds (proportionOfWidth (0.0086f) + roundToInt (proportionOfWidth (0.9847f) * 0.7206f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0645f), 176, 24);
-    editShowOctaveNum->setBounds ((proportionOfWidth (0.0086f) + roundToInt (proportionOfWidth (0.9847f) * 0.7206f)) + 0, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0645f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowMidiNote->setBounds ((proportionOfWidth (0.0086f) + roundToInt (proportionOfWidth (0.9847f) * 0.7206f)) + 0, ((proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0645f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowScaleDegree->setBounds ((proportionOfWidth (0.0086f) + roundToInt (proportionOfWidth (0.9847f) * 0.7206f)) + 0, (((proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0645f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.0000f), 176, 24);
+    editColorLayout->setBounds (proportionOfWidth (0.6180f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0690f), roundToInt (proportionOfWidth (0.9847f) * 0.1180f), 136);
+    editShowKeyNumber->setBounds (proportionOfWidth (0.7689f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0493f), 176, 24);
+    editShowOctaveNum->setBounds (proportionOfWidth (0.7689f) + 0, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0493f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowMidiNote->setBounds (proportionOfWidth (0.7689f) + 0, ((proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0493f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowScaleDegree->setBounds (proportionOfWidth (0.7689f) + 0, (((proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0493f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.0000f), 176, 24);
     editGeneratorOffset->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.2182f), 120, 24);
-    periodLbl->setBounds (proportionOfWidth (0.1227f) + -55, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0664f)) + 0, 64, 24);
+    periodLbl->setBounds (proportionOfWidth (0.1232f) + -55, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0665f)) + 0, 64, 24);
     genLbl->setBounds (proportionOfWidth (0.1227f) + -81, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.1461f)) + 0, 88, 24);
     offsetLbl->setBounds (proportionOfWidth (0.1227f) + -56, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.2182f)) + 0, 64, 24);
     ScaleSize->setBounds (proportionOfWidth (0.1227f) + -82, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.2922f)) + 0, 88, 24);
     editRootSld->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.3643f), 120, 24);
     rootLbl->setBounds (proportionOfWidth (0.1227f) + -75, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.3643f)) + 0, 80, 24);
-    label->setBounds (((proportionOfWidth (0.1227f) + roundToInt (120 * 1.0667f)) + 91) + (roundToInt (proportionOfWidth (0.9847f) * 0.3330f)) / 2 - (112 / 2), (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0713f)) + -22, 112, 24);
-    editScaleFlip->setBounds ((proportionOfWidth (0.1227f) + roundToInt (112 * 1.0982f)) + 88 - 86, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.1784f)) + 20, roundToInt (proportionOfWidth (0.9847f) * 0.0697f), 24);
-    editBlankKeys->setBounds ((proportionOfWidth (0.0086f) + roundToInt (proportionOfWidth (0.9847f) * 0.7206f)) + 0, (((proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0645f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 2.3333f), 176, 24);
-    negateXBtn->setBounds (proportionOfWidth (0.1227f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.1328f), 88, 24);
-    negateYBtn->setBounds (proportionOfWidth (0.1227f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.1784f), 88, 24);
-    fractionalPeriodBox->setBounds (proportionOfWidth (0.1227f) + roundToInt (120 * 1.0667f), (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0664f)) + roundToInt (24 * 0.0000f), 80, 24);
+    colorSelectionLbl->setBounds (proportionOfWidth (0.6180f) + (roundToInt (proportionOfWidth (0.9847f) * 0.1180f)) / 2 - (112 / 2), (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0690f)) + -22, 112, 24);
+    editScaleFlip->setBounds ((proportionOfWidth (0.1227f) + roundToInt (112 * 1.0982f)) + 88 - 86, (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.2611f)) + 41, roundToInt (proportionOfWidth (0.9847f) * 0.0700f), 24);
+    editBlankKeys->setBounds (proportionOfWidth (0.7689f) + 0, (((proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0493f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 2.3333f), 176, 24);
+    negateXBtn->setBounds (proportionOfWidth (0.1227f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.1601f), 88, 24);
+    negateYBtn->setBounds (proportionOfWidth (0.1227f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.2611f), 88, 24);
+    fractionalPeriodBox->setBounds (proportionOfWidth (0.1232f) + roundToInt (120 * 1.0667f), (proportionOfHeight (0.0227f) + roundToInt (proportionOfHeight (0.6646f) * 1.0665f)) + roundToInt (24 * 0.0000f), 80, 24);
+    modMosDegreeBox->setBounds (proportionOfWidth (0.4155f), 472, roundToInt (proportionOfWidth (0.9847f) * 0.1753f), 24);
+    numPeriodsLabel->setBounds ((proportionOfWidth (0.1232f) + roundToInt (120 * 1.0667f)) + 80 / 2 - (88 / 2), 424, 88, 24);
+    modMosDegreeLbl->setBounds (proportionOfWidth (0.4155f) + (roundToInt (proportionOfWidth (0.9847f) * 0.1753f)) / 2 - (176 / 2), 448, 176, 24);
+    modMosChromaSld->setBounds (proportionOfWidth (0.4155f), 536, roundToInt (proportionOfWidth (0.9847f) * 0.1753f), 24);
+    modMosChromaLbl->setBounds (proportionOfWidth (0.4155f) + (roundToInt (proportionOfWidth (0.9847f) * 0.1753f)) / 2 - (176 / 2), 512, 176, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -325,6 +377,11 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
 		layout->setRootKey(rootKey);
 		refreshKeyboardView();
         //[/UserSliderCode_editRootSld]
+    }
+    else if (sliderThatWasMoved == modMosChromaSld.get())
+    {
+        //[UserSliderCode_modMosChromaSld] -- add your slider handling code here..
+        //[/UserSliderCode_modMosChromaSld]
     }
 
     //[UsersliderValueChanged_Post]
@@ -367,6 +424,11 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		scaleStructure->setFractionalPeriodIndex(fractionalPeriods.indexOf(fractionalPeriod));
 		refreshSelections();
         //[/UserComboBoxCode_fractionalPeriodBox]
+    }
+    else if (comboBoxThatHasChanged == modMosDegreeBox.get())
+    {
+        //[UserComboBoxCode_modMosDegreeBox] -- add your combo box handling code here..
+        //[/UserComboBoxCode_modMosDegreeBox]
     }
 
     //[UsercomboBoxChanged_Post]
@@ -505,30 +567,29 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="f8a4a0ba2169ed5d" memberName="keyboardView"
-                    virtualName="" explicitFocusOrder="0" pos="0.915% 2.284% 98.513% 66.395%"
+                    virtualName="" explicitFocusOrder="0" pos="0.851% 2.291% 98.42% 66.448%"
                     class="KeyboardViewer" params="layout.get()"/>
   <SLIDER name="editPeriod" id="c9338955361b5253" memberName="editPeriod"
-          virtualName="" explicitFocusOrder="0" pos="12.243% 106.634% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="12.272% 106.65% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="3.0" max="400.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <COMBOBOX name="editGenerator" id="d2fccf87f53946cd" memberName="editGenerator"
-            virtualName="" explicitFocusOrder="0" pos="12.243% 114.496% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="12.272% 114.532% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="editKeyboard" id="363a9dc4b5eb4f63" memberName="editKeyboard"
-            virtualName="" explicitFocusOrder="0" pos="12.243% 129.238% 112 24"
+            virtualName="" explicitFocusOrder="0" pos="12.272% 129.31% 112 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <GENERICCOMPONENT name="new component" id="80741f8eece04bb7" memberName="editColorLayout"
-                    virtualName="" explicitFocusOrder="0" pos="91 107.125% 33.333% 136"
-                    posRelativeX="83ef104a8936f9d5" posRelativeY="f8a4a0ba2169ed5d"
-                    posRelativeW="f8a4a0ba2169ed5d" class="ListBox" params="&quot;Colour Selector&quot;, colourTableModel.get()"/>
+                    virtualName="" explicitFocusOrder="0" pos="61.847% 106.897% 11.852% 136"
+                    posRelativeY="f8a4a0ba2169ed5d" posRelativeW="f8a4a0ba2169ed5d"
+                    class="ListBox" params="&quot;Colour Selector&quot;, colourTableModel.get()"/>
   <TOGGLEBUTTON name="new toggle button" id="3fefe6b79e2bbe21" memberName="editShowKeyNumber"
-                virtualName="" explicitFocusOrder="0" pos="72.009% 106.388% 176 24"
-                posRelativeX="f8a4a0ba2169ed5d" posRelativeY="f8a4a0ba2169ed5d"
-                buttonText="Full Keyboard Number" connectedEdges="0" needsCallback="1"
-                radioGroupId="10" state="1"/>
+                virtualName="" explicitFocusOrder="0" pos="76.914% 104.926% 176 24"
+                posRelativeY="f8a4a0ba2169ed5d" buttonText="Full Keyboard Number"
+                connectedEdges="0" needsCallback="1" radioGroupId="10" state="1"/>
   <TOGGLEBUTTON name="new toggle button" id="d5902f532f1a13b4" memberName="editShowOctaveNum"
                 virtualName="" explicitFocusOrder="0" pos="0 133.333% 176 24"
                 posRelativeX="3fefe6b79e2bbe21" posRelativeY="3fefe6b79e2bbe21"
@@ -544,7 +605,7 @@ BEGIN_JUCER_METADATA
                 posRelativeY="cd8f1afc15d93282" buttonText="Scale Degree" connectedEdges="0"
                 needsCallback="1" radioGroupId="10" state="0"/>
   <SLIDER name="editGeneratorOffset" id="cf8ed030b390dba8" memberName="editGeneratorOffset"
-          virtualName="" explicitFocusOrder="0" pos="12.243% 121.867% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="12.272% 121.921% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="-6.0" max="6.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
@@ -573,7 +634,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="editRootSld" id="c486bd0e1ff65df1" memberName="editRootSld"
-          virtualName="" explicitFocusOrder="0" pos="12.243% 136.364% 120 24"
+          virtualName="" explicitFocusOrder="0" pos="12.272% 136.453% 120 24"
           posRelativeY="f8a4a0ba2169ed5d" min="0.0" max="274.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
@@ -583,14 +644,14 @@ BEGIN_JUCER_METADATA
          labelText="Root Key: " editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
-  <LABEL name="new label" id="9c0e28f4dfed6909" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="0Cc -22 112 24" posRelativeX="80741f8eece04bb7"
+  <LABEL name="colorSelectionLbl" id="9c0e28f4dfed6909" memberName="colorSelectionLbl"
+         virtualName="" explicitFocusOrder="0" pos="0Cc -22 112 24" posRelativeX="80741f8eece04bb7"
          posRelativeY="80741f8eece04bb7" edTextCol="ff000000" edBkgCol="0"
-         labelText="Color Selection:" editableSingleClick="0" editableDoubleClick="0"
+         labelText="Color Selection&#10;" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <TOGGLEBUTTON name="editScaleFlip" id="f9e862554b787aca" memberName="editScaleFlip"
-                virtualName="" explicitFocusOrder="0" pos="86R 20 6.969% 24"
+                virtualName="" explicitFocusOrder="0" pos="86R 41 7.037% 24"
                 posRelativeX="91bd59afec743d5b" posRelativeY="91bd59afec743d5b"
                 posRelativeW="f8a4a0ba2169ed5d" buttonText="Flip" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
@@ -600,12 +661,12 @@ BEGIN_JUCER_METADATA
                 buttonText="Blank" connectedEdges="0" needsCallback="1" radioGroupId="10"
                 state="0"/>
   <TOGGLEBUTTON name="negateXBtn" id="fe6ffcda9917ff6" memberName="negateXBtn"
-                virtualName="" explicitFocusOrder="0" pos="109.821% 113.268% 88 24"
+                virtualName="" explicitFocusOrder="0" pos="109.821% 116.01% 88 24"
                 posRelativeX="d2fccf87f53946cd" posRelativeY="f8a4a0ba2169ed5d"
                 buttonText="Negate X" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <TOGGLEBUTTON name="negateYBtn" id="91bd59afec743d5b" memberName="negateYBtn"
-                virtualName="" explicitFocusOrder="0" pos="109.821% 117.936% 88 24"
+                virtualName="" explicitFocusOrder="0" pos="109.821% 126.108% 88 24"
                 posRelativeX="d2fccf87f53946cd" posRelativeY="f8a4a0ba2169ed5d"
                 buttonText="Negate Y" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
@@ -613,6 +674,32 @@ BEGIN_JUCER_METADATA
             virtualName="" explicitFocusOrder="0" pos="106.667% 0% 80 24"
             posRelativeX="c9338955361b5253" posRelativeY="c9338955361b5253"
             editable="0" layout="33" items="1" textWhenNonSelected="1" textWhenNoItems="(no choices)"/>
+  <COMBOBOX name="modMosDegreeBox" id="5a7f5a9b8eb8c2f2" memberName="modMosDegreeBox"
+            virtualName="" explicitFocusOrder="0" pos="41.555% 472 17.531% 24"
+            posRelativeW="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
+            textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+  <LABEL name="numPeriodsLabel" id="f9ca9fdac9632f8f" memberName="numPeriodsLabel"
+         virtualName="" explicitFocusOrder="0" pos="0Cc 424 88 24" posRelativeX="83ef104a8936f9d5"
+         edTextCol="ff000000" edBkgCol="0" labelText="Num Periods" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="modMosDegreeLbl" id="e42659cd84f0c6e5" memberName="modMosDegreeLbl"
+         virtualName="" explicitFocusOrder="0" pos="0Cc 448 176 24" posRelativeX="5a7f5a9b8eb8c2f2"
+         edTextCol="ff000000" edBkgCol="0" labelText="MODMOS Degree Selector"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
+  <SLIDER name="modMosChromaSld" id="8eb8c5b5ca62ad94" memberName="modMosChromaSld"
+          virtualName="" explicitFocusOrder="0" pos="41.555% 536 17.531% 24"
+          posRelativeW="f8a4a0ba2169ed5d" min="-1.0" max="1.0" int="1.0"
+          style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <LABEL name="modMosChromaLbl" id="b7f7c7d3b2836124" memberName="modMosChromaLbl"
+         virtualName="" explicitFocusOrder="0" pos="0Cc 512 176 24" posRelativeX="8eb8c5b5ca62ad94"
+         edTextCol="ff000000" edBkgCol="0" labelText="MODMOS Chroma Amount"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
