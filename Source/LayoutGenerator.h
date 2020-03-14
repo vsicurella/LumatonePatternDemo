@@ -16,6 +16,8 @@ class LayoutHelper
     // Independent Properties   
 	int rootKey = 129;
 	bool flipScale = false;
+	bool negateX = false;
+	bool negateY = false;
 
 	Array<Colour>* scaleColours; // the colors chosen for the scale segments
 
@@ -53,6 +55,8 @@ class LayoutHelper
 	// Setters
 
 	void setRootKey(int rootKeyIn);
+	void setNegateX(bool doNegate);
+	void setNegateY(bool doNegate);
 	void setScaleFlipped(bool doFlip);
 
 	void addColour(Colour colorIn);

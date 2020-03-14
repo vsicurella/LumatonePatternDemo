@@ -70,10 +70,12 @@ void LayoutHelper::mapKeysToDegree()
 
 	Point<int> steps = structure->getCurrentStepSize();
 
+	if (negateX)
+		steps.setX(-steps.x);
+	if (negateY)
+		steps.setY(-steps.y);
 	if (flipScale)
-	{
 		steps.setXY(steps.y, steps.x);
-	}
 
 	int xSteps = 0;
 	int ySteps = 0;
@@ -155,6 +157,18 @@ Array<Colour>* LayoutHelper::getScaleColours()
 bool LayoutHelper::isScaleFlipped()
 {
 	return flipScale;
+}
+
+void LayoutHelper::setNegateX(bool doNegate)
+{
+	negateX = doNegate;
+	refresh();
+}
+
+void LayoutHelper::setNegateY(bool doNegate)
+{
+	negateY = doNegate;
+	refresh();
 }
 
 void LayoutHelper::setScaleFlipped(bool doFlip)

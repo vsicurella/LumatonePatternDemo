@@ -483,11 +483,13 @@ void MainWindow::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == negateXBtn.get())
     {
         //[UserButtonCode_negateXBtn] -- add your button handler code here..
+		layout->setNegateX(negateXBtn->getToggleState());
         //[/UserButtonCode_negateXBtn]
     }
     else if (buttonThatWasClicked == negateYBtn.get())
     {
         //[UserButtonCode_negateYBtn] -- add your button handler code here..
+		layout->setNegateY(negateYBtn->getToggleState());
         //[/UserButtonCode_negateYBtn]
     }
 
