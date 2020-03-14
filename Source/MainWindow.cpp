@@ -341,6 +341,10 @@ void MainWindow::resized()
     modMosChromaSld->setBounds (proportionOfWidth (0.4155f), 536, roundToInt (proportionOfWidth (0.9842f) * 0.1753f), 24);
     modMosChromaLbl->setBounds (proportionOfWidth (0.4155f) + (roundToInt (proportionOfWidth (0.9842f) * 0.1753f)) / 2 - (176 / 2), 512, 176, 24);
     //[UserResized] Add your own custom resize handling here..
+	
+	// update color box row heights
+	int idealHeight = editColorLayout->getHeight() / colourTableModel->getNumRows() * colourTableModel->getNumRows();
+	editColorLayout->setSize(editColorLayout->getWidth(), idealHeight);
     //[/UserResized]
 }
 
