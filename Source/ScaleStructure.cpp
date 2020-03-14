@@ -110,6 +110,7 @@ void ScaleStructure::resetToPeriod(int periodIn)
 	keyboardTypes.clear();
 	pgCoords.clear();
 	stepSizes.clear();
+	modmosProperties.clear();
 }
 
 void ScaleStructure::setFractionalPeriodIndex(int index)
@@ -136,6 +137,13 @@ void ScaleStructure::setGeneratorOffset(int offsetIn)
 	generatorOffset = offsetIn;
 	useSuggestedSizeGrouping();
 }
+
+void ScaleStructure::setMODMOSProperties(Array<Point<int>> modmosPropertiesIn)
+{
+	modmosProperties = modmosPropertiesIn;
+	fillSymmetricGrouping();
+}
+
 
 Point<int> ScaleStructure::getStepSizes(int kbdTypeIn) const
 {
@@ -169,10 +177,13 @@ Point<int> ScaleStructure::getCurrentStepSize() const
 
 void ScaleStructure::calculateProperties()
 {
+	// Clear all data dependent on Generator and Size choices
 	scaleSizes.clear();
 	keyboardTypes.clear();
 	pgCoords.clear();
+	modmosProperties.clear();
 
+	// Calculate properties of scale
     Array<int> cf = getContinuedFraction((double)validGenerators[generator] / (period / fractionalPeriods[fractionalPeriodSelected]));
 
 	// seed the sequence
@@ -272,10 +283,9 @@ void ScaleStructure::calculateGeneratorChain()
 	{
 		generatorChain.add(modulo(i * gen, fractionalPeriod));
 	}
-
 }
 
-void ScaleStructure::fillDegreeGroupings()
+void ScaleStructure::fillGroupingSymmetrically()
 {
 	degreeGroupings.clear();
 
@@ -339,7 +349,7 @@ void ScaleStructure::fillDegreeGroupings()
 	DBG(dbgstr);
 }
 
-void ScaleStructure::fillGroupingsSymmetrically()
+void ScaleStructure::fillSymmetricGrouping()
 {
 	int periodFactor = fractionalPeriods[fractionalPeriodSelected];
 	int fractionalPeriod = period / periodFactor;
@@ -361,6 +371,10 @@ void ScaleStructure::fillGroupingsSymmetrically()
 			indexOffset = modulo(indexOffset + 1, fractionalPeriod);
 		}
 	}
+
+	// Rearrange degrees if MODMOS properties exist
+	if (modmosProperties.size() > 0)
+		applyMODMOSProperties();
 
 	String dbgstr = "";
 	int size, sum = 0;
@@ -386,6 +400,40 @@ void ScaleStructure::fillGroupingsSymmetrically()
 
 	DBG("Degree groupings: ");
 	DBG(dbgstr);
+}
+
+void ScaleStructure::applyMODMOSProperties()
+{
+	Array<int> naturalScale = degreeGroupings[0];
+	naturalScale.sort();
+	int fractionalPeriod = period / fractionalPeriods[fractionalPeriodSelected];
+
+	for (auto alteration : modmosProperties)
+	{
+		// Get current properties
+		int naturalDegree = alteration.x;
+		int scaleDegree = naturalScale[naturalDegree];
+		int naturalGroupingIndex = degreeGroupings.getReference(0).indexOf(naturalDegree);
+
+		int amount = alteration.y;
+		int scaleSize = scaleSizes[currentSizeSelected];
+
+		// Find the altered scale degree
+		int newGeneratorIndex = modulo(generatorChain.indexOf(scaleDegree) + amount * scaleDegree, fractionalPeriod);
+		int alteredDegree = generatorChain[newGeneratorIndex];
+
+		// Swap the scale degrees in degreeGroupings
+		for (auto group : degreeGroupings)
+		{
+			if (group.contains(alteredDegree))
+			{
+				int indexToSwap = group.indexOf(alteredDegree);
+				degreeGroupings.getReference(0).set(naturalGroupingIndex, alteredDegree);
+				group.set(indexToSwap, naturalDegree);
+				continue;
+			}
+		}
+	}
 }
 
 
@@ -619,7 +667,7 @@ void ScaleStructure::useSuggestedSizeGrouping()
 		dbgstr += String(scaleSizes[sizeGroupings[i]]) + ", ";
 	DBG(dbgstr);
 
-	fillGroupingsSymmetrically();
+	fillSymmetricGrouping();
 }
 
 bool ScaleStructure::isValid() const

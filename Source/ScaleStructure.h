@@ -28,6 +28,7 @@ class ScaleStructure
 	Array<int> sizeGroupings;
 	Array<Array<int>> degreeGroupings;
 	Array<int> generatorChain;
+	Array<Point<int>> modmosProperties;
 
 	int fractionalPeriodSelected = 0;
 	int currentSizeSelected = -1;
@@ -36,8 +37,9 @@ class ScaleStructure
 	void calculateProperties();
 	void calculateStepSizes();
 	void calculateGeneratorChain();
-	void fillDegreeGroupings();
-	void fillGroupingsSymmetrically();
+	void fillGroupingSymmetrically();
+	void fillSymmetricGrouping();
+	void applyMODMOSProperties();
 
 public:
 
@@ -79,6 +81,13 @@ public:
 	void setGeneratorIndex(int index);
 	void setSizeIndex(int index);
 	void setGeneratorOffset(int offsetIn);
+
+	/*
+		Input a mapping of scale degrees and chroma alteration values. 
+		x of Point is a scale degree between 0 and scaleSize, in numerical order (not chain of generators)
+		y of Point is the amount of chroma alterations, usually +/- 1
+	*/
+	void setMODMOSProperties(Array<Point<int>> modmosPropertiesIn);
 
 	// returns the index whose generator is closest to a perfect fifth
 	int getSuggestedGeneratorIndex();
