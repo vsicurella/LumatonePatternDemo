@@ -68,6 +68,11 @@ public:
 
 	Array<int> getSizeGrouping() const;
     Array<Array<int>> getDegreeGroupings() const;
+
+	Array<Point<int>> getMODMOSProperties() const;
+	int naturalDegreeToScaleDegree(int naturalDegree) const;
+	int getAlterationOfDegree(int naturalDegree) const;
+	void setAlterationofDegree(int naturalDegree, int alteration);
     
     int getGeneratorIndex() const;
     int getSizeIndex() const;

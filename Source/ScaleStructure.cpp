@@ -160,6 +160,71 @@ Array<Array<int>> ScaleStructure::getDegreeGroupings() const
     return degreeGroupings;
 }
 
+Array<Point<int>> ScaleStructure::getMODMOSProperties() const
+{
+	return modmosProperties;
+}
+
+int ScaleStructure::naturalDegreeToScaleDegree(int naturalDegree) const
+{
+	naturalDegree = modulo(naturalDegree, scaleSizes[currentSizeSelected]);
+	Array<int> naturalScale = degreeGroupings[0];
+	naturalScale.sort();
+
+	return naturalScale[naturalDegree];
+}
+
+int ScaleStructure::getAlterationOfDegree(int naturalDegree) const
+{
+	for (auto alteration : modmosProperties)
+	{
+		if (alteration.x == naturalDegree)
+		{
+			return alteration.y;
+		}
+	}
+
+	return 0;
+}
+
+void ScaleStructure::setAlterationofDegree(int naturalDegree, int alteration)
+{
+	int currentAlteration = getAlterationOfDegree(naturalDegree);
+
+	// Apply new MODMOS property
+	if (currentAlteration != alteration)
+	{
+		int index = modmosProperties.indexOf(Point<int>(naturalDegree, currentAlteration));
+
+		if (alteration == 0 && index >= 0)
+		{
+			modmosProperties.removeRange(index, 1);
+		}
+		else
+		{
+			if (index < 0)
+			{
+				modmosProperties.add(Point<int>(naturalDegree, alteration));
+			}
+			else
+			{
+				modmosProperties.set(index, Point<int>(naturalDegree, alteration));
+			}
+		}
+
+		String dbgstr = "";
+
+		for (auto alteration : modmosProperties)
+		{
+			dbgstr += alteration.toString() + '\n';
+		}
+		DBG("MODMOS Properties:\n" + dbgstr);
+	}
+
+	fillSymmetricGrouping();
+}
+
+
 int ScaleStructure::getGeneratorIndex() const
 {
     return generator;
@@ -402,6 +467,10 @@ void ScaleStructure::fillSymmetricGrouping()
 	DBG(dbgstr);
 }
 
+// TODO: Fix issues with generator offsets (modes).
+//		- This algorithm finds and uses absolute degrees, which get affected by generator offset
+//		- The proper solution would be to use relative degrees within the groups
+//		- AKA swap values of degreeGrouping indicies, rather than values of generatorChain indicies
 void ScaleStructure::applyMODMOSProperties()
 {
 	Array<int> naturalScale = degreeGroupings[0];
@@ -413,23 +482,28 @@ void ScaleStructure::applyMODMOSProperties()
 		// Get current properties
 		int naturalDegree = alteration.x;
 		int scaleDegree = naturalScale[naturalDegree];
-		int naturalGroupingIndex = degreeGroupings.getReference(0).indexOf(naturalDegree);
+		int naturalGroupingIndex = degreeGroupings.getReference(0).indexOf(scaleDegree);
 
 		int amount = alteration.y;
 		int scaleSize = scaleSizes[currentSizeSelected];
 
 		// Find the altered scale degree
-		int newGeneratorIndex = modulo(generatorChain.indexOf(scaleDegree) + amount * scaleDegree, fractionalPeriod);
+		int originalChainIndex = generatorChain.indexOf(scaleDegree);
+		int shiftAmount = amount * scaleSize;
+		int shiftedIndex = generatorChain.indexOf(scaleDegree) + amount * scaleSize;
+		int newGeneratorIndex = modulo(generatorChain.indexOf(scaleDegree) + amount * scaleSize, fractionalPeriod);
 		int alteredDegree = generatorChain[newGeneratorIndex];
 
 		// Swap the scale degrees in degreeGroupings
-		for (auto group : degreeGroupings)
+		for (int i = 0; i < degreeGroupings.size(); i++)
 		{
+			Array<int>& group = degreeGroupings.getReference(i);
+
 			if (group.contains(alteredDegree))
 			{
 				int indexToSwap = group.indexOf(alteredDegree);
 				degreeGroupings.getReference(0).set(naturalGroupingIndex, alteredDegree);
-				group.set(indexToSwap, naturalDegree);
+				group.set(indexToSwap, scaleDegree);
 				continue;
 			}
 		}
