@@ -67,12 +67,12 @@ private:
 	std::unique_ptr<ColourTableModel> colourTableModel;
 
 	Array<int> fractionalPeriods;
-    Array<int> validGenerators;
+    Array<int> coprimeGenerators;
     Array<int> validSizes;
 
 	int period = 12;
 	int fractionalPeriod = 1;
-	int generator = 2;
+	int generator = 7;
 	int genOffset = -1;
 	int size = 4;
 	int rootKey = 129;

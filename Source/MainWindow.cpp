@@ -249,7 +249,7 @@ MainWindow::MainWindow ()
 	// Default values
 	editRootSld->setValue(129);
 	editPeriod->setValue(12);
-	editGenerator->setSelectedId(7);
+	editGeneratorSld->setValue(7);
 	editKeyboard->setSelectedId(4);
 	editGeneratorOffset->setValue(-1);
 	DBG("MAIN WINDOW: Done. Moving on.");
@@ -392,6 +392,16 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == editGeneratorSld.get())
     {
         //[UserSliderCode_editGeneratorSld] -- add your slider handling code here..
+		generator = editGeneratorSld->getValue();
+		DBG("Generator box has changed, generator is " + String(generator));
+		scaleStructure->setGenerator(generator);
+		validSizes = scaleStructure->getScaleSizes();
+
+		refreshSelections(false);
+
+		size = scaleStructure->getSuggestedSizeIndex();
+		DBG("Suggested scale size: Index = " + String(size) + "\tValue = " + String(validSizes[size]));
+		editKeyboard->setSelectedId(size + 1, dontSendNotification);
         //[/UserSliderCode_editGeneratorSld]
     }
 
@@ -503,11 +513,6 @@ void MainWindow::buttonClicked (Button* buttonThatWasClicked)
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void MainWindow::refreshPeriods()
 {
-	fractionalPeriodBox->clear(dontSendNotification);
-	fractionalPeriods = scaleStructure->getFractionalPeriods();
-	for (int i = 0; i < fractionalPeriods.size(); i++)
-		fractionalPeriodBox->addItem(String(fractionalPeriods[i]), fractionalPeriods[i]);
-
 	modMosChromaSld->setRange(-period, period, 1);
 }
 
@@ -515,28 +520,28 @@ void MainWindow::refreshSelections(bool recalculateGenerators)
 {
     if (recalculateGenerators)
     {
-        editGenerator->clear(dontSendNotification);
-        validGenerators = scaleStructure->getValidGenerators();
-        for (int i = 0; i < validGenerators.size(); i++)
-        {
-            editGenerator->addItem(String(validGenerators[i]), i+1);
-        }
+		editGeneratorSld->setRange(1, period - 1, 1);
+        coprimeGenerators = scaleStructure->getCoprimeGenerators();
 
-        generator = scaleStructure->getSuggestedGeneratorIndex();
-		DBG("Suggested generator: Index = " + String(generator) + "\tValue = " + String(validGenerators[generator]));
-		editGenerator->setSelectedId(generator+1, dontSendNotification);
+		// TODO
+		if (false /* use only coprime generators */)
+		{
+			for (int i = 0; i < coprimeGenerators.size(); i++)
+			{
+				// editGenerator->addItem(String(coprimeGenerators[i]), i + 1);
+			}
+		}
+
+        generator = scaleStructure->getSuggestedGenerator();
+		DBG("Suggested generator: " + String(generator));
+		editGeneratorSld->setValue(generator + 1, dontSendNotification);
 
 		DBG("Updating Generator Offsets and Keyboard Sizes");
-		// update gen offset range
-		if (editGenerator->getSelectedId() > 0)
-		{
-			int max = validGenerators[editGenerator->getSelectedId() - 1];
-			editGeneratorOffset->setRange(-max, max, 1);
-		}
+		editGeneratorOffset->setRange(-period + 1, 0, 1);
 
 		DBG("MAIN WINDOW: finished recalulating generators");
 		// gets called again when generator is set
-        comboBoxChanged(editGenerator.get());
+        sliderValueChanged(editGeneratorSld.get());
 		return;
     }
 
