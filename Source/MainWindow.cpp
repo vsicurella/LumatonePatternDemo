@@ -244,7 +244,7 @@ MainWindow::MainWindow ()
     //[Constructor] You can add your own custom stuff here..
 	DBG("MAIN WINDOW: Setting default values...");
 	// Default values
-	editRootSld->setValue(129);
+	editRootSld->setValue(135);
 	editPeriod->setValue(12);
 	editGeneratorSld->setValue(7);
 	editKeyboard->setSelectedId(4);
