@@ -44,7 +44,7 @@ MainWindow::MainWindow ()
     addAndMakeVisible (editPeriod.get());
     editPeriod->setRange (3, 400, 1);
     editPeriod->setSliderStyle (Slider::IncDecButtons);
-    editPeriod->setTextBoxStyle (Slider::TextBoxLeft, false, 60, 20);
+    editPeriod->setTextBoxStyle (Slider::TextBoxLeft, false, 50, 20);
     editPeriod->addListener (this);
 
     editKeyboard.reset (new ComboBox ("editKeyboard"));
@@ -88,7 +88,7 @@ MainWindow::MainWindow ()
     addAndMakeVisible (editGeneratorOffset.get());
     editGeneratorOffset->setRange (-6, 6, 1);
     editGeneratorOffset->setSliderStyle (Slider::IncDecButtons);
-    editGeneratorOffset->setTextBoxStyle (Slider::TextBoxLeft, false, 60, 20);
+    editGeneratorOffset->setTextBoxStyle (Slider::TextBoxLeft, false, 50, 20);
     editGeneratorOffset->addListener (this);
 
     periodLbl.reset (new Label ("new label",
@@ -131,7 +131,7 @@ MainWindow::MainWindow ()
     addAndMakeVisible (editRootSld.get());
     editRootSld->setRange (0, 274, 1);
     editRootSld->setSliderStyle (Slider::IncDecButtons);
-    editRootSld->setTextBoxStyle (Slider::TextBoxLeft, false, 60, 20);
+    editRootSld->setTextBoxStyle (Slider::TextBoxLeft, false, 50, 20);
     editRootSld->addListener (this);
 
     rootLbl.reset (new Label ("new label",
@@ -203,7 +203,7 @@ MainWindow::MainWindow ()
     addAndMakeVisible (modMosChromaSld.get());
     modMosChromaSld->setRange (-10, 10, 1);
     modMosChromaSld->setSliderStyle (Slider::IncDecButtons);
-    modMosChromaSld->setTextBoxStyle (Slider::TextBoxLeft, false, 60, 20);
+    modMosChromaSld->setTextBoxStyle (Slider::TextBoxLeft, false, 50, 20);
     modMosChromaSld->addListener (this);
 
     modMosChromaLbl.reset (new Label ("modMosChromaLbl",
@@ -228,7 +228,7 @@ MainWindow::MainWindow ()
     addAndMakeVisible (editGeneratorSld.get());
     editGeneratorSld->setRange (1, 11, 1);
     editGeneratorSld->setSliderStyle (Slider::IncDecButtons);
-    editGeneratorSld->setTextBoxStyle (Slider::TextBoxLeft, false, 60, 20);
+    editGeneratorSld->setTextBoxStyle (Slider::TextBoxLeft, false, 50, 20);
     editGeneratorSld->addListener (this);
 
 
@@ -314,32 +314,32 @@ void MainWindow::resized()
     //[/UserPreResize]
 
     keyboardView->setBounds (proportionOfWidth (0.0090f), proportionOfHeight (0.0228f), proportionOfWidth (0.9835f), proportionOfHeight (0.6640f));
-    editPeriod->setBounds (proportionOfWidth (0.1697f) - (proportionOfWidth (0.0901f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -37, proportionOfWidth (0.0901f), 24);
-    editKeyboard->setBounds (proportionOfWidth (0.1697f) - (proportionOfWidth (0.0901f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -117, proportionOfWidth (0.0901f), 24);
-    editColorLayout->setBounds (proportionOfWidth (0.6791f) - ((roundToInt (proportionOfWidth (0.9835f) * 0.1183f)) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -37, roundToInt (proportionOfWidth (0.9835f) * 0.1183f), 136);
-    editShowKeyNumber->setBounds (proportionOfWidth (0.8709f) - (176 / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -40, 176, 24);
-    editShowOctaveNum->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -40) + 27, 176, 24);
-    editShowMidiNote->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, ((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -40) + 27) + 27, 176, 24);
-    editShowScaleDegree->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, (((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -40) + 27) + 27) + 27, 176, 24);
-    editGeneratorOffset->setBounds (proportionOfWidth (0.3352f) - (proportionOfWidth (0.0893f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -76, proportionOfWidth (0.0893f), 24);
-    periodLbl->setBounds ((proportionOfWidth (0.1697f) - (proportionOfWidth (0.0901f) / 2)) + -55, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -37) + 0, 64, 24);
-    genLbl->setBounds ((proportionOfWidth (0.1697f) - (proportionOfWidth (0.0901f) / 2)) + -80, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -77) + 0, 88, 24);
-    offsetLbl->setBounds ((proportionOfWidth (0.3352f) - (proportionOfWidth (0.0893f) / 2)) + -56, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -76) + 0, 64, 24);
-    ScaleSize->setBounds ((proportionOfWidth (0.1697f) - (proportionOfWidth (0.0901f) / 2)) + -82, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -117) + 0, 88, 24);
-    editRootSld->setBounds (proportionOfWidth (0.1697f) - (proportionOfWidth (0.0901f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -157, proportionOfWidth (0.0901f), 24);
-    rootLbl->setBounds ((proportionOfWidth (0.1697f) - (proportionOfWidth (0.0901f) / 2)) + -75, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -157) + 0, 80, 24);
-    colorSelectionLbl->setBounds ((proportionOfWidth (0.6791f) - ((roundToInt (proportionOfWidth (0.9835f) * 0.1183f)) / 2)) + (roundToInt (proportionOfWidth (0.9835f) * 0.1183f)) / 2 - (112 / 2), (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -37) + -24, 112, 24);
-    editScaleFlip->setBounds (((proportionOfWidth (0.2853f) - (88 / 2)) + roundToInt (88 * 0.0000f)) + 0, ((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -112) + roundToInt (24 * 1.1667f)) + 28, roundToInt (proportionOfWidth (0.9835f) * 0.0702f), 24);
-    editBlankKeys->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, ((((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -40) + 27) + 27) + 27) + 27, 176, 24);
-    negateXBtn->setBounds (proportionOfWidth (0.2853f) - (88 / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -112, 88, 24);
-    negateYBtn->setBounds ((proportionOfWidth (0.2853f) - (88 / 2)) + roundToInt (88 * 0.0000f), (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -112) + roundToInt (24 * 1.1667f), 88, 24);
-    modMosDegreeBox->setBounds (proportionOfWidth (0.5000f) - (proportionOfWidth (0.0886f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -61, proportionOfWidth (0.0886f), 24);
-    numPeriodsLabel->setBounds (proportionOfWidth (0.2462f), ((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -37) + 0) + 0, 88, 24);
-    modMosDegreeLbl->setBounds ((proportionOfWidth (0.5000f) - (proportionOfWidth (0.0886f) / 2)) + proportionOfWidth (0.0886f) / 2 - (176 / 2), (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -61) + 24 - 56, 176, 24);
-    modMosChromaSld->setBounds (proportionOfWidth (0.4989f) - ((roundToInt (proportionOfWidth (0.9835f) * 0.1092f)) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -125, roundToInt (proportionOfWidth (0.9835f) * 0.1092f), 24);
-    modMosChromaLbl->setBounds ((proportionOfWidth (0.4989f) - ((roundToInt (proportionOfWidth (0.9835f) * 0.1092f)) / 2)) + (roundToInt (proportionOfWidth (0.9835f) * 0.1092f)) / 2 - (176 / 2), (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -125) + -32, 176, 24);
-    numPeriodsValue->setBounds (proportionOfWidth (0.2462f) + 84, (((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -37) + 0) + 0) + 0, 52, 24);
-    editGeneratorSld->setBounds (proportionOfWidth (0.1697f) - (proportionOfWidth (0.0901f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -77, proportionOfWidth (0.0901f), 24);
+    editPeriod->setBounds (proportionOfWidth (0.1764f) - (proportionOfWidth (0.1036f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -21, proportionOfWidth (0.1036f), 24);
+    editKeyboard->setBounds (proportionOfWidth (0.1764f) - (proportionOfWidth (0.1036f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -101, proportionOfWidth (0.1036f), 24);
+    editColorLayout->setBounds (proportionOfWidth (0.6750f) - ((roundToInt (proportionOfWidth (0.9835f) * 0.1183f)) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -36, roundToInt (proportionOfWidth (0.9835f) * 0.1183f), 136);
+    editShowKeyNumber->setBounds (proportionOfWidth (0.8709f) - (176 / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -24, 176, 24);
+    editShowOctaveNum->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -24) + 27, 176, 24);
+    editShowMidiNote->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, ((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -24) + 27) + 27, 176, 24);
+    editShowScaleDegree->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, (((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -24) + 27) + 27) + 27, 176, 24);
+    editGeneratorOffset->setBounds (proportionOfWidth (0.3352f) - (proportionOfWidth (0.1036f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -60, proportionOfWidth (0.1036f), 24);
+    periodLbl->setBounds ((proportionOfWidth (0.1764f) - (proportionOfWidth (0.1036f) / 2)) + -55, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -21) + 0, 64, 24);
+    genLbl->setBounds ((proportionOfWidth (0.1764f) - (proportionOfWidth (0.1036f) / 2)) + -80, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -61) + 0, 88, 24);
+    offsetLbl->setBounds ((proportionOfWidth (0.3352f) - (proportionOfWidth (0.1036f) / 2)) + -56, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -60) + 0, 64, 24);
+    ScaleSize->setBounds ((proportionOfWidth (0.1764f) - (proportionOfWidth (0.1036f) / 2)) + -82, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -101) + 0, 88, 24);
+    editRootSld->setBounds (proportionOfWidth (0.1764f) - (proportionOfWidth (0.1036f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -141, proportionOfWidth (0.1036f), 24);
+    rootLbl->setBounds ((proportionOfWidth (0.1764f) - (proportionOfWidth (0.1036f) / 2)) + -75, (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -141) + 0, 80, 24);
+    colorSelectionLbl->setBounds ((proportionOfWidth (0.6750f) - ((roundToInt (proportionOfWidth (0.9835f) * 0.1183f)) / 2)) + (roundToInt (proportionOfWidth (0.9835f) * 0.1183f)) / 2 - (112 / 2), (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -36) + -24, 112, 24);
+    editScaleFlip->setBounds (((proportionOfWidth (0.2853f) - (88 / 2)) + roundToInt (88 * 0.0000f)) + 0, ((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -96) + roundToInt (24 * 1.1667f)) + 28, roundToInt (proportionOfWidth (0.9835f) * 0.0702f), 24);
+    editBlankKeys->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, ((((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -24) + 27) + 27) + 27) + 27, 176, 24);
+    negateXBtn->setBounds (proportionOfWidth (0.2853f) - (88 / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -96, 88, 24);
+    negateYBtn->setBounds ((proportionOfWidth (0.2853f) - (88 / 2)) + roundToInt (88 * 0.0000f), (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -96) + roundToInt (24 * 1.1667f), 88, 24);
+    modMosDegreeBox->setBounds (proportionOfWidth (0.5000f) - (proportionOfWidth (0.0886f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -45, proportionOfWidth (0.0886f), 24);
+    numPeriodsLabel->setBounds (proportionOfWidth (0.2462f), ((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -21) + 0) + 0, 88, 24);
+    modMosDegreeLbl->setBounds ((proportionOfWidth (0.5000f) - (proportionOfWidth (0.0886f) / 2)) + proportionOfWidth (0.0886f) / 2 - (176 / 2), (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -45) + 24 - 56, 176, 24);
+    modMosChromaSld->setBounds (proportionOfWidth (0.5000f) - ((roundToInt (proportionOfWidth (0.9835f) * 0.1036f)) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -109, roundToInt (proportionOfWidth (0.9835f) * 0.1036f), 24);
+    modMosChromaLbl->setBounds ((proportionOfWidth (0.5000f) - ((roundToInt (proportionOfWidth (0.9835f) * 0.1036f)) / 2)) + (roundToInt (proportionOfWidth (0.9835f) * 0.1036f)) / 2 - (176 / 2), (proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -109) + -32, 176, 24);
+    numPeriodsValue->setBounds (proportionOfWidth (0.2462f) + 84, (((proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -21) + 0) + 0) + 0, 52, 24);
+    editGeneratorSld->setBounds (proportionOfWidth (0.1764f) - (proportionOfWidth (0.1036f) / 2), proportionOfHeight (0.0228f) + proportionOfHeight (0.6640f) - -61, proportionOfWidth (0.1036f), 24);
     //[UserResized] Add your own custom resize handling here..
 
 	// update color box row heights
@@ -370,7 +370,7 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_editGeneratorOffset] -- add your slider handling code here..
 		genOffset = editGeneratorOffset->getValue();
-		scaleStructure->setGeneratorOffset(genOffset); 
+		scaleStructure->setGeneratorOffset(genOffset);
 		refreshKeyboardView();
         //[/UserSliderCode_editGeneratorOffset]
     }
@@ -414,7 +414,7 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		DBG("Scale size has changed to size " + String(sizeValue));
 		sizeIndex = editKeyboard->getSelectedId() - 1;
 		scaleStructure->setSizeIndex(sizeIndex);
-		
+
 		if (sizeValue > 1)
 			editGeneratorOffset->setRange(-sizeValue + 1, 0, 1);
 		else
@@ -586,20 +586,20 @@ BEGIN_JUCER_METADATA
                     virtualName="" explicitFocusOrder="0" pos="0.901% 2.278% 98.348% 66.401%"
                     class="KeyboardViewer" params="layout.get()"/>
   <SLIDER name="editPeriod" id="c9338955361b5253" memberName="editPeriod"
-          virtualName="" explicitFocusOrder="0" pos="16.967%c -37R 9.009% 24"
+          virtualName="" explicitFocusOrder="0" pos="17.643%c -21R 10.36% 24"
           posRelativeY="f8a4a0ba2169ed5d" min="3.0" max="400.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <COMBOBOX name="editKeyboard" id="363a9dc4b5eb4f63" memberName="editKeyboard"
-            virtualName="" explicitFocusOrder="0" pos="16.967%c -117R 9.009% 24"
+            virtualName="" explicitFocusOrder="0" pos="17.643%c -101R 10.36% 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <GENERICCOMPONENT name="new component" id="80741f8eece04bb7" memberName="editColorLayout"
-                    virtualName="" explicitFocusOrder="0" pos="67.755%c -37R 11.832% 136"
+                    virtualName="" explicitFocusOrder="0" pos="67.38%c -36R 11.832% 136"
                     posRelativeY="f8a4a0ba2169ed5d" posRelativeW="f8a4a0ba2169ed5d"
                     class="ListBox" params="&quot;Colour Selector&quot;, colourTableModel.get()"/>
   <TOGGLEBUTTON name="new toggle button" id="3fefe6b79e2bbe21" memberName="editShowKeyNumber"
-                virtualName="" explicitFocusOrder="0" pos="87.087%c -40R 176 24"
+                virtualName="" explicitFocusOrder="0" pos="87.087%c -24R 176 24"
                 posRelativeY="f8a4a0ba2169ed5d" buttonText="Full Keyboard Number"
                 connectedEdges="0" needsCallback="1" radioGroupId="10" state="1"/>
   <TOGGLEBUTTON name="new toggle button" id="d5902f532f1a13b4" memberName="editShowOctaveNum"
@@ -615,10 +615,10 @@ BEGIN_JUCER_METADATA
                 posRelativeY="cd8f1afc15d93282" buttonText="Scale Degree" connectedEdges="0"
                 needsCallback="1" radioGroupId="10" state="0"/>
   <SLIDER name="editGeneratorOffset" id="cf8ed030b390dba8" memberName="editGeneratorOffset"
-          virtualName="" explicitFocusOrder="0" pos="33.521%c -76R 8.934% 24"
+          virtualName="" explicitFocusOrder="0" pos="33.483%c -60R 10.36% 24"
           posRelativeY="f8a4a0ba2169ed5d" min="-6.0" max="6.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="new label" id="8b29c2f0ff851665" memberName="periodLbl"
          virtualName="" explicitFocusOrder="0" pos="-55 0 64 24" posRelativeX="c9338955361b5253"
          posRelativeY="c9338955361b5253" edTextCol="ff000000" edBkgCol="0"
@@ -644,10 +644,10 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="editRootSld" id="c486bd0e1ff65df1" memberName="editRootSld"
-          virtualName="" explicitFocusOrder="0" pos="16.967%c -157R 9.009% 24"
+          virtualName="" explicitFocusOrder="0" pos="17.643%c -141R 10.36% 24"
           posRelativeY="f8a4a0ba2169ed5d" min="0.0" max="274.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="new label" id="c3f7dd0f5b81a1e9" memberName="rootLbl" virtualName=""
          explicitFocusOrder="0" pos="-75 0 80 24" posRelativeX="c486bd0e1ff65df1"
          posRelativeY="c486bd0e1ff65df1" edTextCol="ff000000" edBkgCol="0"
@@ -670,7 +670,7 @@ BEGIN_JUCER_METADATA
                 posRelativeY="90354e3468042d3e" buttonText="Blank" connectedEdges="0"
                 needsCallback="1" radioGroupId="10" state="0"/>
   <TOGGLEBUTTON name="negateXBtn" id="fe6ffcda9917ff6" memberName="negateXBtn"
-                virtualName="" explicitFocusOrder="0" pos="28.529%c -112R 88 24"
+                virtualName="" explicitFocusOrder="0" pos="28.529%c -96R 88 24"
                 posRelativeY="f8a4a0ba2169ed5d" buttonText="Negate X" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="negateYBtn" id="91bd59afec743d5b" memberName="negateYBtn"
@@ -679,7 +679,7 @@ BEGIN_JUCER_METADATA
                 buttonText="Negate Y" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <COMBOBOX name="modMosDegreeBox" id="5a7f5a9b8eb8c2f2" memberName="modMosDegreeBox"
-            virtualName="" explicitFocusOrder="0" pos="50%c -61R 8.859% 24"
+            virtualName="" explicitFocusOrder="0" pos="50%c -45R 8.859% 24"
             posRelativeY="f8a4a0ba2169ed5d" editable="0" layout="33" items=""
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <LABEL name="numPeriodsLabel" id="f9ca9fdac9632f8f" memberName="numPeriodsLabel"
@@ -694,10 +694,10 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="modMosChromaSld" id="8eb8c5b5ca62ad94" memberName="modMosChromaSld"
-          virtualName="" explicitFocusOrder="0" pos="49.812%c -125R 10.916% 24"
+          virtualName="" explicitFocusOrder="0" pos="49.925%c -109R 10.382% 24"
           posRelativeY="f8a4a0ba2169ed5d" posRelativeW="f8a4a0ba2169ed5d"
           min="-10.0" max="10.0" int="1.0" style="IncDecButtons" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="60" textBoxHeight="20" skewFactor="1.0"
+          textBoxEditable="1" textBoxWidth="50" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <LABEL name="modMosChromaLbl" id="b7f7c7d3b2836124" memberName="modMosChromaLbl"
          virtualName="" explicitFocusOrder="0" pos="0Cc -32 176 24" posRelativeX="8eb8c5b5ca62ad94"
@@ -712,10 +712,10 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="editGeneratorSld" id="47c080d0f31dbabc" memberName="editGeneratorSld"
-          virtualName="" explicitFocusOrder="0" pos="16.967%c -77R 9.009% 24"
+          virtualName="" explicitFocusOrder="0" pos="17.643%c -61R 10.36% 24"
           posRelativeY="f8a4a0ba2169ed5d" min="1.0" max="11.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="60" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+          textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
