@@ -72,7 +72,7 @@ private:
     Array<int> validSizes;
 
 	int period = 12;
-	int fractionalPeriod = 1;
+	int numPeriods = 1;
 	int generator = 7;
 	int genOffset = -1;
 	int sizeIndex = 4;

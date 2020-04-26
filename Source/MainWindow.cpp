@@ -410,10 +410,11 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     if (comboBoxThatHasChanged == editKeyboard.get())
     {
         //[UserComboBoxCode_editKeyboard] -- add your combo box handling code here..
-		sizeValue = validSizes[sizeIndex];
-		DBG("Scale size has changed to size " + String(sizeValue));
 		sizeIndex = editKeyboard->getSelectedId() - 1;
 		scaleStructure->setSizeIndex(sizeIndex);
+
+		sizeValue = validSizes[sizeIndex];
+		DBG("Scale size has changed to size " + String(sizeValue));
 
 		if (sizeValue > 1)
 			editGeneratorOffset->setRange(-sizeValue + 1, 0, 1);
@@ -422,7 +423,7 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 
 		// Update modmos degree box to have 'size' amount of degrees
 		modMosDegreeBox->clear(dontSendNotification);
-		for (int i = 0; i < sizeValue * fractionalPeriod; i++)
+		for (int i = 0; i < sizeValue * numPeriods; i++)
 		{
 			modMosDegreeBox->addItem(String(i + 1), i + 1);
 		}
@@ -538,7 +539,8 @@ void MainWindow::onGeneratorChange()
 	DBG("Generator box has changed, generator is " + String(generator));
 	scaleStructure->setGenerator(generator);
 
-	numPeriodsValue->setText(String(scaleStructure->getNumPeriods()), dontSendNotification);
+	numPeriods = scaleStructure->getNumPeriods();
+	numPeriodsValue->setText(String(numPeriods), dontSendNotification);
 
 	validSizes = scaleStructure->getScaleSizes();
 	sizeIndex = scaleStructure->getSuggestedSizeIndex();
