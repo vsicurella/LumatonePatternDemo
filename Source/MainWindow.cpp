@@ -242,9 +242,6 @@ MainWindow::MainWindow ()
 
 
     //[Constructor] You can add your own custom stuff here..
-	DBG("MAIN WINDOW: Constructed! Refreshing options...");
-    //refresh();
-
 	DBG("MAIN WINDOW: Setting default values...");
 	// Default values
 	editRootSld->setValue(129);
@@ -252,6 +249,10 @@ MainWindow::MainWindow ()
 	editGeneratorSld->setValue(7);
 	editKeyboard->setSelectedId(4);
 	editGeneratorOffset->setValue(-1);
+
+	refreshPeriods();
+	refreshSizes();
+
 	DBG("MAIN WINDOW: Done. Moving on.");
     //[/Constructor]
 }
@@ -361,7 +362,7 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
 		layout->setColours(&scaleColours);
 		colourTableModel->setColours(&scaleColours);
 		refreshPeriods();
-		refreshSelections();
+		refreshSizes();
         //[/UserSliderCode_editPeriod]
     }
     else if (sliderThatWasMoved == editGeneratorOffset.get())
@@ -369,9 +370,6 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_editGeneratorOffset] -- add your slider handling code here..
 		genOffset = editGeneratorOffset->getValue();
 		scaleStructure->setGeneratorOffset(genOffset);
-		layout->refresh();
-		refreshKeyboardView();
-		//keyboardView->setScale(kbdScalePattern(129, periodHXY, genHXY, size, genOffset));
         //[/UserSliderCode_editGeneratorOffset]
     }
     else if (sliderThatWasMoved == editRootSld.get())
@@ -379,7 +377,7 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_editRootSld] -- add your slider handling code here..
 		rootKey = editRootSld->getValue();
 		layout->setRootKey(rootKey);
-		refreshKeyboardView();
+		//refreshKeyboardView();
         //[/UserSliderCode_editRootSld]
     }
     else if (sliderThatWasMoved == modMosChromaSld.get())
@@ -395,18 +393,18 @@ void MainWindow::sliderValueChanged (Slider* sliderThatWasMoved)
 		generator = editGeneratorSld->getValue();
 		DBG("Generator box has changed, generator is " + String(generator));
 		scaleStructure->setGenerator(generator);
+
 		validSizes = scaleStructure->getScaleSizes();
-
-		refreshSelections(false);
-
 		size = scaleStructure->getSuggestedSizeIndex();
+		refreshSizes();
 		DBG("Suggested scale size: Index = " + String(size) + "\tValue = " + String(validSizes[size]));
-		editKeyboard->setSelectedId(size + 1, dontSendNotification);
+		editKeyboard->setSelectedId(size + 1);
+		//refreshKeyboardView();
         //[/UserSliderCode_editGeneratorSld]
     }
 
     //[UsersliderValueChanged_Post]
-
+	refreshKeyboardView();
     //[/UsersliderValueChanged_Post]
 }
 
@@ -420,6 +418,18 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
         //[UserComboBoxCode_editKeyboard] -- add your combo box handling code here..
 		DBG("Keyboard box has changed");
 		size = editKeyboard->getSelectedId() - 1;
+		scaleStructure->setSizeIndex(size);
+
+		// Update modmos degree box to have 'size' amount of degrees
+		modMosDegreeBox->clear(dontSendNotification);
+		for (int i = 0; i < scaleStructure->getScaleSizes()[size] * fractionalPeriod; i++)
+		{
+			modMosDegreeBox->addItem(String(i + 1), i + 1);
+		}
+		modMosDegreeBox->setSelectedId(1);
+
+		refreshKeyboardView();
+		DBG("MAIN WINDOW: Step sizes: " + scaleStructure->getCurrentStepSize().toString());
         //[/UserComboBoxCode_editKeyboard]
     }
     else if (comboBoxThatHasChanged == modMosDegreeBox.get())
@@ -430,22 +440,7 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     }
 
     //[UsercomboBoxChanged_Post]
-	if (scaleStructure->getSizeIndex() != size)
-	{
-		scaleStructure->setSizeIndex(size);
 
-		// Update modmos degree box to have 'size' amount of degrees
-		modMosDegreeBox->clear(dontSendNotification);
-		for (int i = 0; i < scaleStructure->getScaleSizes()[size] * fractionalPeriod; i++)
-		{
-			modMosDegreeBox->addItem(String(i + 1), i + 1);
-		}
-		modMosDegreeBox->setSelectedId(1);
-	}
-
-	DBG("Step sizes: " + scaleStructure->getCurrentStepSize().toString());
-	layout->refresh();
-	keyboardView->setLayout(layout.get());
     //[/UsercomboBoxChanged_Post]
 }
 
@@ -513,39 +508,33 @@ void MainWindow::buttonClicked (Button* buttonThatWasClicked)
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void MainWindow::refreshPeriods()
 {
+	// update ranges
+	editGeneratorSld->setRange(1, period - 1, 1);
+	editGeneratorOffset->setRange(-period + 1, 0, 1);
+	coprimeGenerators = scaleStructure->getCoprimeGenerators();
+
+	// TODO: refresh generator selections
+	if (false /* useOnlyCoprimeGenerators */)
+	{
+		// TODO: make sure generator selection is limited (ComboBox)
+
+		for (int i = 0; i < coprimeGenerators.size(); i++)
+		{
+			// editGeneratorBox->addItem(String(coprimeGenerators[i]), i + 1);
+		}
+	}
+
+	// set to suggested generator
+	generator = scaleStructure->getSuggestedGenerator();
+	DBG("Suggested generator: " + String(generator));
+	editGeneratorSld->setValue(generator);
+
 	modMosChromaSld->setRange(-period, period, 1);
 }
 
-void MainWindow::refreshSelections(bool recalculateGenerators)
+void MainWindow::refreshSizes()
 {
-    if (recalculateGenerators)
-    {
-		editGeneratorSld->setRange(1, period - 1, 1);
-        coprimeGenerators = scaleStructure->getCoprimeGenerators();
-
-		// TODO
-		if (false /* use only coprime generators */)
-		{
-			for (int i = 0; i < coprimeGenerators.size(); i++)
-			{
-				// editGenerator->addItem(String(coprimeGenerators[i]), i + 1);
-			}
-		}
-
-        generator = scaleStructure->getSuggestedGenerator();
-		DBG("Suggested generator: " + String(generator));
-		editGeneratorSld->setValue(generator + 1, dontSendNotification);
-
-		DBG("Updating Generator Offsets and Keyboard Sizes");
-		editGeneratorOffset->setRange(-period + 1, 0, 1);
-
-		DBG("MAIN WINDOW: finished recalulating generators");
-		// gets called again when generator is set
-        sliderValueChanged(editGeneratorSld.get());
-		return;
-    }
-
-    editKeyboard->clear(dontSendNotification);
+	editKeyboard->clear(dontSendNotification);
 
 	// update keyboard options
     for (int i = 0; i < validSizes.size(); i++)
@@ -556,7 +545,9 @@ void MainWindow::refreshSelections(bool recalculateGenerators)
 
 void MainWindow::refreshKeyboardView()
 {
-	keyboardView->setLayout(layout.get());
+	layout->refresh();
+	//keyboardView->setLayout(layout.get());
+	keyboardView->repaint();
 }
 //[/MiscUserCode]
 

@@ -48,7 +48,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void refreshPeriods();
-    void refreshSelections(bool recalculateGenerators=true);
+    void refreshSizes();
 	void refreshKeyboardView();
     //[/UserMethods]
 

@@ -173,7 +173,6 @@ void LayoutHelper::setNegateY(bool doNegate)
 
 void LayoutHelper::setScaleFlipped(bool doFlip)
 {
-	DBG("Flipping scale");
 	flipScale = doFlip;
 	refresh();
 }
@@ -196,7 +195,7 @@ Array<Array<int>> LayoutHelper::getDegreeGroupings()
 void LayoutHelper::setRootKey(int rootKeyIn)
 {
 	rootKey = rootKeyIn;
-	mapKeysToDegree();
+	refresh();
 }
 
 void LayoutHelper::addColour(Colour colorIn)
