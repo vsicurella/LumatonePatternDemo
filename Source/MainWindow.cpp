@@ -313,35 +313,35 @@ void MainWindow::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    keyboardView->setBounds (proportionOfWidth (0.0085f), proportionOfHeight (0.0229f), proportionOfWidth (0.9842f), proportionOfHeight (0.6645f));
-    editPeriod->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0665f), 120, 24);
-    editGenerator->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.1453f), 112, 24);
-    editKeyboard->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2931f), 112, 24);
-    editColorLayout->setBounds (proportionOfWidth (0.6185f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0690f), roundToInt (proportionOfWidth (0.9842f) * 0.1185f), 136);
-    editShowKeyNumber->setBounds (proportionOfWidth (0.7691f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f), 176, 24);
-    editShowOctaveNum->setBounds (proportionOfWidth (0.7691f) + 0, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowMidiNote->setBounds (proportionOfWidth (0.7691f) + 0, ((proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
-    editShowScaleDegree->setBounds (proportionOfWidth (0.7691f) + 0, (((proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.0000f), 176, 24);
-    editGeneratorOffset->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2192f), 120, 24);
-    periodLbl->setBounds (proportionOfWidth (0.1227f) + -55, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0665f)) + 0, 64, 24);
-    genLbl->setBounds (proportionOfWidth (0.1227f) + -81, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.1453f)) + 0, 88, 24);
-    offsetLbl->setBounds (proportionOfWidth (0.1227f) + -56, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2192f)) + 0, 64, 24);
-    ScaleSize->setBounds (proportionOfWidth (0.1227f) + -82, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2931f)) + 0, 88, 24);
-    editRootSld->setBounds (proportionOfWidth (0.1227f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.3645f), 120, 24);
-    rootLbl->setBounds (proportionOfWidth (0.1227f) + -75, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.3645f)) + 0, 80, 24);
-    colorSelectionLbl->setBounds (proportionOfWidth (0.6185f) + (roundToInt (proportionOfWidth (0.9842f) * 0.1185f)) / 2 - (112 / 2), (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0690f)) + -22, 112, 24);
-    editScaleFlip->setBounds ((proportionOfWidth (0.1227f) + roundToInt (112 * 1.0982f)) + 88 - 86, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2611f)) + 41, roundToInt (proportionOfWidth (0.9842f) * 0.0704f), 24);
-    editBlankKeys->setBounds (proportionOfWidth (0.7691f) + 0, (((proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 2.3333f), 176, 24);
-    negateXBtn->setBounds (proportionOfWidth (0.1227f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.1601f), 88, 24);
-    negateYBtn->setBounds (proportionOfWidth (0.1227f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2611f), 88, 24);
-    fractionalPeriodBox->setBounds (proportionOfWidth (0.1227f) + roundToInt (120 * 1.0667f), (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0665f)) + roundToInt (24 * 0.0000f), 80, 24);
-    modMosDegreeBox->setBounds (proportionOfWidth (0.4155f), 472, roundToInt (proportionOfWidth (0.9842f) * 0.1753f), 24);
-    numPeriodsLabel->setBounds ((proportionOfWidth (0.1227f) + roundToInt (120 * 1.0667f)) + 80 / 2 - (88 / 2), 424, 88, 24);
-    modMosDegreeLbl->setBounds (proportionOfWidth (0.4155f) + (roundToInt (proportionOfWidth (0.9842f) * 0.1753f)) / 2 - (176 / 2), 448, 176, 24);
-    modMosChromaSld->setBounds (proportionOfWidth (0.4155f), 536, roundToInt (proportionOfWidth (0.9842f) * 0.1753f), 24);
-    modMosChromaLbl->setBounds (proportionOfWidth (0.4155f) + (roundToInt (proportionOfWidth (0.9842f) * 0.1753f)) / 2 - (176 / 2), 512, 176, 24);
+    keyboardView->setBounds (proportionOfWidth (0.0088f), proportionOfHeight (0.0229f), proportionOfWidth (0.9836f), proportionOfHeight (0.6645f));
+    editPeriod->setBounds (proportionOfWidth (0.1223f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0665f), 120, 24);
+    editGenerator->setBounds (proportionOfWidth (0.1223f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.1453f), 112, 24);
+    editKeyboard->setBounds (proportionOfWidth (0.1223f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2931f), 112, 24);
+    editColorLayout->setBounds (proportionOfWidth (0.6179f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0690f), roundToInt (proportionOfWidth (0.9836f) * 0.1179f), 136);
+    editShowKeyNumber->setBounds (proportionOfWidth (0.7692f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f), 176, 24);
+    editShowOctaveNum->setBounds (proportionOfWidth (0.7692f) + 0, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowMidiNote->setBounds (proportionOfWidth (0.7692f) + 0, ((proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f), 176, 24);
+    editShowScaleDegree->setBounds (proportionOfWidth (0.7692f) + 0, (((proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.0000f), 176, 24);
+    editGeneratorOffset->setBounds (proportionOfWidth (0.1223f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2192f), 120, 24);
+    periodLbl->setBounds (proportionOfWidth (0.1223f) + -55, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0665f)) + 0, 64, 24);
+    genLbl->setBounds (proportionOfWidth (0.1223f) + -81, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.1453f)) + 0, 88, 24);
+    offsetLbl->setBounds (proportionOfWidth (0.1223f) + -56, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2192f)) + 0, 64, 24);
+    ScaleSize->setBounds (proportionOfWidth (0.1223f) + -82, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2931f)) + 0, 88, 24);
+    editRootSld->setBounds (proportionOfWidth (0.1223f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.3645f), 120, 24);
+    rootLbl->setBounds (proportionOfWidth (0.1223f) + -75, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.3645f)) + 0, 80, 24);
+    colorSelectionLbl->setBounds (proportionOfWidth (0.6179f) + (roundToInt (proportionOfWidth (0.9836f) * 0.1179f)) / 2 - (112 / 2), (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0690f)) + -22, 112, 24);
+    editScaleFlip->setBounds ((proportionOfWidth (0.1223f) + roundToInt (112 * 1.0982f)) + 88 - 86, (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2611f)) + 41, roundToInt (proportionOfWidth (0.9836f) * 0.0705f), 24);
+    editBlankKeys->setBounds (proportionOfWidth (0.7692f) + 0, (((proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0493f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 1.3333f)) + roundToInt (24 * 2.3333f), 176, 24);
+    negateXBtn->setBounds (proportionOfWidth (0.1223f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.1601f), 88, 24);
+    negateYBtn->setBounds (proportionOfWidth (0.1223f) + roundToInt (112 * 1.0982f), proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.2611f), 88, 24);
+    fractionalPeriodBox->setBounds (proportionOfWidth (0.1223f) + roundToInt (120 * 1.0667f), (proportionOfHeight (0.0229f) + roundToInt (proportionOfHeight (0.6645f) * 1.0665f)) + roundToInt (24 * 0.0000f), 80, 24);
+    modMosDegreeBox->setBounds (proportionOfWidth (0.4161f), 472, roundToInt (proportionOfWidth (0.9836f) * 0.1756f), 24);
+    numPeriodsLabel->setBounds ((proportionOfWidth (0.1223f) + roundToInt (120 * 1.0667f)) + 80 / 2 - (88 / 2), 424, 88, 24);
+    modMosDegreeLbl->setBounds (proportionOfWidth (0.4161f) + (roundToInt (proportionOfWidth (0.9836f) * 0.1756f)) / 2 - (176 / 2), 448, 176, 24);
+    modMosChromaSld->setBounds (proportionOfWidth (0.4161f), 536, roundToInt (proportionOfWidth (0.9836f) * 0.1756f), 24);
+    modMosChromaLbl->setBounds (proportionOfWidth (0.4161f) + (roundToInt (proportionOfWidth (0.9836f) * 0.1756f)) / 2 - (176 / 2), 512, 176, 24);
     //[UserResized] Add your own custom resize handling here..
-	
+
 	// update color box row heights
 	int idealHeight = editColorLayout->getHeight() / colourTableModel->getNumRows() * colourTableModel->getNumRows();
 	editColorLayout->setSize(editColorLayout->getWidth(), idealHeight);
@@ -527,6 +527,8 @@ void MainWindow::refreshPeriods()
 	fractionalPeriods = scaleStructure->getFractionalPeriods();
 	for (int i = 0; i < fractionalPeriods.size(); i++)
 		fractionalPeriodBox->addItem(String(fractionalPeriods[i]), fractionalPeriods[i]);
+
+	modMosChromaSld->setRange(-period, period, 1);
 }
 
 void MainWindow::refreshSelections(bool recalculateGenerators)
