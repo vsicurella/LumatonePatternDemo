@@ -47,7 +47,8 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-	void refreshPeriods();
+	void onPeriodChange();
+	void onGeneratorChange();
     void refreshSizes();
 	void refreshKeyboardView();
     //[/UserMethods]
@@ -74,7 +75,8 @@ private:
 	int fractionalPeriod = 1;
 	int generator = 7;
 	int genOffset = -1;
-	int size = 4;
+	int sizeIndex = 4;
+	int sizeValue = 7;
 	int rootKey = 129;
 
 	Point<int> periodHXY = Point<int>(2, 5);
