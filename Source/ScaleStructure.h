@@ -21,7 +21,7 @@ class ScaleStructure
 	int fPeriod;
 	int fGen = -1;
 
-	Array<int> validGenerators; // not needed anymore
+	Array<int> coprimeGenerators; // not needed anymore
 
 	Array<int> scaleSizes;
 	Array<Point<int>> keyboardTypes;
@@ -51,9 +51,13 @@ public:
 	ScaleStructure(ValueTree scaleStructureProperties);
     
     int getPeriod() const;
-    
-    Array<int> getValidGenerators() const;
-    int getGenerator(int genIndex) const;
+	int getGenerator() const;
+
+	int getNumPeriods() const;
+	int getFractionalPeriod() const;
+	int getFractionalGenerator() const;
+
+	Array<int> getCoprimeGenerators() const;
 
 	Array<int> getScaleSizes() const;
 	int getScaleSize(int ind) const;
@@ -75,7 +79,6 @@ public:
 	int getAlterationOfDegree(int naturalDegree) const;
 	void setAlterationofDegree(int naturalDegree, int alteration);
     
-    int getGeneratorIndex() const;
     int getSizeIndex() const;
 	Point<int> getCurrentStepSize() const;
 
@@ -83,7 +86,7 @@ public:
 
 	void resetToPeriod(int periodIn);
 
-	void setGeneratorIndex(int index);
+	void setGenerator(int generatorIn);
 	void setSizeIndex(int index);
 	void setGeneratorOffset(int offsetIn);
 
@@ -95,7 +98,7 @@ public:
 	void setMODMOSProperties(Array<Point<int>> modmosPropertiesIn);
 
 	// returns the index whose generator is closest to a perfect fifth
-	int getSuggestedGeneratorIndex();
+	int getSuggestedGenerator();
 
 	// returns the index whose size is closest to 7
 	int getSuggestedSizeIndex();

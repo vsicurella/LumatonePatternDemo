@@ -13,14 +13,14 @@
 ScaleStructure::ScaleStructure(int periodIn)
 {
 	period = periodIn;
-	validGenerators = getCoprimes(period);
+	coprimeGenerators = getCoprimes(period);
 }
 
 ScaleStructure::ScaleStructure(int periodIn, int generatorIndex, int sizeIndex, Array<int> degreeGroups)
 {
 	period = periodIn;
 
-	validGenerators = getCoprimes(period);
+	coprimeGenerators = getCoprimes(period);
 	generator = generatorIndex;
 
 	// TODO: check for valid input
@@ -35,14 +35,29 @@ int ScaleStructure::getPeriod() const
     return period;
 }
 
-Array<int> ScaleStructure::getValidGenerators() const
+Array<int> ScaleStructure::getCoprimeGenerators() const
 {
-    return validGenerators;
+    return coprimeGenerators;
 }
 
-int ScaleStructure::getGenerator(int genIndex) const
+int ScaleStructure::getGenerator() const
 {
-    return validGenerators[genIndex];
+    return generator;
+}
+
+int ScaleStructure::getNumPeriods() const
+{
+	return numFractionalPeriods;
+}
+
+int ScaleStructure::getFractionalPeriod() const
+{
+	return fPeriod;
+}
+
+int ScaleStructure::getFractionalGenerator() const
+{
+	return fGen;
 }
 
 Array<int> ScaleStructure::getScaleSizes() const
@@ -89,7 +104,7 @@ int ScaleStructure::getGroupOfDegree(int scaleDegreeIn) const
 void ScaleStructure::resetToPeriod(int periodIn)
 {
 	period = periodIn;
-	validGenerators = getCoprimes(period);
+	coprimeGenerators = getCoprimes(period);
 	generator = -1;
 	currentSizeSelected = -1;
 
@@ -100,9 +115,9 @@ void ScaleStructure::resetToPeriod(int periodIn)
 	modmosProperties.clear();
 }
 
-void ScaleStructure::setGeneratorIndex(int index)
+void ScaleStructure::setGenerator(int generatorIn)
 {
-    generator = index;
+    generator = generatorIn;
 	calculateProperties();
 }
 
@@ -205,11 +220,6 @@ void ScaleStructure::setAlterationofDegree(int naturalDegree, int alteration)
 }
 
 
-int ScaleStructure::getGeneratorIndex() const
-{
-    return generator;
-}
-
 int ScaleStructure::getSizeIndex() const
 {
     return currentSizeSelected;
@@ -229,12 +239,15 @@ void ScaleStructure::calculateProperties()
 	modmosProperties.clear();
 
 	// Calculate number of periods based on generator
-	numFractionalPeriods = getLCM(period, generator);
+	numFractionalPeriods = getGCD(period, generator);
 	fPeriod = period / numFractionalPeriods;
 	fGen = generator / numFractionalPeriods;
 
+	DBG("CALCULATING");
+	DBG("GCD of (" + String(period) + ", " + String(generator) + ") is " + String(numFractionalPeriods) + "\tfPeriod: " + String(fPeriod) + "\tfGen: " + String(fGen));
+
 	// Calculate properties of scale
-    Array<int> cf = getContinuedFraction((double)validGenerators[generator] / period);
+    Array<int> cf = getContinuedFraction((double)generator / period);
 
 	// seed the sequence
 	Point<int> parent1 = Point<int>(-1 + cf[0], 1);
@@ -487,16 +500,16 @@ void ScaleStructure::applyMODMOSProperties()
 }
 
 
-int ScaleStructure::getSuggestedGeneratorIndex()
+int ScaleStructure::getSuggestedGenerator()
 {
 	int index = -1;
 	float dif1, dif2 = 10e6;
-	float interval = 1200.0f / fPeriod;
-	int suggestedCents = 700;
+	float interval = 1200.0f / period;
+	int suggestedCents = 702;
 
-	for (int i = 1; i < validGenerators.size(); i++)
+	for (int i = 1; i < period; i++)
 	{
-		dif1 = abs(suggestedCents - interval * validGenerators[i]);
+		dif1 = abs(suggestedCents - interval * i);
 
 		if (dif1 < dif2)
 		{
@@ -553,7 +566,7 @@ Array<int> ScaleStructure::getNestedSizeGrouping()
 	int scaleSize = scaleSizes[currentSizeSelected];
 	Array<int> grouping = { currentSizeSelected };
 
-	int notesLeft = (period / numFractionalPeriods) - scaleSize;
+	int notesLeft = fPeriod - scaleSize;
 	int subSizeInd = currentSizeSelected;
 	int subSize = scaleSize;
 
@@ -723,7 +736,7 @@ bool ScaleStructure::isValid() const
 {	
 	bool valid = true;
 
-	if (generator < 0 || generator > validGenerators.size())
+	if (generator < 0 || generator >= period)
 	{
 		DBG("Invalid generator");
 		valid = false;

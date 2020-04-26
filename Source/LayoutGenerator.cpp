@@ -48,7 +48,7 @@ int LayoutHelper::getPeriod()
 
 int LayoutHelper::getGenerator()
 {
-    return structure->getGenerator(structure->getGeneratorIndex());
+    return structure->getGenerator();
 }
 
 int LayoutHelper::getSize()
