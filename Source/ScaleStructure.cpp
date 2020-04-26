@@ -13,19 +13,14 @@
 ScaleStructure::ScaleStructure(int periodIn)
 {
 	period = periodIn;
-	fractionalPeriods = getFactors(period);
-	fractionalPeriodSelected = 0;
-
-	validGenerators = getCoprimes(period / fractionalPeriods[fractionalPeriodSelected]);
+	validGenerators = getCoprimes(period);
 }
 
 ScaleStructure::ScaleStructure(int periodIn, int generatorIndex, int sizeIndex, Array<int> degreeGroups)
 {
 	period = periodIn;
-	fractionalPeriods = getFactors(period);
-	fractionalPeriodSelected = 0;
 
-	validGenerators = getCoprimes(period / fractionalPeriods[fractionalPeriodSelected]);
+	validGenerators = getCoprimes(period);
 	generator = generatorIndex;
 
 	// TODO: check for valid input
@@ -39,12 +34,6 @@ int ScaleStructure::getPeriod() const
 {
     return period;
 }
-
-Array<int> ScaleStructure::getFractionalPeriods() const
-{
-	return fractionalPeriods;
-}
-
 
 Array<int> ScaleStructure::getValidGenerators() const
 {
@@ -100,9 +89,7 @@ int ScaleStructure::getGroupOfDegree(int scaleDegreeIn) const
 void ScaleStructure::resetToPeriod(int periodIn)
 {
 	period = periodIn;
-	fractionalPeriods = getFactors(period);
-	fractionalPeriodSelected = 0;
-	validGenerators = getCoprimes(period / fractionalPeriods[fractionalPeriodSelected]);
+	validGenerators = getCoprimes(period);
 	generator = -1;
 	currentSizeSelected = -1;
 
@@ -111,13 +98,6 @@ void ScaleStructure::resetToPeriod(int periodIn)
 	pgCoords.clear();
 	stepSizes.clear();
 	modmosProperties.clear();
-}
-
-void ScaleStructure::setFractionalPeriodIndex(int index)
-{
-	fractionalPeriodSelected = index;
-	validGenerators = getCoprimes(period / fractionalPeriods[fractionalPeriodSelected]);
-	calculateProperties();
 }
 
 void ScaleStructure::setGeneratorIndex(int index)
@@ -248,8 +228,13 @@ void ScaleStructure::calculateProperties()
 	pgCoords.clear();
 	modmosProperties.clear();
 
+	// Calculate number of periods based on generator
+	numFractionalPeriods = getLCM(period, generator);
+	fPeriod = period / numFractionalPeriods;
+	fGen = generator / numFractionalPeriods;
+
 	// Calculate properties of scale
-    Array<int> cf = getContinuedFraction((double)validGenerators[generator] / (period / fractionalPeriods[fractionalPeriodSelected]));
+    Array<int> cf = getContinuedFraction((double)validGenerators[generator] / period);
 
 	// seed the sequence
 	Point<int> parent1 = Point<int>(-1 + cf[0], 1);
@@ -305,10 +290,6 @@ void ScaleStructure::calculateStepSizes()
 	Point<int> periodCoordinate;
 	Point<int> generatorCoordinate;
 
-	int fPeriod = period / fractionalPeriods[fractionalPeriodSelected];
-    
-    int gen = validGenerators[generator];
-
 	for (int i = 0; i < scaleSizes.size(); i++)
 	{
 		generatorCoordinate = Point<int>(pgCoords[i].x.x, pgCoords[i].y.x);
@@ -316,23 +297,23 @@ void ScaleStructure::calculateStepSizes()
 
 		// find horiztonal step size (X)
 		if (periodCoordinate.y == generatorCoordinate.y)
-			stepSizesOut.setX(fPeriod - gen);
+			stepSizesOut.setX(fPeriod - fGen);
 		else if (periodCoordinate.y == 0)
 			stepSizesOut.setX(fPeriod);
 		else if (generatorCoordinate.y == 0)
-			stepSizesOut.setX(gen);
+			stepSizesOut.setX(fGen);
 		else
-			stepSizesOut.setX(fPeriod * generatorCoordinate.y - gen * periodCoordinate.y);
+			stepSizesOut.setX(fPeriod * generatorCoordinate.y - fGen * periodCoordinate.y);
 
 		// find upward right step size (Y)
 		if (periodCoordinate.x == generatorCoordinate.x)
-			stepSizesOut.setY(fPeriod - gen);
+			stepSizesOut.setY(fPeriod - fGen);
 		else if (periodCoordinate.x == 0)
 			stepSizesOut.setX(fPeriod);
 		else if (generatorCoordinate.y == 0)
-			stepSizesOut.setX(gen);
+			stepSizesOut.setX(fGen);
 		else
-			stepSizesOut.setY(gen * periodCoordinate.x - fPeriod * generatorCoordinate.x);
+			stepSizesOut.setY(fGen * periodCoordinate.x - fPeriod * generatorCoordinate.x);
 
 		stepSizes.add(stepSizesOut);
 	}
@@ -341,12 +322,10 @@ void ScaleStructure::calculateStepSizes()
 void ScaleStructure::calculateGeneratorChain()
 {
 	generatorChain.clear();
-    int gen = validGenerators[generator];
-	int fractionalPeriod = period / fractionalPeriods[fractionalPeriodSelected];
 
-	for (int i = 0; i < fractionalPeriod; i++)
+	for (int i = 0; i < fPeriod; i++)
 	{
-		generatorChain.add(modulo(i * gen, fractionalPeriod));
+		generatorChain.add(modulo(i * fGen, fPeriod));
 	}
 }
 
@@ -356,7 +335,7 @@ void ScaleStructure::fillGroupingSymmetrically()
 
 	Array<int> grouping;
 
-	for (int i = 0; i < fractionalPeriods[fractionalPeriodSelected]; i++)
+	for (int i = 0; i < numFractionalPeriods; i++)
 	{
 		grouping.addArray(sizeGroupings);
 	}
@@ -416,24 +395,22 @@ void ScaleStructure::fillGroupingSymmetrically()
 
 void ScaleStructure::fillSymmetricGrouping()
 {
-	int periodFactor = fractionalPeriods[fractionalPeriodSelected];
-	int fractionalPeriod = period / periodFactor;
 	degreeGroupings.clear();
-	degreeGroupings.resize(sizeGroupings.size() * periodFactor);
+	degreeGroupings.resize(sizeGroupings.size() * numFractionalPeriods);
 
 	// Fill degree groups symmetrically
 
-	int indexOffset = modulo(generatorOffset, fractionalPeriod);
+	int indexOffset = modulo(generatorOffset, fPeriod);
 
 	for (int t = 0; t < sizeGroupings.size(); t++)
 	{
 		for (int n = 0; n < scaleSizes[sizeGroupings[t]]; n++)
 		{
-			for (int f = 0; f < periodFactor; f++)
+			for (int f = 0; f < numFractionalPeriods; f++)
 			{
-				degreeGroupings.getReference(t).add(generatorChain[indexOffset] + fractionalPeriod * f);
+				degreeGroupings.getReference(t).add(generatorChain[indexOffset] + fPeriod * f);
 			}
-			indexOffset = modulo(indexOffset + 1, fractionalPeriod);
+			indexOffset = modulo(indexOffset + 1, fPeriod);
 		}
 	}
 
@@ -475,7 +452,6 @@ void ScaleStructure::applyMODMOSProperties()
 {
 	Array<int> naturalScale = degreeGroupings[0];
 	naturalScale.sort();
-	int fractionalPeriod = period / fractionalPeriods[fractionalPeriodSelected];
 
 	for (auto alteration : modmosProperties)
 	{
@@ -491,7 +467,7 @@ void ScaleStructure::applyMODMOSProperties()
 		int originalChainIndex = generatorChain.indexOf(scaleDegree);
 		int shiftAmount = amount * scaleSize;
 		int shiftedIndex = generatorChain.indexOf(scaleDegree) + amount * scaleSize;
-		int newGeneratorIndex = modulo(generatorChain.indexOf(scaleDegree) + amount * scaleSize, fractionalPeriod);
+		int newGeneratorIndex = modulo(generatorChain.indexOf(scaleDegree) + amount * scaleSize, fPeriod);
 		int alteredDegree = generatorChain[newGeneratorIndex];
 
 		// Swap the scale degrees in degreeGroupings
@@ -515,8 +491,7 @@ int ScaleStructure::getSuggestedGeneratorIndex()
 {
 	int index = -1;
 	float dif1, dif2 = 10e6;
-	int fractionalPeriod = fractionalPeriods[fractionalPeriodSelected];
-	float interval = 1200.0f / (period / fractionalPeriod);
+	float interval = 1200.0f / fPeriod;
 	int suggestedCents = 700;
 
 	for (int i = 1; i < validGenerators.size(); i++)
@@ -537,7 +512,7 @@ int ScaleStructure::getSuggestedSizeIndex()
 {
 	int index = -1;
 	int dif1, dif2 = INT_MAX;
-	int scaleSize = 7 / fractionalPeriods[fractionalPeriodSelected];
+	int scaleSize = 7 / numFractionalPeriods;
 
 	for (int i = 0; i < scaleSizes.size(); i++)
 	{
@@ -557,7 +532,7 @@ int ScaleStructure::getPrefferedSizeIndex(int prefferedSize, bool preferLarger)
 {
 	int index = -1;
 	int dif1, dif2 = INT_MAX;
-	int scaleSize = prefferedSize / fractionalPeriods[fractionalPeriodSelected];
+	int scaleSize = prefferedSize / numFractionalPeriods;
 
 	for (int i = 0; i < scaleSizes.size(); i++)
 	{
@@ -578,7 +553,7 @@ Array<int> ScaleStructure::getNestedSizeGrouping()
 	int scaleSize = scaleSizes[currentSizeSelected];
 	Array<int> grouping = { currentSizeSelected };
 
-	int notesLeft = (period / fractionalPeriods[fractionalPeriodSelected]) - scaleSize;
+	int notesLeft = (period / numFractionalPeriods) - scaleSize;
 	int subSizeInd = currentSizeSelected;
 	int subSize = scaleSize;
 
@@ -646,7 +621,7 @@ Array<int> ScaleStructure::getComplimentarySizeGrouping()
 	int scaleSize = scaleSizes[currentSizeSelected];
 	Array<int> grouping = { currentSizeSelected };
 
-	int notesLeft = (period / fractionalPeriods[fractionalPeriodSelected]) - scaleSize;
+	int notesLeft = (period / numFractionalPeriods) - scaleSize;
 	int subSizeInd = currentSizeSelected;
 	int subSize = scaleSize;
 
@@ -763,7 +738,7 @@ bool ScaleStructure::isValid() const
 	int sum = 0;
 	for (int s = 0; s < sizeGroupings.size(); s++)
 	{
-		sum += scaleSizes[sizeGroupings[s]] * fractionalPeriods[fractionalPeriodSelected];
+		sum += scaleSizes[sizeGroupings[s]] * numFractionalPeriods;
 	}
 	
 	if (sum != period)

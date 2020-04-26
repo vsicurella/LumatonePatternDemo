@@ -137,7 +137,6 @@ static Array<int> getContinuedFraction(double num, int maxDepth=20, double round
     return cf;
 }
 
-// TODO: make with template class
 /*
 	Takes an array and tries to arrange it symmetrically, such that the array can be wrapped into a symmetric circle
 	If array cannot be arranged symmetrically, function will return an empty array

@@ -16,9 +16,12 @@ class ScaleStructure
 {
 	int period;
 	int generator = -1;
+	
+	int numFractionalPeriods;
+	int fPeriod;
+	int fGen = -1;
 
-	Array<int> fractionalPeriods;
-	Array<int> validGenerators;
+	Array<int> validGenerators; // not needed anymore
 
 	Array<int> scaleSizes;
 	Array<Point<int>> keyboardTypes;
@@ -30,7 +33,6 @@ class ScaleStructure
 	Array<int> generatorChain;
 	Array<Point<int>> modmosProperties;
 
-	int fractionalPeriodSelected = 0;
 	int currentSizeSelected = -1;
 	int generatorOffset = 0;
 
@@ -49,7 +51,6 @@ public:
 	ScaleStructure(ValueTree scaleStructureProperties);
     
     int getPeriod() const;
-	Array<int> getFractionalPeriods() const;
     
     Array<int> getValidGenerators() const;
     int getGenerator(int genIndex) const;
@@ -82,7 +83,6 @@ public:
 
 	void resetToPeriod(int periodIn);
 
-	void setFractionalPeriodIndex(int index);
 	void setGeneratorIndex(int index);
 	void setSizeIndex(int index);
 	void setGeneratorOffset(int offsetIn);
