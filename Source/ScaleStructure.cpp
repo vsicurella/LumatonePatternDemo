@@ -310,23 +310,23 @@ void ScaleStructure::calculateStepSizes()
 
 		// find horiztonal step size (X)
 		if (periodCoordinate.y == generatorCoordinate.y)
-			stepSizesOut.setX(fPeriod - fGen);
+			stepSizesOut.setX(fPeriod - generator);
 		else if (periodCoordinate.y == 0)
 			stepSizesOut.setX(fPeriod);
 		else if (generatorCoordinate.y == 0)
-			stepSizesOut.setX(fGen);
+			stepSizesOut.setX(generator);
 		else
-			stepSizesOut.setX(fPeriod * generatorCoordinate.y - fGen * periodCoordinate.y);
+			stepSizesOut.setX(fPeriod * generatorCoordinate.y - generator * periodCoordinate.y);
 
 		// find upward right step size (Y)
 		if (periodCoordinate.x == generatorCoordinate.x)
-			stepSizesOut.setY(fPeriod - fGen);
+			stepSizesOut.setY(fPeriod - generator);
 		else if (periodCoordinate.x == 0)
 			stepSizesOut.setX(fPeriod);
 		else if (generatorCoordinate.y == 0)
-			stepSizesOut.setX(fGen);
+			stepSizesOut.setX(generator);
 		else
-			stepSizesOut.setY(fGen * periodCoordinate.x - fPeriod * generatorCoordinate.x);
+			stepSizesOut.setY(generator * periodCoordinate.x - fPeriod * generatorCoordinate.x);
 
 		stepSizes.add(stepSizesOut);
 	}
@@ -335,15 +335,19 @@ void ScaleStructure::calculateStepSizes()
 void ScaleStructure::calculateGeneratorChain()
 {
 	generatorChain.clear();
-
+	String dbgstr = "";
 	for (int i = 0; i < fPeriod; i++)
 	{
-		generatorChain.add(modulo(i * fGen, fPeriod));
+		generatorChain.add(modulo(i * generator, fPeriod));
+		dbgstr += String(modulo(i * generator, fPeriod)) + ", ";
 	}
+
+	DBG("Generator chain: " + dbgstr);
 }
 
 void ScaleStructure::fillGroupingSymmetrically()
 {
+	DBG("Filling groups: filling degrees symmetrically");
 	degreeGroupings.clear();
 
 	Array<int> grouping;
@@ -408,6 +412,7 @@ void ScaleStructure::fillGroupingSymmetrically()
 
 void ScaleStructure::fillSymmetricGrouping()
 {
+	DBG("Filling groups: degrees already symmetric.");
 	degreeGroupings.clear();
 	degreeGroupings.resize(sizeGroupings.size() * numFractionalPeriods);
 
