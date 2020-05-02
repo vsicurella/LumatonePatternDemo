@@ -47,9 +47,8 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-	void onPeriodChange();
-	void onGeneratorChange();
-    void refreshSizes();
+	void refreshPeriods();
+    void refreshSelections(bool recalculateGenerators=true);
 	void refreshKeyboardView();
     //[/UserMethods]
 
@@ -68,15 +67,14 @@ private:
 	std::unique_ptr<ColourTableModel> colourTableModel;
 
 	Array<int> fractionalPeriods;
-    Array<int> coprimeGenerators;
+    Array<int> validGenerators;
     Array<int> validSizes;
 
 	int period = 12;
-	int numPeriods = 1;
-	int generator = 7;
+	int fractionalPeriod = 1;
+	int generator = 2;
 	int genOffset = -1;
-	int sizeIndex = 4;
-	int sizeValue = 7;
+	int size = 4;
 	int rootKey = 129;
 
 	Point<int> periodHXY = Point<int>(2, 5);
@@ -107,6 +105,7 @@ private:
     //==============================================================================
     std::unique_ptr<KeyboardViewer> keyboardView;
     std::unique_ptr<Slider> editPeriod;
+    std::unique_ptr<ComboBox> editGenerator;
     std::unique_ptr<ComboBox> editKeyboard;
     std::unique_ptr<ListBox> editColorLayout;
     std::unique_ptr<ToggleButton> editShowKeyNumber;
@@ -130,8 +129,8 @@ private:
     std::unique_ptr<Label> modMosDegreeLbl;
     std::unique_ptr<Slider> modMosChromaSld;
     std::unique_ptr<Label> modMosChromaLbl;
-    std::unique_ptr<Label> numPeriodsValue;
-    std::unique_ptr<Slider> editGeneratorSld;
+    std::unique_ptr<Label> generatorLabel;
+    std::unique_ptr<ComboBox> numPeriodBox;
 
 
     //==============================================================================
