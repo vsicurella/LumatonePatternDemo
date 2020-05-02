@@ -48,12 +48,12 @@ int LayoutHelper::getPeriod()
 
 int LayoutHelper::getGenerator()
 {
-    return structure->getGenerator(structure->getGeneratorIndex());
+    return structure->getGenerator();
 }
 
 int LayoutHelper::getSize()
 {
-    return structure->getScaleSize(structure->getSizeIndex());
+	return structure->getScaleSize();
 }
 
 void LayoutHelper::mapKeysToDegree()
@@ -68,7 +68,7 @@ void LayoutHelper::mapKeysToDegree()
 		return;
 	}
 
-	Point<int> steps = structure->getCurrentStepSize();
+	Point<int> steps = structure->getStepSize();
 
 	if (negateX)
 		steps.setX(-steps.x);
