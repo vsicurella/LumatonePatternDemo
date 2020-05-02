@@ -451,7 +451,7 @@ void ScaleStructure::fillGroupingSymmetrically()
 void ScaleStructure::fillSymmetricGrouping()
 {
 	degreeGroupings.clear();
-	degreeGroupings.resize(degreeGroupSizes.size() * periodFactorSelected);
+	degreeGroupings.resize(degreeGroupSizes.size());
 
 	// Fill degree groups symmetrically
 
@@ -461,12 +461,10 @@ void ScaleStructure::fillSymmetricGrouping()
 	{
 		for (int n = 0; n < scaleSizes[degreeGroupSizes[t]]; n++)
 		{
-
-			degreeGroupings.getReference(t).add(generatorChain[indexOffset]);
-
-			//for (int f = 0; f < periodFactor; f++)
-			//{
-			//}
+			for (int f = 0; f < periodFactorSelected; f++)
+			{
+				degreeGroupings.getReference(t).add(generatorChain[indexOffset + fPeriod * f]);
+			}
 			indexOffset = modulo(indexOffset + 1, fPeriod);
 		}
 	}
