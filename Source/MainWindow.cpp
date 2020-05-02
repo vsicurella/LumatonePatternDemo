@@ -445,7 +445,7 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
         //[UserComboBoxCode_numPeriodBox] -- add your combo box handling code here..
 		DBG("Fractional Period changed");
 		fractionalPeriod = numPeriodBox->getSelectedId();
-		scaleStructure->setFractionalPeriodIndex(numPeriodBox->getSelectedId() - 1);
+		scaleStructure->setFractionalPeriodIndex(fractionalPeriods.indexOf(fractionalPeriod));
 		refreshSelections();
         //[/UserComboBoxCode_numPeriodBox]
     }
@@ -538,6 +538,7 @@ void MainWindow::refreshPeriods()
 	fractionalPeriods = scaleStructure->getFractionalPeriods();
 	for (int i = 0; i < fractionalPeriods.size(); i++)
 		numPeriodBox->addItem(String(fractionalPeriods[i]), fractionalPeriods[i]);
+	numPeriodBox->setSelectedId(1, dontSendNotification);
 
 	modMosChromaSld->setRange(-period, period, 1);
 }
@@ -576,7 +577,7 @@ void MainWindow::refreshSelections(bool recalculateGenerators)
 	// update keyboard options
     for (int i = 0; i < validSizes.size(); i++)
     {
-        editKeyboard->addItem(String(validSizes[i]), i+1);
+        editKeyboard->addItem(String(validSizes[i] * fractionalPeriod), i+1);
     }
 }
 
