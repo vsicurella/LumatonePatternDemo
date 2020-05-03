@@ -51,7 +51,7 @@ public:
 	void onPeriodFactorChange();
     void onGeneratorChange();
 	void onSizeChange();
-	
+
 	void refreshGenerators();
 	void refreshSizes();
 
@@ -79,7 +79,7 @@ private:
 	int period = 12;
 	int periodFactorIndex = 0;
 	int genIndex = 2;
-	int genOffset = -1;
+	int genOffset = 1;
 	int sizeIndex = 4;
 	int rootKey = 129;
 

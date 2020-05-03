@@ -252,6 +252,7 @@ void ScaleStructure::setSizeIndex(int index)
 void ScaleStructure::setGeneratorOffset(int offsetIn)
 {
 	generatorOffset = offsetIn;
+	calculateGeneratorChain();
 	useSuggestedSizeGrouping();
 }
 
@@ -367,7 +368,7 @@ void ScaleStructure::calculateGeneratorChain()
 
 	for (int i = 0; i < fPeriod; i++)
 	{
-		generatorChain.add(modulo(i * gen, fPeriod));
+		generatorChain.add(modulo((i - generatorOffset) * gen, fPeriod));
 		dbgstr += String(generatorChain[i]) + ", ";
 	}
 
@@ -398,27 +399,25 @@ void ScaleStructure::fillGroupingSymmetrically()
 	degreeGroupings.resize(grouping.size());
 
 	// Fill degree groups symmetrically
-
-	int indexForward = generatorOffset;
-	int indexBackwards = period - 1 + generatorOffset;
-	int indexOffset;
-
+	int indexForward = 0;
+	int indexBackwards = period - 1;
+	int ind;
 	for (int t = 0; t < grouping.size(); t++)
 	{
 		for (int n = 0; n < scaleSizes[grouping[t]]; n++)
 		{
 			if (t % 2 == 0)
 			{
-				indexOffset = modulo(indexForward, period);
+				ind = modulo(indexForward, period);
 				indexForward++;
 			}
 			else
 			{
-				indexOffset = modulo(indexBackwards, period);
+				ind = modulo(indexBackwards, period);
 				indexBackwards--;
 			}
 
-			degreeGroupings.getReference(t).add(generatorChain[indexOffset]);
+			degreeGroupings.getReference(t).add(generatorChain[ind]);
 		}
 	}
 
@@ -454,18 +453,16 @@ void ScaleStructure::fillSymmetricGrouping()
 	degreeGroupings.resize(degreeGroupSizes.size());
 
 	// Fill degree groups symmetrically
-
-	int indexOffset = modulo(generatorOffset, fPeriod);
-
+	int ind = 0;
 	for (int t = 0; t < degreeGroupSizes.size(); t++)
 	{
 		for (int n = 0; n < scaleSizes[degreeGroupSizes[t]]; n++)
 		{
 			for (int f = 0; f < periodFactorSelected; f++)
 			{
-				degreeGroupings.getReference(t).add(generatorChain[indexOffset + fPeriod * f]);
+				degreeGroupings.getReference(t).add(generatorChain[ind + fPeriod * f]);
 			}
-			indexOffset = modulo(indexOffset + 1, fPeriod);
+			ind = modulo(ind + 1, fPeriod);
 		}
 	}
 

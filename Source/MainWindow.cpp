@@ -260,7 +260,7 @@ MainWindow::MainWindow ()
 	// Default values
 	editRootSld->setValue(135);
 	editPeriod->setValue(12, sendNotificationSync);
-	editGeneratorOffset->setValue(-1);
+	editGeneratorOffset->setValue(1);
 	DBG("MAIN WINDOW: Done. Moving on.");
     //[/Constructor]
 }
@@ -536,7 +536,7 @@ void MainWindow::onSizeChange()
 {
 	scaleStructure->setSizeIndex(sizeIndex);
 
-	editGeneratorOffset->setRange(-scaleStructure->getScaleSize(), 0, 1);
+	editGeneratorOffset->setRange(0, scaleStructure->getScaleSize() - 1, 1);
 
 	// Update modmos degree box to have 'size' amount of degrees
 	modMosDegreeBox->clear(dontSendNotification);
