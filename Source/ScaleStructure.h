@@ -9,7 +9,7 @@
 */
 
 #pragma once
-
+#include <JuceHeader.h>
 #include "CommonFunctions.h"
 
 class ScaleStructure
@@ -32,7 +32,8 @@ class ScaleStructure
 	Array<Point<int>> stepSizes; // Hex step sizes
 
 	Array<int> generatorChain;
-	Array<int> degreeGroupSizes;
+	Array<int> degreeGroupIndexedSizes;
+	Array<int> degreeGroupScaleSizes;
 	Array<Array<int>> degreeGroupings;
 
 	Array<Point<int>> modmosProperties;
@@ -46,7 +47,7 @@ class ScaleStructure
 	// Enumerates the scale as a chain of generators
 	void calculateGeneratorChain();
 
-	// Fills arrays of degrees based on degreeGroupSizes. Use this if group sizes haven't been arranged symmetrically
+	// Fills arrays of degrees based on degreeGroupIndexedSizes. Use this if group sizes haven't been arranged symmetrically
 	// Starts at beginning of generatorChain and puts the succeeding degrees in the second group, but wraps to degrees
 	// preceding the generatorChain beginning into the third group, and alternates to fill all degrees
 	void fillGroupingSymmetrically();
@@ -99,8 +100,17 @@ public:
 	Point<int> getStepSizes(int kbdTypeIn) const;
 	Point<int> getStepSize() const;
 
-	Array<int> getSizeGrouping() const;
+	Array<int> getGeneratorChain() const;
+	const Array<int>& getGeneratorChainReference();
+
+	// Returns an array of indicies reffering to scale sizes of degree groups
+	Array<int> getGroupingIndexedSizes() const;
+
+	// Returns an array of actual group sizes, for visualization use
+	const Array<int>& getGroupingSizesReference();
+
 	Array<Array<int>> getDegreeGroupings() const;
+	const Array<Array<int>>& getDegreeGroupingsReference() const;
 	int getGroupOfDegree(int scaleDegreeIn) const;
 
 	Array<Point<int>> getMODMOSProperties() const;
@@ -132,4 +142,14 @@ public:
 	Array<int> getNestedSizeGrouping();
 	Array<int> getComplimentarySizeGrouping();
 	void useSuggestedSizeGrouping();
+
+
+	// Returns the scale as a string of step sizes and puts integer values into passed in point reference
+	String getIntervalSteps(Point<int>& stepSizesOut);
+
+	// Returns the scale as a string of step sizes
+	String getIntervalSteps();
+
+	// Returns the scale as a string of L and s step sizes
+	String getLsSteps();
 };

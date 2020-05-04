@@ -23,6 +23,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "KeyboardViewer.h"
 #include "ColorTable.h"
+#include "ScaleStructureComponent/ScaleStructureComponent.h"
 //[/Headers]
 
 
@@ -36,9 +37,9 @@
                                                                     //[/Comments]
 */
 class MainWindow  : public Component,
-                    public Slider::Listener,
-                    public ComboBox::Listener,
-                    public Button::Listener
+                    public ChangeListener,
+                    public Button::Listener,
+                    public Slider::Listener
 {
 public:
     //==============================================================================
@@ -47,22 +48,14 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-	void onPeriodChange();
-	void onPeriodFactorChange();
-    void onGeneratorChange();
-	void onSizeChange();
-
-	void refreshGenerators();
-	void refreshSizes();
-
 	void refreshKeyboardView();
+	void changeListenerCallback(ChangeBroadcaster* source) override;
     //[/UserMethods]
 
     void paint (Graphics& g) override;
     void resized() override;
-    void sliderValueChanged (Slider* sliderThatWasMoved) override;
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void buttonClicked (Button* buttonThatWasClicked) override;
+    void sliderValueChanged (Slider* sliderThatWasMoved) override;
 
 
 
@@ -110,19 +103,12 @@ private:
 
     //==============================================================================
     std::unique_ptr<KeyboardViewer> keyboardView;
-    std::unique_ptr<Slider> editPeriod;
-    std::unique_ptr<ComboBox> editGenerator;
-    std::unique_ptr<ComboBox> editKeyboard;
     std::unique_ptr<ListBox> editColorLayout;
     std::unique_ptr<ToggleButton> editShowKeyNumber;
     std::unique_ptr<ToggleButton> editShowOctaveNum;
     std::unique_ptr<ToggleButton> editShowMidiNote;
     std::unique_ptr<ToggleButton> editShowScaleDegree;
-    std::unique_ptr<Slider> editGeneratorOffset;
-    std::unique_ptr<Label> periodLbl;
     std::unique_ptr<Label> genLbl;
-    std::unique_ptr<Label> offsetLbl;
-    std::unique_ptr<Label> ScaleSize;
     std::unique_ptr<Slider> editRootSld;
     std::unique_ptr<Label> rootLbl;
     std::unique_ptr<Label> colorSelectionLbl;
@@ -130,13 +116,7 @@ private:
     std::unique_ptr<ToggleButton> editBlankKeys;
     std::unique_ptr<ToggleButton> negateXBtn;
     std::unique_ptr<ToggleButton> negateYBtn;
-    std::unique_ptr<ComboBox> modMosDegreeBox;
-    std::unique_ptr<Label> numPeriodsLabel;
-    std::unique_ptr<Label> modMosDegreeLbl;
-    std::unique_ptr<Slider> modMosChromaSld;
-    std::unique_ptr<Label> modMosChromaLbl;
-    std::unique_ptr<Label> generatorLabel;
-    std::unique_ptr<ComboBox> numPeriodBox;
+    std::unique_ptr<ScaleStructureComponent> scaleStructureComponent;
 
 
     //==============================================================================

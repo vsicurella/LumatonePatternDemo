@@ -4,6 +4,20 @@
               jucerVersion="5.4.7">
   <MAINGROUP id="IsZKgY" name="GeneralizedScaleSetup">
     <GROUP id="{F2189B60-1842-B504-0A30-163E90EF3F1C}" name="Source">
+      <GROUP id="{E99966EE-B936-FD79-A76B-D78561768E33}" name="ScaleStructureComponent">
+        <FILE id="HM5ao4" name="GroupingCircle.cpp" compile="1" resource="0"
+              file="Source/ScaleStructureComponent/GroupingCircle.cpp"/>
+        <FILE id="sBFrS4" name="GroupingCircle.h" compile="0" resource="0"
+              file="Source/ScaleStructureComponent/GroupingCircle.h"/>
+        <FILE id="sxU0Rr" name="NumberSelector.cpp" compile="1" resource="0"
+              file="Source/ScaleStructureComponent/NumberSelector.cpp"/>
+        <FILE id="wrAyVL" name="NumberSelector.h" compile="0" resource="0"
+              file="Source/ScaleStructureComponent/NumberSelector.h"/>
+        <FILE id="PmWfOp" name="ScaleStructureComponent.cpp" compile="1" resource="0"
+              file="Source/ScaleStructureComponent/ScaleStructureComponent.cpp"/>
+        <FILE id="jJydZk" name="ScaleStructureComponent.h" compile="0" resource="0"
+              file="Source/ScaleStructureComponent/ScaleStructureComponent.h"/>
+      </GROUP>
       <FILE id="A3PUrt" name="ColorTable.cpp" compile="1" resource="0" file="Source/ColorTable.cpp"/>
       <FILE id="J7IAeS" name="ColorTable.h" compile="0" resource="0" file="Source/ColorTable.h"/>
       <FILE id="Qkz7rl" name="ScaleStructure.cpp" compile="1" resource="0"
