@@ -77,28 +77,44 @@ ScaleStructureComponent::ScaleStructureComponent (ScaleStructure& scaleStructure
 
 
     //[UserPreSize]
+	circle = dynamic_cast<GroupingCircle*>(circleComponent.get());
+
 	periodSlider->showNameLabel();
 	//periodFactorSelector->showNameLabel();
 	generatorSlider->showNameLabel();
-	offsetSlider->showNameLabel();
 	scaleSizeSelector->showNameLabel();
+
+	offsetSlider->setVisible(false);
     //[/UserPreSize]
 
     setSize (800, 800);
 
 
     //[Constructor] You can add your own custom stuff here..
-	circle = dynamic_cast<GroupingCircle*>(circleComponent.get());
+
+	// Set up default values, then set up listening
+	periodSlider->setRange(5, 400, true, false);
+	periodSlider->setValue(scaleStructure.getPeriod());
+	generatorSlider->setIndex(4);
+	scaleSizeSelector->setIndex(4);
+
+	offsetSlider->setValue(1);
+	circleOffset = &circle->getOffsetValue();
+	*circleOffset = offsetSlider->getValue();
+
+	scaleStructure.resetToPeriod(12);
+	scaleStructure.setGeneratorIndex(scaleStructure.getSuggestedGeneratorIndex());
+	scaleStructure.setSizeIndex(scaleStructure.getSuggestedSizeIndex());
+	scaleStructure.setGeneratorOffset(1);
 
 	periodSlider->addListener(this);
 	generatorSlider->addListener(this);
 	offsetSlider->addListener(this);
 	scaleSizeSelector->addListener(this);
+	circleOffset->addListener(this);
 
-	periodSlider->setRange(5, 400, true, false);
-	periodSlider->setValue(scaleStructure.getPeriod());
-
-	offsetSlider->setValue(1);
+	circle->updatePeriod(scaleStructure.getPeriod());
+	circle->updateGenerator();
     //[/Constructor]
 }
 
@@ -139,14 +155,22 @@ void ScaleStructureComponent::resized()
     //[/UserPreResize]
 
     circleComponent->setBounds (0, 0, proportionOfWidth (1.0000f), proportionOfHeight (1.0000f));
-    offsetSlider->setBounds (proportionOfWidth (0.5015f) - (proportionOfWidth (0.1802f) / 2), proportionOfHeight (0.1913f), proportionOfWidth (0.1802f), proportionOfHeight (0.1105f));
-    generatorSlider->setBounds (proportionOfWidth (0.5000f) - (proportionOfWidth (0.1802f) / 2), proportionOfHeight (0.4613f), proportionOfWidth (0.1802f), proportionOfHeight (0.1105f));
-    periodSlider->setBounds (proportionOfWidth (0.5000f) - (proportionOfWidth (0.1802f) / 2), proportionOfHeight (0.3155f), proportionOfWidth (0.1802f), proportionOfHeight (0.1105f));
-    generatorValueLbl->setBounds (proportionOfWidth (0.3600f) - (103 / 2), proportionOfHeight (0.7050f), 103, 24);
-    stepSizePatternLbl->setBounds (proportionOfWidth (0.6396f) - (96 / 2), proportionOfHeight (0.7050f), 96, 24);
-    periodFactorSelector->setBounds (proportionOfWidth (0.6306f), proportionOfHeight (0.1913f), proportionOfWidth (0.1441f), proportionOfHeight (0.3645f));
-    scaleSizeSelector->setBounds (proportionOfWidth (0.5000f) - (proportionOfWidth (0.1802f) / 2), proportionOfHeight (0.6048f), proportionOfWidth (0.1802f), proportionOfHeight (0.1105f));
+    offsetSlider->setBounds (proportionOfWidth (0.9093f) - (proportionOfWidth (0.1299f) / 2), proportionOfHeight (0.9326f), proportionOfWidth (0.1299f), proportionOfHeight (0.0291f));
+    generatorSlider->setBounds (proportionOfWidth (0.5013f) - (proportionOfWidth (0.2503f) / 2), proportionOfHeight (0.4372f), proportionOfWidth (0.2503f), proportionOfHeight (0.1494f));
+    periodSlider->setBounds (proportionOfWidth (0.5041f) - (proportionOfWidth (0.2503f) / 2), proportionOfHeight (0.2769f), proportionOfWidth (0.2503f), proportionOfHeight (0.1494f));
+    generatorValueLbl->setBounds (proportionOfWidth (0.3606f) - (103 / 2), proportionOfHeight (0.7049f), 103, 24);
+    stepSizePatternLbl->setBounds (proportionOfWidth (0.6401f) - (96 / 2), proportionOfHeight (0.7049f), 96, 24);
+    periodFactorSelector->setBounds (proportionOfWidth (0.7470f), proportionOfHeight (0.2769f), proportionOfWidth (0.1448f), proportionOfHeight (0.3643f));
+    scaleSizeSelector->setBounds (proportionOfWidth (0.5013f) - (proportionOfWidth (0.1800f) / 2), proportionOfHeight (0.6266f), proportionOfWidth (0.1800f), proportionOfHeight (0.1111f));
     //[UserResized] Add your own custom resize handling here..
+
+	// TODO: implement (probably ex-projucer) this so that the bounds don't have to be set twice
+	periodSlider->setCentrePosition(circle->getPositionFromCenter(circle->getInnerRadius() * 0.45f, 0));
+	generatorSlider->setCentrePosition(circle->getPositionFromCenter(circle->getInnerRadius() * 0.05f, float_Pi));
+	scaleSizeSelector->setCentrePosition(circle->getPositionFromCenter(circle->getInnerRadius() *  7.0f / 10.0f, float_Pi));
+
+	generatorValueLbl->setCentrePosition(circle->getPositionFromCenter(circle->getInnerRadius() * 2.0f / 3.0f, float_Pi * 11.0f / 8.0f));
+	stepSizePatternLbl->setCentrePosition(circle->getPositionFromCenter(circle->getInnerRadius() * 2.0f / 3.0f, float_Pi * 5.0f / 8.0f));
     //[/UserResized]
 }
 
@@ -187,7 +211,8 @@ void ScaleStructureComponent::selectorValueChanged(NumberSelector* selectorThatH
 	else if (selectorThatHasChanged == offsetSlider.get())
 	{
 		scaleStructure.setGeneratorOffset(offsetSlider->getValue());
-		circle->updateGenerator();
+		circle->setGeneratorOffset(offsetSlider->getValue());
+
 		DBG("SSC: Generator Offset changed to: " + String(offsetSlider->getValue()));
 		stepSizePatternLbl->setText(scaleStructure.getLsSteps(), dontSendNotification);
 	}
@@ -198,12 +223,23 @@ void ScaleStructureComponent::selectorValueChanged(NumberSelector* selectorThatH
 		DBG("SSC: Size changed to: " + String(scaleSizeSelector->getValue()));
 
 		offsetSlider->setRange(0, scaleSizeSelector->getValue());
+		circle->setOffsetLimit(scaleSizeSelector->getValue() - 1);
 
 		stepSizePatternLbl->setText(scaleStructure.getLsSteps(), dontSendNotification);
 	}
 
+	// TODO: Figure out a way to only call this once per change
 	sendChangeMessage();
 }
+
+void ScaleStructureComponent::valueChanged(Value& valueThatHasChanged)
+{
+	if (valueThatHasChanged.refersToSameSourceAs(*circleOffset))
+	{
+		offsetSlider->setValue(circleOffset->getValue());
+	}
+}
+
 //[/MiscUserCode]
 
 
@@ -217,7 +253,7 @@ void ScaleStructureComponent::selectorValueChanged(NumberSelector* selectorThatH
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="ScaleStructureComponent"
-                 componentName="" parentClasses="public Component, public NumberSelector::Listener, public ChangeBroadcaster"
+                 componentName="" parentClasses="public Component, public NumberSelector::Listener, public Value::Listener, public ChangeBroadcaster"
                  constructorParams="ScaleStructure&amp; scaleStructureIn, Array&lt;Colour&gt;&amp; colourTableIn"
                  variableInitialisers="scaleStructure(scaleStructureIn), colourTable(colourTableIn)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
@@ -227,29 +263,29 @@ BEGIN_JUCER_METADATA
                     virtualName="" explicitFocusOrder="0" pos="0 0 100% 100%" class="GroupingCircle"
                     params="scaleStructure.getGeneratorChainReference(), scaleStructure.getGroupingSizesReference(), colourTable"/>
   <GENERICCOMPONENT name="Offset" id="1bfdf4c1ccc67e63" memberName="offsetSlider"
-                    virtualName="" explicitFocusOrder="0" pos="50.15%c 19.134% 18.018% 11.048%"
+                    virtualName="" explicitFocusOrder="0" pos="90.934%c 93.26% 12.991% 2.914%"
                     class="NumberSelector" params="&quot;Offset&quot;"/>
   <GENERICCOMPONENT name="Generator" id="efbe5586805bc62b" memberName="generatorSlider"
-                    virtualName="NumberSelector" explicitFocusOrder="0" pos="50%c 46.128% 18.018% 11.048%"
+                    virtualName="NumberSelector" explicitFocusOrder="0" pos="50.135%c 43.716% 25.034% 14.936%"
                     class="Component" params="&quot;Generator&quot;, NumberSelector::SelectionType::List"/>
   <GENERICCOMPONENT name="Period" id="39f9599ebb9952a" memberName="periodSlider"
-                    virtualName="NumberSelector" explicitFocusOrder="0" pos="50%c 31.549% 18.018% 11.048%"
+                    virtualName="NumberSelector" explicitFocusOrder="0" pos="50.406%c 27.687% 25.034% 14.936%"
                     class="Component" params="&quot;Period&quot;"/>
   <LABEL name="generatorValueLbl" id="7250d3d0fa11afcf" memberName="generatorValueLbl"
-         virtualName="" explicitFocusOrder="0" pos="35.998%c 70.501% 103 24"
+         virtualName="" explicitFocusOrder="0" pos="36.062%c 70.492% 103 24"
          edTextCol="ff000000" edBkgCol="0" labelText="700 cents" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="36"/>
   <LABEL name="stepSizePatternLbl" id="b4e52c793121b24" memberName="stepSizePatternLbl"
-         virtualName="" explicitFocusOrder="0" pos="63.964%c 70.501% 96 24"
+         virtualName="" explicitFocusOrder="0" pos="64.005%c 70.492% 96 24"
          edTextCol="ff000000" edBkgCol="0" labelText="LLsLLLs&#10;" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="36"/>
   <GENERICCOMPONENT name="Period Factor" id="a3462f3523b591da" memberName="periodFactorSelector"
-                    virtualName="" explicitFocusOrder="0" pos="63.063% 19.134% 14.414% 36.446%"
+                    virtualName="" explicitFocusOrder="0" pos="74.696% 27.687% 14.479% 36.43%"
                     class="NumberSelector" params="&quot;Period\nFactor&quot;, NumberSelector::SelectionType::List, NumberSelector::SelectorStyle::TickBox, NumberSelector::Orientation::Vertical"/>
   <GENERICCOMPONENT name="Scale Size" id="caf76440221c94" memberName="scaleSizeSelector"
-                    virtualName="" explicitFocusOrder="0" pos="50%c 60.478% 18.018% 11.048%"
+                    virtualName="" explicitFocusOrder="0" pos="50.135%c 62.659% 17.997% 11.111%"
                     class="NumberSelector" params="&quot;Scale Size&quot;, NumberSelector::SelectionType::List"/>
 </JUCER_COMPONENT>
 
