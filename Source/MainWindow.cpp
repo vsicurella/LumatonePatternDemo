@@ -193,20 +193,20 @@ void MainWindow::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    keyboardView->setBounds (proportionOfWidth (0.0120f), proportionOfHeight (0.0182f), proportionOfWidth (0.5803f), proportionOfHeight (0.5399f));
-    editColorLayout->setBounds (proportionOfWidth (0.5022f) - (proportionOfWidth (0.1156f) / 2), proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -32, proportionOfWidth (0.1156f), 136);
-    editShowKeyNumber->setBounds (proportionOfWidth (0.8709f) - (176 / 2), proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -24, 176, 24);
-    editShowOctaveNum->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, (proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -24) + 27, 176, 24);
-    editShowMidiNote->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, ((proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -24) + 27) + 27, 176, 24);
-    editShowScaleDegree->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, (((proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -24) + 27) + 27) + 27, 176, 24);
-    editRootSld->setBounds (proportionOfWidth (0.1182f) - (proportionOfWidth (0.1043f) / 2), proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -133, proportionOfWidth (0.1043f), 24);
-    rootLbl->setBounds ((proportionOfWidth (0.1182f) - (proportionOfWidth (0.1043f) / 2)) + -75, (proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -133) + 0, 80, 24);
-    colorSelectionLbl->setBounds ((proportionOfWidth (0.5022f) - (proportionOfWidth (0.1156f) / 2)) + proportionOfWidth (0.1156f) / 2 - (112 / 2), (proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -32) + -24, 112, 24);
-    editScaleFlip->setBounds (((proportionOfWidth (0.1051f) - (88 / 2)) + roundToInt (88 * 0.0000f)) + 0, ((proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -45) + roundToInt (24 * 1.1667f)) + 28, roundToInt (proportionOfWidth (0.5803f) * 0.0699f), 24);
-    editBlankKeys->setBounds ((proportionOfWidth (0.8709f) - (176 / 2)) + 0, ((((proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -24) + 27) + 27) + 27) + 27, 176, 24);
-    negateXBtn->setBounds (proportionOfWidth (0.1051f) - (88 / 2), proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -45, 88, 24);
-    negateYBtn->setBounds ((proportionOfWidth (0.1051f) - (88 / 2)) + roundToInt (88 * 0.0000f), (proportionOfHeight (0.0182f) + proportionOfHeight (0.5399f) - -45) + roundToInt (24 * 1.1667f), 88, 24);
-    scaleStructureComponent->setBounds (proportionOfWidth (0.0120f) + proportionOfWidth (0.5803f) - -8, proportionOfHeight (0.0182f) + 0, 504, roundToInt (proportionOfHeight (0.5399f) * 1.0000f));
+    keyboardView->setBounds (10, proportionOfHeight (0.0283f), proportionOfWidth (0.5803f), proportionOfHeight (0.5406f));
+    editColorLayout->setBounds (proportionOfWidth (0.7868f) - (proportionOfWidth (0.3724f) / 2), proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -30, proportionOfWidth (0.3724f), 136);
+    editShowKeyNumber->setBounds (20, proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -54, 176, 24);
+    editShowOctaveNum->setBounds (20 + 0, (proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -54) + 27, 176, 24);
+    editShowMidiNote->setBounds (20 + 0, ((proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -54) + 27) + 27, 176, 24);
+    editShowScaleDegree->setBounds (20 + 0, (((proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -54) + 27) + 27) + 27, 176, 24);
+    editRootSld->setBounds (90, proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -14, proportionOfWidth (0.1036f), 24);
+    rootLbl->setBounds (90 + -75, (proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -14) + 0, 80, 24);
+    colorSelectionLbl->setBounds ((proportionOfWidth (0.7868f) - (proportionOfWidth (0.3724f) / 2)) + proportionOfWidth (0.3724f) / 2 - (112 / 2), (proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -30) + -24, 112, 24);
+    editScaleFlip->setBounds (((proportionOfWidth (0.3163f) - (proportionOfWidth (0.0990f) / 2)) + roundToInt (proportionOfWidth (0.0990f) * 1.1591f)) + 91, ((proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -14) + roundToInt (24 * 0.0000f)) + 0, roundToInt (proportionOfWidth (0.5803f) * 0.1680f), 24);
+    editBlankKeys->setBounds (20 + 0, ((((proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -54) + 27) + 27) + 27) + 27, 176, 24);
+    negateXBtn->setBounds (proportionOfWidth (0.3163f) - (proportionOfWidth (0.0990f) / 2), proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -14, proportionOfWidth (0.0990f), 24);
+    negateYBtn->setBounds ((proportionOfWidth (0.3163f) - (proportionOfWidth (0.0990f) / 2)) + roundToInt (proportionOfWidth (0.0990f) * 1.1591f), (proportionOfHeight (0.0283f) + proportionOfHeight (0.5406f) - -14) + roundToInt (24 * 0.0000f), proportionOfWidth (0.1006f), 24);
+    scaleStructureComponent->setBounds (10 + proportionOfWidth (0.5803f) - -23, proportionOfHeight (0.0283f) + 0, 504, roundToInt (proportionOfHeight (0.5406f) * 1.0000f));
     //[UserResized] Add your own custom resize handling here..
 
 	// update color box row heights
@@ -330,15 +330,15 @@ BEGIN_JUCER_METADATA
                  overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="f8a4a0ba2169ed5d" memberName="keyboardView"
-                    virtualName="" explicitFocusOrder="0" pos="1.201% 1.822% 58.033% 53.986%"
+                    virtualName="" explicitFocusOrder="0" pos="10 2.847% 58.033% 54.1%"
                     class="KeyboardViewer" params="layout.get()"/>
   <GENERICCOMPONENT name="new component" id="80741f8eece04bb7" memberName="editColorLayout"
-                    virtualName="" explicitFocusOrder="0" pos="50.225%c -32R 11.562% 136"
+                    virtualName="" explicitFocusOrder="0" pos="78.679%c -30R 37.237% 136"
                     posRelativeY="f8a4a0ba2169ed5d" class="ListBox" params="&quot;Colour Selector&quot;, colourTableModel.get()"/>
   <TOGGLEBUTTON name="new toggle button" id="3fefe6b79e2bbe21" memberName="editShowKeyNumber"
-                virtualName="" explicitFocusOrder="0" pos="87.087%c -24R 176 24"
-                posRelativeY="f8a4a0ba2169ed5d" buttonText="Full Keyboard Number"
-                connectedEdges="0" needsCallback="1" radioGroupId="10" state="1"/>
+                virtualName="" explicitFocusOrder="0" pos="20 -54R 176 24" posRelativeY="f8a4a0ba2169ed5d"
+                buttonText="Full Keyboard Number" connectedEdges="0" needsCallback="1"
+                radioGroupId="10" state="1"/>
   <TOGGLEBUTTON name="new toggle button" id="d5902f532f1a13b4" memberName="editShowOctaveNum"
                 virtualName="" explicitFocusOrder="0" pos="0 27 176 24" posRelativeX="3fefe6b79e2bbe21"
                 posRelativeY="3fefe6b79e2bbe21" buttonText="Octave Number" connectedEdges="0"
@@ -358,7 +358,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="editRootSld" id="c486bd0e1ff65df1" memberName="editRootSld"
-          virtualName="" explicitFocusOrder="0" pos="11.824%c -133R 10.435% 24"
+          virtualName="" explicitFocusOrder="0" pos="90 -14R 10.36% 24"
           posRelativeY="f8a4a0ba2169ed5d" min="0.0" max="274.0" int="1.0"
           style="IncDecButtons" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
@@ -375,7 +375,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <TOGGLEBUTTON name="editScaleFlip" id="f9e862554b787aca" memberName="editScaleFlip"
-                virtualName="" explicitFocusOrder="0" pos="0 28 6.986% 24" posRelativeX="91bd59afec743d5b"
+                virtualName="" explicitFocusOrder="0" pos="91 0 16.818% 24" posRelativeX="91bd59afec743d5b"
                 posRelativeY="91bd59afec743d5b" posRelativeW="f8a4a0ba2169ed5d"
                 buttonText="Flip" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
@@ -384,16 +384,16 @@ BEGIN_JUCER_METADATA
                 posRelativeY="90354e3468042d3e" buttonText="Blank" connectedEdges="0"
                 needsCallback="1" radioGroupId="10" state="0"/>
   <TOGGLEBUTTON name="negateXBtn" id="fe6ffcda9917ff6" memberName="negateXBtn"
-                virtualName="" explicitFocusOrder="0" pos="10.511%c -45R 88 24"
+                virtualName="" explicitFocusOrder="0" pos="31.607%c -14R 9.91% 24"
                 posRelativeY="f8a4a0ba2169ed5d" buttonText="Negate X" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="negateYBtn" id="91bd59afec743d5b" memberName="negateYBtn"
-                virtualName="" explicitFocusOrder="0" pos="0% 116.667% 88 24"
+                virtualName="" explicitFocusOrder="0" pos="115.909% 0% 10.06% 24"
                 posRelativeX="fe6ffcda9917ff6" posRelativeY="fe6ffcda9917ff6"
                 buttonText="Negate Y" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <GENERICCOMPONENT name="scaleStructureComponent" id="b43f58850a822163" memberName="scaleStructureComponent"
-                    virtualName="" explicitFocusOrder="0" pos="-8R 0 504 100%" posRelativeX="f8a4a0ba2169ed5d"
+                    virtualName="" explicitFocusOrder="0" pos="-23R 0 504 100%" posRelativeX="f8a4a0ba2169ed5d"
                     posRelativeY="f8a4a0ba2169ed5d" posRelativeH="f8a4a0ba2169ed5d"
                     class="ScaleStructureComponent" params="*scaleStructure.get(), scaleColours"/>
 </JUCER_COMPONENT>

@@ -101,14 +101,16 @@ ScaleStructureComponent::ScaleStructureComponent (ScaleStructure& scaleStructure
 	scaleStructure.setSizeIndex(scaleStructure.getSuggestedSizeIndex());
 	scaleStructure.setGeneratorOffset(1);
 
-	offsetSlider->setValue(1);
-	circleOffset = &circle->getOffsetValue();
-	*circleOffset = offsetSlider->getValue();
-
 	generatorSlider->setList(scaleStructure.getValidGenerators());
 	generatorSlider->setIndex(scaleStructure.getGeneratorIndex());
 	scaleSizeSelector->setList(scaleStructure.getScaleSizes());
 	scaleSizeSelector->setIndex(scaleStructure.getScaleSizeIndex());
+	offsetSlider->setValue(1);
+
+	offsetSlider->setValue(1);
+	circleOffset = &circle->getOffsetValue();
+	*circleOffset = offsetSlider->getValue();
+	circle->setOffsetLimit(scaleStructure.getScaleSize() - 1);
 
 	periodSlider->addListener(this);
 	generatorSlider->addListener(this);
