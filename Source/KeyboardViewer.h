@@ -50,9 +50,9 @@ private:
 	Point<float> horizontalStep;
 	Point<float> verticalStep;
 	Point<float> octaveSpacing;
-	AffineTransform transform = AffineTransform::rotation(-0.2f);
+	AffineTransform transform = AffineTransform::rotation(-19.0f / 72.0f);
 
-	float widthMult = 0.015;
+	float widthMult = 0.014;
 	float spacing = 0.1;
 
 	// Independent Attributes

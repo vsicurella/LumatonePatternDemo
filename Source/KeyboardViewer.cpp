@@ -64,7 +64,7 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 		{
 			hex = new Path();
 			hexes.add(hex);
-			hex->addPolygon(Point<float>(getWidth() * 0.015f, getHeight() * 0.11f) +
+			hex->addPolygon(Point<float>(getWidth() * -widthMult / 2, getHeight() / 4.0f) +
 				(horizontalStep * (k + octaveRowOffsets[r])) +
 				verticalStep * r + octaveSpacing * octaveNumber, 6, getWidth() * widthMult);
 			hex->applyTransform(transform);
@@ -120,7 +120,7 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 void KeyboardViewer::resized()
 {
 	horizontalStep = Point<float>(getWidth() * widthMult * 2 + spacing, 0);
-	horizontalStep.rotatedAboutOrigin(0.2f);
+	horizontalStep.rotatedAboutOrigin(0.25f);
 
 	verticalStep = Point<float>(getWidth() * widthMult + spacing, getWidth() * widthMult * 1.66667f) - horizontalStep;
 
