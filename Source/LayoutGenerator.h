@@ -23,9 +23,13 @@ class LayoutHelper
 
 	// Dependent Properties
 	const ScaleStructure* structure; // calculates the properties of the selected scale
+	Point<int> stepSizes;
 
-	std::unique_ptr<Array<int>> kbdScaleDegrees; // array of root-note-offsets per keyboard key number
-	std::unique_ptr<Array<Array<int>>> notesByGenerators; // the notes by number of generators, with separate tiers for different colors
+	Array<int> kbdScaleDegrees; // array of root-note-offsets per keyboard key number
+	Array<Array<int>> notesByGenerators; // the notes by number of generators, with separate tiers for different colors
+
+	void fillStartingFromNote(int kbdNoteNum, int startingStepVal);
+	void fixErrors();
     
   public:
   
