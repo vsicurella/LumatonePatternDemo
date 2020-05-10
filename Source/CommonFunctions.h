@@ -206,6 +206,10 @@ static Array<int> arrangeSymmetrically(Array<int> arrayOfValues, int centerIndex
 		sortedValues.insert(0, oddGroupValue);
 	}
 
+	// TODO: add size order optimization
+	// - Avoid group sizes identical to primary group being consecutive (odd groupings greater than 1)
+	// - If necessary, break up groups to acheive above point
+
 	// rebuild groupings with sorted order
 	Array<Point<int>> sortedGroupings;
 	for (auto val : sortedValues)
