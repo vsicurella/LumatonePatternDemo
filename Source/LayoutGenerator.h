@@ -14,7 +14,7 @@
 class LayoutHelper
 {
     // Independent Properties   
-	int rootKey = 129;
+	int rootKey = 134;
 	bool flipScale = false;
 	bool negateX = false;
 	bool negateY = false;
@@ -28,12 +28,12 @@ class LayoutHelper
 	Array<int> kbdScaleDegrees; // array of root-note-offsets per keyboard key number
 	Array<Array<int>> notesByGenerators; // the notes by number of generators, with separate tiers for different colors
 
-	void fillStartingFromNote(int kbdNoteNum, int startingStepVal);
+	void fillStartingFromNote(int kbdNoteNum, Point<int> startingSteps = Point<int>());
 	void fixErrors();
     
   public:
   
-    LayoutHelper(const ScaleStructure* scaleStructureIn, int rootIn=129);
+    LayoutHelper(const ScaleStructure* scaleStructureIn, int rootIn=134);
 	LayoutHelper(const LayoutHelper& layoutToCopy);
     ~LayoutHelper();
 	
@@ -48,6 +48,8 @@ class LayoutHelper
 
 	int getRootKey();
 	bool isScaleFlipped();
+
+	Point<int> findStepsFromRoot(int kbdNoteNum);
 
 	Array<Colour>* getScaleColours();
 

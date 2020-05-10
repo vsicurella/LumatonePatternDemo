@@ -60,7 +60,7 @@ void LayoutHelper::mapKeysToDegree()
 {
 	kbdScaleDegrees.clear();
 	kbdScaleDegrees.resize(275);
-	kbdScaleDegrees.fill(-1);
+	kbdScaleDegrees.fill(INT_MIN);
 	
 	if (!structure->isValid())
 	{
@@ -77,14 +77,13 @@ void LayoutHelper::mapKeysToDegree()
 	if (flipScale)
 		stepSizes.setXY(stepSizes.y, stepSizes.x);
 
-	fillStartingFromNote(rootKey, 0);
+	fillStartingFromNote(rootKey);
 	fixErrors();
 }
 
-void LayoutHelper::fillStartingFromNote(int kbdNoteNum, int startingStepVal)
+void LayoutHelper::fillStartingFromNote(int kbdNoteNum, Point<int> startingSteps)
 {
-	int xSteps = 0;
-	int ySteps = 0;
+	int xSteps, ySteps = startingSteps.y;
 
 	int nextRow = kbdNoteNum;
 	int nextNote;
@@ -95,7 +94,7 @@ void LayoutHelper::fillStartingFromNote(int kbdNoteNum, int startingStepVal)
 	// start moving right and getting upleft/downright rows
 	while (nextRow > 0)
 	{
-		xSteps = startingStepVal;
+		xSteps = startingSteps.x;
 		nextNote = nextRow;
 		while (nextNote > -1)
 		{
@@ -106,7 +105,7 @@ void LayoutHelper::fillStartingFromNote(int kbdNoteNum, int startingStepVal)
 
 		}
 		nextNote = nextRow;
-		xSteps = startingStepVal;
+		xSteps = startingSteps.x;
 		while (nextNote > -1)
 		{
 			//DBG("RIGHT Mapping note " + String(nextNote) + " to " + String(xSteps * stepSizes.x + ySteps * stepSizes.y));
@@ -122,11 +121,11 @@ void LayoutHelper::fillStartingFromNote(int kbdNoteNum, int startingStepVal)
 
 	//DBG("moving left and get upleft/downright rows");
 	// moving left and get upleft/downright rows
-	ySteps = -1;
+	ySteps = startingSteps.y - 1;
 	nextRow = kbdLeft(kbdNoteNum, 1);
 	while (nextRow > 0)
 	{
-		xSteps = startingStepVal;
+		xSteps = startingSteps.x;
 		nextNote = nextRow;
 		while (nextNote > -1)
 		{
@@ -135,7 +134,7 @@ void LayoutHelper::fillStartingFromNote(int kbdNoteNum, int startingStepVal)
 			nextNote = kbdUpLeft(nextNote, 1);
 			xSteps--;
 		}
-		xSteps = startingStepVal;
+		xSteps = startingSteps.x;
 		nextNote = nextRow;
 		while (nextNote > -1)
 		{
@@ -157,17 +156,25 @@ void LayoutHelper::fixErrors()
 	int negativeErrors = 0;
 	int kbdNote = 43;
 	int nextNote = kbdRight(kbdNote, 1);
-
+	DBG("CHECK ERROR: Bottom Left.");
 	while (nextNote < 221)
 	{
-		if (kbdScaleDegrees[kbdNote] == -1)
+		if (kbdScaleDegrees[kbdNote] == INT_MIN)
 			negativeErrors++;
+		else
+		{
+			// break if corner is valid
+			DBG("No errors found.");
+			break;
+		}
+		
 		
 		// find first non-negative-one value
-		if (negativeErrors >= 2 && kbdScaleDegrees[nextNote] != -1)
+		if (negativeErrors >= 2 && kbdScaleDegrees[nextNote] != INT_MIN)
 		{
 			// fill
-			fillStartingFromNote(nextNote, kbdScaleDegrees[nextNote]);
+			DBG("Found nonnegative key: Key " + String(nextNote) + "\tDegree " + String(kbdScaleDegrees[nextNote]));
+			fillStartingFromNote(nextNote, findStepsFromRoot(nextNote));
 			break;
 		}
 
@@ -179,23 +186,38 @@ void LayoutHelper::fixErrors()
 	negativeErrors = 0;
 	kbdNote = 226;
 	nextNote = kbdLeft(kbdNote, 1);
-
+	DBG("CHECK ERROR: Top Right.");
 	while (nextNote > 49)
 	{
-		if (kbdScaleDegrees[kbdNote] == -1)
+		if (kbdScaleDegrees[kbdNote] == INT_MIN)
 			negativeErrors++;
 
+		// break if there aren't consecutive negative values
+		if (negativeErrors == 0 && kbdNote == 47)
+		{
+			DBG("No errors found.");
+			break;
+		}
+
 		// find first non-negative-one value
-		if (negativeErrors >= 2 && kbdScaleDegrees[nextNote] != -1)
+		else if (negativeErrors >= 2 && kbdScaleDegrees[nextNote] != INT_MIN)
 		{
 			// fill
-			fillStartingFromNote(nextNote, kbdScaleDegrees[nextNote]);
+
+			fillStartingFromNote(nextNote, findStepsFromRoot(nextNote));
 			break;
 		}
 
 		kbdNote = nextNote;
 		nextNote = kbdLeft(nextNote, 1);
 	}
+}
+
+Point<int> LayoutHelper::findStepsFromRoot(int kbdNoteNum)
+{
+	// TODO:
+	// Figure out how many x and y steps it takes to get from root note to given note
+	return Point<int>();
 }
 
 int LayoutHelper::getRootKey()
@@ -212,6 +234,8 @@ bool LayoutHelper::isScaleFlipped()
 {
 	return flipScale;
 }
+
+
 
 void LayoutHelper::setNegateX(bool doNegate)
 {
