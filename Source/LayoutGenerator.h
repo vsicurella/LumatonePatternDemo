@@ -29,7 +29,6 @@ class LayoutHelper
 	Array<Array<int>> notesByGenerators; // the notes by number of generators, with separate tiers for different colors
 
 	void fillStartingFromNote(int kbdNoteNum, Point<int> startingSteps = Point<int>());
-	void fixErrors();
     
   public:
   
