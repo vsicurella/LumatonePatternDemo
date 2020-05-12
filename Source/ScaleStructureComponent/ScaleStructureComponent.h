@@ -66,13 +66,15 @@ private:
 	GroupingCircle* circle;
 	Value* circleOffset;
 
+	std::unique_ptr<Label> offsetLabel;
+	Path offsetArrows;
+
 	int periodSelected;
 	int generatorSelected;
     //[/UserVariables]
 
     //==============================================================================
     std::unique_ptr<GroupingCircle> circleComponent;
-    std::unique_ptr<NumberSelector> offsetSlider;
     std::unique_ptr<NumberSelector> generatorSlider;
     std::unique_ptr<NumberSelector> periodSlider;
     std::unique_ptr<Label> generatorValueLbl;
