@@ -77,7 +77,7 @@ void KeyboardViewer::drawOctave(Graphics& g, int octaveNumber)
 				for (int t = 0; t < generatorNotes.size(); t++)
 				{
 					if (generatorNotes.getReference(t).contains(modDegree))
-						keyColour = layout->getScaleColours()->getUnchecked(t);
+						keyColour = (*layout->getScaleColours())[t];
 				}
 			}
 

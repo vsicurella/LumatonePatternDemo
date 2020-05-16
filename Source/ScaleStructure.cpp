@@ -557,10 +557,6 @@ void ScaleStructure::fillSymmetricGrouping()
 	DBG(dbgstr);
 }
 
-// TODO: Fix issues with generator offsets (modes).
-//		- This algorithm finds and uses absolute degrees, which get affected by generator offset
-//		- The proper solution would be to use relative degrees within the groups
-//		- AKA swap values of degreeGrouping indicies, rather than values of generatorChain indicies
 void ScaleStructure::applyMODMOSProperties()
 {
 	Array<int> naturalScale = degreeGroupings[0];
@@ -596,7 +592,6 @@ void ScaleStructure::applyMODMOSProperties()
 				int indexToSwap = group.indexOf(alteredDegree);
 				degreeGroupings.getReference(0).set(naturalGroupingIndex, alteredDegree);
 				group.set(indexToSwap, scaleDegree);
-				continue;
 			}
 		}
 	}
