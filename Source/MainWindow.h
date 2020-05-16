@@ -52,8 +52,8 @@ public:
     void onGeneratorChange();
 	void onSizeChange();
 
-	void refreshGenerators();
-	void refreshSizes();
+	void refreshGenerators(bool updateControl = true);
+	void refreshSizes(bool updateControl = true);
 
 	void refreshKeyboardView();
     //[/UserMethods]

@@ -411,13 +411,16 @@ void MainWindow::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     {
         //[UserComboBoxCode_editGenerator] -- add your combo box handling code here..
 		genIndex = editGenerator->getSelectedId() - 1;
+		scaleStructure->setGeneratorIndex(genIndex);
 		onGeneratorChange();
         //[/UserComboBoxCode_editGenerator]
     }
     else if (comboBoxThatHasChanged == editKeyboard.get())
     {
         //[UserComboBoxCode_editKeyboard] -- add your combo box handling code here..
-		sizeIndex = editKeyboard->getSelectedId() - 1;
+		sizeIndex = jmax(1, editKeyboard->getSelectedId() - 1);
+		DBG("SIZE BOX INDEX SET TO " + String(sizeIndex));
+		scaleStructure->setSizeIndex(sizeIndex);
 		onSizeChange();
 		refreshKeyboardView();
         //[/UserComboBoxCode_editKeyboard]
@@ -518,25 +521,32 @@ void MainWindow::onPeriodChange()
 
 void MainWindow::onPeriodFactorChange()
 {
-	scaleStructure->setPeriodFactorIndex(periodFactorIndex);
+	scaleStructure->setAll(period, -1, -1, editGeneratorOffset->getValue(), numPeriodBox->getSelectedId() - 1);
 	DBG("Period factor has changed, fractional period is " + String(scaleStructure->getPeriod(true)));
 
-	refreshGenerators();
+	refreshGenerators(false);
+	refreshSizes(false);
+
+	sizeIndex = scaleStructure->getScaleSizeIndex();
+	onSizeChange();
+	refreshKeyboardView();
 }
 
 void MainWindow::onGeneratorChange()
 {
-	scaleStructure->setGeneratorIndex(genIndex);
 	DBG("Generator box has changed, generator is " + String(scaleStructure->getGenerator()));
-
 	refreshSizes();
 }
 
 void MainWindow::onSizeChange()
 {
-	scaleStructure->setSizeIndex(sizeIndex);
-
-	editGeneratorOffset->setRange(0, scaleStructure->getScaleSize() - 1, 1);
+	if (scaleStructure->getScaleSize() > 1)
+	{
+		editGeneratorOffset->setEnabled(true);
+		editGeneratorOffset->setRange(0, scaleStructure->getScaleSize() - 1, 1);
+	}
+	else
+		editGeneratorOffset->setEnabled(false);
 
 	// Update modmos degree box to have 'size' amount of degrees
 	modMosDegreeBox->clear(dontSendNotification);
@@ -549,7 +559,7 @@ void MainWindow::onSizeChange()
 	DBG("Step sizes: " + scaleStructure->getStepSize().toString());
 }
 
-void MainWindow::refreshGenerators()
+void MainWindow::refreshGenerators(bool updateControl)
 {
 	// Update generators
 	validGenerators = scaleStructure->getValidGenerators();
@@ -559,10 +569,11 @@ void MainWindow::refreshGenerators()
 		editGenerator->addItem(String(validGenerators[i]), i + 1);
 	}
 
-	editGenerator->setSelectedId(scaleStructure->getSuggestedGeneratorIndex() + 1, sendNotificationSync);
+	NotificationType notify = updateControl ? sendNotificationSync : dontSendNotification;
+	editGenerator->setSelectedId(scaleStructure->getSuggestedGeneratorIndex() + 1, notify);
 }
 
-void MainWindow::refreshSizes()
+void MainWindow::refreshSizes(bool updateControl)
 {
 	// update keyboard options
 	validSizes = scaleStructure->getScaleSizes();
@@ -572,7 +583,8 @@ void MainWindow::refreshSizes()
 		editKeyboard->addItem(String(validSizes[i] * scaleStructure->getPeriodFactor()), i + 1);
 	}
 
-	editKeyboard->setSelectedId(scaleStructure->getSuggestedSizeIndex() + 1, sendNotificationSync);
+	NotificationType notify = updateControl ? sendNotificationSync : dontSendNotification;
+	editKeyboard->setSelectedId(scaleStructure->getSuggestedSizeIndex() + 1, notify);
 }
 
 
