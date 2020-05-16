@@ -453,17 +453,19 @@ void ScaleStructure::fillSymmetricGrouping()
 	degreeGroupings.resize(degreeGroupSizes.size());
 
 	// Fill degree groups symmetrically
-	int ind = 0;
-	for (int t = 0; t < degreeGroupSizes.size(); t++)
+	int groupSize, ind = 0;
+	for (int group = 0; group < degreeGroupSizes.size(); group++)
 	{
-		for (int n = 0; n < scaleSizes[degreeGroupSizes[t]]; n++)
+		groupSize = scaleSizes[degreeGroupSizes[group]];
+		for (int f = 0; f < periodFactorSelected; f++)
 		{
-			for (int f = 0; f < periodFactorSelected; f++)
+			for (int deg = 0; deg < groupSize; deg++)
 			{
-				degreeGroupings.getReference(t).add(generatorChain[ind + fPeriod * f]);
+				degreeGroupings.getReference(group).add(generatorChain[ind + deg + fPeriod * f]);
 			}
-			ind = modulo(ind + 1, fPeriod);
 		}
+
+		ind += groupSize;
 	}
 
 	// Rearrange degrees if MODMOS properties exist
@@ -515,6 +517,7 @@ void ScaleStructure::applyMODMOSProperties()
 
 		int amount = alteration.y;
 		int scaleSize = scaleSizes[sizeIndexSelected];
+		DBG("Scale size is " + String(scaleSize));
 
 		// Find the altered scale degree
 		int originalChainIndex = generatorChain.indexOf(scaleDegree);
