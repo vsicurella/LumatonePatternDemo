@@ -33,14 +33,6 @@ ScaleStructure::ScaleStructure(int periodIn, int genIndexIn, int sizeIndexIn, Ar
 	}
 }
 
-int ScaleStructure::getPeriod(bool ofFactorSelected) const
-{
-	if (ofFactorSelected && periodFactorSelected > 0)
-		return fPeriod;
-
-	return period;
-}
-
 void ScaleStructure::resetToPeriod(int periodIn)
 {
 	period = periodIn;
@@ -49,6 +41,70 @@ void ScaleStructure::resetToPeriod(int periodIn)
 
 	periodFactors = getFactors(period);
 	setPeriodFactorIndex(0);
+}
+
+void ScaleStructure::setAll(
+	int periodIn,
+	int generatorIndexIn,
+	int sizeIndexIn,
+	int generatorOffsetIn,
+	int periodFactorIndexIn,
+	Array<int> degreeGroupSizeIndiciesIn,
+	Array<Point<int>> modMosPropertiesIn)
+{
+	period = periodIn;
+	
+	periodFactors = getFactors(period);
+	periodFactorIndexSelected = jlimit(0, periodFactors.size() - 1, periodFactorIndexIn);
+	periodFactorSelected = periodFactors[periodFactorIndexSelected];
+	fPeriod = period / periodFactorSelected;
+
+	validGenerators = getCoprimes(fPeriod);
+	// if generator index is invalid, default to suggested
+	if (generatorIndexIn < 0 || generatorIndexIn >= validGenerators.size())
+		generatorIndex = getSuggestedGeneratorIndex();
+	else
+		generatorIndex = generatorIndexIn;
+
+	calculateProperties();
+
+	// if size index is invalid, default to suggested
+	if (sizeIndexIn < 0 || sizeIndexIn >= scaleSizes.size())
+		sizeIndexSelected = getSuggestedSizeIndex();
+	else
+		sizeIndexSelected = sizeIndexIn;
+
+	generatorOffset = jlimit(0, getScaleSize() - 1, generatorOffsetIn);
+
+	calculateGeneratorChain();
+
+	if (modMosPropertiesIn.size() > 0)
+	{
+		// TODO: check if valid
+		modmosProperties = modMosPropertiesIn;
+	}
+
+	if (degreeGroupSizeIndiciesIn.size() > 0)
+	{
+		// TODO: check if valid scale size
+		degreeGroupSizes = degreeGroupSizeIndiciesIn;
+
+		// TODO: symmetric checks/fixes
+		arrangeSymmetrically(degreeGroupSizes);
+		fillSymmetricGrouping();
+	}
+	else
+	{
+		useSuggestedSizeGrouping();
+	}
+}
+
+int ScaleStructure::getPeriod(bool ofFactorSelected) const
+{
+	if (ofFactorSelected && periodFactorSelected > 0)
+		return fPeriod;
+
+	return period;
 }
 
 Array<int> ScaleStructure::getPeriodFactors() const
@@ -234,13 +290,17 @@ void ScaleStructure::setPeriodFactorIndex(int index)
 	validGenerators = getCoprimes(fPeriod);
 
 	if (generatorIndex > -1)
+	{
 		calculateProperties();
+		calculateGeneratorChain();
+	}
 }
 
 void ScaleStructure::setGeneratorIndex(int index)
 {
 	generatorIndex = index;
 	calculateProperties();
+	calculateGeneratorChain();
 }
 
 void ScaleStructure::setSizeIndex(int index)
@@ -317,7 +377,6 @@ void ScaleStructure::calculateProperties()
 	DBG("Sizes available: " + dbgstr);
 
 	calculateStepSizes();
-	calculateGeneratorChain();
 }
 
 void ScaleStructure::calculateStepSizes()
@@ -560,6 +619,7 @@ int ScaleStructure::getSuggestedGeneratorIndex()
 		}
 	}
 
+	DBG("Suggested generator: " + String(validGenerators[index]) + "\tIndex: " + String(index));
 	return index;
 }
 
@@ -580,6 +640,7 @@ int ScaleStructure::getSuggestedSizeIndex()
 		}
 	}
 
+	DBG("Suggested size: " + String(scaleSizes[index]) + "\tIndex: " + String(index));
 	return index;
 }
 
@@ -610,7 +671,7 @@ Array<int> ScaleStructure::getNestedSizeGrouping()
 
 	int notesLeft = fPeriod - scaleSize;
 	int subSizeInd = sizeIndexSelected;
-	int subSize = scaleSize;
+	int subSize = jmax(1, scaleSize);
 
 	while (notesLeft > 0)
 	{
@@ -678,7 +739,7 @@ Array<int> ScaleStructure::getComplimentarySizeGrouping()
 
 	int notesLeft = fPeriod - scaleSize;
 	int subSizeInd = sizeIndexSelected;
-	int subSize = scaleSize;
+	int subSize = jmax(1, scaleSize);
 
 	int q = notesLeft / subSize;
 	int numToAdd = notesLeft % subSize == 0 ? q : q - (q % 2);
