@@ -506,7 +506,6 @@ void ScaleStructure::applyMODMOSProperties()
 {
 	Array<int> naturalScale = degreeGroupings[0];
 	naturalScale.sort();
-	int fractionalPeriod = period / periodFactors[periodFactorIndexSelected];
 
 	for (auto alteration : modmosProperties)
 	{
@@ -522,8 +521,8 @@ void ScaleStructure::applyMODMOSProperties()
 		// Find the altered scale degree
 		int originalChainIndex = generatorChain.indexOf(scaleDegree);
 		int shiftAmount = amount * scaleSize;
-		int shiftedIndex = generatorChain.indexOf(scaleDegree) + amount * scaleSize;
-		int newGeneratorIndex = modulo(generatorChain.indexOf(scaleDegree) + amount * scaleSize, fractionalPeriod);
+		int shiftedIndex = originalChainIndex + shiftAmount;
+		int newGeneratorIndex = modulo(shiftedIndex, period);
 		int alteredDegree = generatorChain[newGeneratorIndex];
 
 		// Swap the scale degrees in degreeGroupings
@@ -730,7 +729,7 @@ Array<int> ScaleStructure::getComplimentarySizeGrouping()
 			num = 0;
 		}
 	}
-
+	
 	DBG("Complimentary group:");
 	String dbgstr = "";
 	for (int i = 0; i < grouping.size(); i++)
