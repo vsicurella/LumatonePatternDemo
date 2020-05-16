@@ -579,10 +579,12 @@ void ScaleStructure::applyMODMOSProperties()
 
 		// Find the altered scale degree
 		int originalChainIndex = generatorChain.indexOf(scaleDegree);
+		int fractionalChainIndex = originalChainIndex % fPeriod;
+		int periodDegreeIsIn = originalChainIndex / fPeriod;
+
 		int shiftAmount = amount * scaleSize;
-		int shiftedIndex = originalChainIndex + shiftAmount;
-		int newGeneratorIndex = modulo(shiftedIndex, period);
-		int alteredDegree = generatorChain[newGeneratorIndex];
+		int shiftedIndex = modulo(fractionalChainIndex + shiftAmount, fPeriod) + fPeriod * periodDegreeIsIn;
+		int alteredDegree = generatorChain[shiftedIndex];
 
 		// Swap the scale degrees in degreeGroupings
 		for (int i = 0; i < degreeGroupings.size(); i++)
