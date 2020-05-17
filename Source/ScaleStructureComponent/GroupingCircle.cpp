@@ -12,13 +12,11 @@
 #include "GroupingCircle.h"
 
 //==============================================================================
-GroupingCircle::GroupingCircle(const Array<int>& generatorChainIn, const Array<int>& degreeGroupSizesIn, Array<Colour>& groupColoursIn)
-	:	generatorChain(generatorChainIn),
-		degreeGroupSizes(degreeGroupSizesIn),
+GroupingCircle::GroupingCircle(const Array<Array<int>>& degreeGroupingsIn, Array<Colour>& groupColoursIn)
+	:	degreeGroupings(degreeGroupingsIn),
 		colourTable(groupColoursIn)
 {
-	//jassert(degreeGroupSize.size() == colourTable.size())
-	//addMouseListener(this, true);
+
 }
 
 GroupingCircle::~GroupingCircle()
@@ -139,7 +137,7 @@ void GroupingCircle::paint (Graphics& g)
 		groupSizeLabels[i]->setColour(Label::ColourIds::textColourId, groupColour.contrasting(labelContrastRatio));
 
 		// Draw degrees
-		for (int d = 0; d < degreeGroupSizes[i]; d++)
+		for (int d = 0; d < groupSizes[i]; d++)
 		{
 			degreeColour = groupColour;
 
@@ -187,7 +185,7 @@ void GroupingCircle::resized()
 	angleHalf = angleIncrement / 2.0f;
 
 	// determine circle offset, based off of middle angle of first degree group
-	circleOffset = degreeGroupSizes[0] * angleIncrement / 2.0f;
+	circleOffset = groupSizes[0] * angleIncrement / 2.0f;
 
 	int groupIndex = 0;
 	int groupDegreesPassed = 0;
@@ -229,7 +227,7 @@ void GroupingCircle::resized()
 			round(center.y + sinf(degLabelAngle) * degreeMiddleRadius)
 		));
 
-		int groupSize = degreeGroupSizes[groupIndex];
+		int groupSize = groupSizes[groupIndex];
 		if ((i + 1) - groupDegreesPassed >= groupSize && groupSize > 0)
 		{
 			groupPath = Path();
@@ -252,7 +250,7 @@ void GroupingCircle::resized()
 
 			groupDegreesPassed += groupSize;
 			groupIndex++;
-			groupSize = degreeGroupSizes[groupIndex];
+			groupSize = groupSizes[groupIndex];
 
 			groupAngleFrom = angleTo;
 		}
@@ -338,7 +336,7 @@ void GroupingCircle::mouseDrag(const MouseEvent& event)
 	float mouseDownRadius = event.mouseDownPosition.getDistanceFrom(center);
 	bool dirty = false;
 
-	if (mouseDownRadius >= degreeInnerRadius || mouseDownRadius < degreeOuterRadius)
+	if (mouseDownRadius >= degreeInnerRadius && mouseDownRadius < degreeOuterRadius)
 	{
 		float mouseRadius = event.position.getDistanceFrom(center);
 		float angle = getNormalizedMouseAngle(event);
@@ -389,7 +387,20 @@ void GroupingCircle::updatePeriod(int periodIn)
 
 void GroupingCircle::updateGenerator()
 {
-	DBG("Circle: Generator changed, updating labels");
+	// Update generatorChain and groupSizes
+	generatorChain.clear();
+	groupSizes.clear();
+	for (int g = 0; g < degreeGroupings.size(); g++)
+	{
+		const Array<int>& group = degreeGroupings.getReference(g);
+		groupSizes.add(group.size());
+
+		for (auto degree : group)
+		{
+			generatorChain.add(degree);
+		}
+	}
+	
 	for (int i = 0; i < degreeLabels.size(); i++)
 	{
 		degreeLabels[i]->setText(String(generatorChain[i]), dontSendNotification);
@@ -397,14 +408,17 @@ void GroupingCircle::updateGenerator()
 	}
 
 	groupSizeLabels.clear();
-	for (auto groupSize : degreeGroupSizes)
+	for (int i = 0; i < groupSizes.size(); i++)
 	{
 		Label* l = groupSizeLabels.add(new Label());
 		l->setJustificationType(Justification::centred);
-		l->setText(String(groupSize), dontSendNotification);
+		l->setText(String(groupSizes[i]), dontSendNotification);
 		l->setInterceptsMouseClicks(false, false);
 		//l->setColour(Label::ColourIds::outlineColourId, Colours::white);
-		addAndMakeVisible(l);
+
+		// First one will be replaced by scaleSizeSelector
+		if (i > 0)
+			addAndMakeVisible(l);
 	}
 
 	groupSectorMouseOver.resize(groupSizeLabels.size());
@@ -416,7 +430,7 @@ void GroupingCircle::updateGenerator()
 
 float GroupingCircle::getNormalizedMouseAngle(const MouseEvent& event)
 {
-	float angle = atan2f(event.position.x - center.x, center.y - event.position.y) + (degreeGroupSizes[0] / 2.0f * angleIncrement);
+	float angle = atan2f(event.position.x - center.x, center.y - event.position.y) + (groupSizes[0] / 2.0f * angleIncrement);
 	if (angle < 0) angle += float_Tau;
 	if (angle >= float_Tau) angle -= float_Tau;
 
@@ -439,11 +453,15 @@ int GroupingCircle::mouseInDegreeRingSector(const MouseEvent& event, float radiu
 int GroupingCircle::mouseInGroupSector(int degreeIndex)
 {
 	int groupIndex = 0;
-	int groupSize = degreeGroupSizes[groupIndex];
+	int groupSize = groupSizes[groupIndex];
 	while (degreeIndex >= groupSize)
 	{
 		degreeIndex -= groupSize;
-		groupSize = degreeGroupSizes[++groupIndex];
+
+		if (degreeIndex < 0 || groupIndex == groupSizes.size() - 1)
+			return -1;
+
+		groupSize = groupSizes[++groupIndex];
 	}
 	
 	return groupIndex;

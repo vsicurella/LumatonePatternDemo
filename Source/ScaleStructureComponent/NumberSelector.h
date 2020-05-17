@@ -19,7 +19,10 @@
 	The value text box is centered between the buttons.
 */
 class NumberSelector :	public Component,
-						private Button::Listener
+						private Button::Listener,
+						private ComboBox::Listener,
+						private Label::Listener,
+						private TextEditor::Listener
 {
 public:
 
@@ -69,7 +72,7 @@ public:
 		buttonOutlineColourId = 0x1001700,
 
 		beltBackgroundColorId = 0x1001800,
-		beltBuckleColourId = 0x1001810
+		beltBuckleColourId = 0x1001810,
 	};
 
 
@@ -79,8 +82,16 @@ public:
 		String componentName = "",
 		SelectionType typeIn = SelectionType::Range, 
 		SelectorStyle styleIn = TickBox, 
-		Orientation orientationIn = Horizontal
+		Orientation orientationIn = Horizontal,
+		Colour defaultTextColour = Colours::white
 	);
+
+	NumberSelector(
+		String componentName,
+		SelectionType typeIn,
+		Colour defaultTextColour
+	);
+
 	~NumberSelector();
 
 	SelectionType getSelectionType() const;
@@ -125,6 +136,8 @@ public:
 
 	void setList(IntList listIn, bool updateValueAndIndex = true, bool sendNotification = true);
 
+	void setListLookAndFeel(LookAndFeel* newLookAndFeel);
+
 	void paint(Graphics&) override;
 
 	void resized() override;
@@ -152,11 +165,12 @@ protected:
 	ListenerList<Listener> listeners;
 
 private:
-	std::unique_ptr<Label> valueLabel;
 	std::unique_ptr<ArrowButton> incrementButton;
 	std::unique_ptr<ArrowButton> decrementButton;
+	std::unique_ptr<Label> titleLabel;
 
-	std::unique_ptr<Label> nameLabel;
+	std::unique_ptr<Label> rangeValueLabel;
+	std::unique_ptr<ComboBox> listValueLabel;
 
 	int valueSelected = 0;
 	int indexSelected = 0;
@@ -177,10 +191,17 @@ private:
 	void updateIndexFromValue();
 	void updateTextBox();
 
-	void buttonClicked(Button* buttonThatHasChanged) override;
+	void buttonClicked(Button*) override;
 
-	void setupDefaultColours();
+	void comboBoxChanged(ComboBox*) override;
+
+	void labelTextChanged(Label*) override;
+	void editorShown(Label*, TextEditor&) override;
+	void editorHidden(Label*, TextEditor&) override;
+
+	void textEditorTextChanged(TextEditor&) override;
+
+	void setupDefaultColours(Colour defaultTextColourIn);
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(NumberSelector)
 };
-

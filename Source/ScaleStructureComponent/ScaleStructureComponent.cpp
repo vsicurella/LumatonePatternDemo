@@ -33,7 +33,7 @@ ScaleStructureComponent::ScaleStructureComponent (ScaleStructure& scaleStructure
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    circleComponent.reset (new GroupingCircle (scaleStructure.getGeneratorChainReference(), scaleStructure.getGroupingSizesReference(), colourTable));
+    circleComponent.reset (new GroupingCircle (scaleStructure.getDegreeGroupingsReference(), colourTable));
     addAndMakeVisible (circleComponent.get());
     circleComponent->setName ("circleComponent");
 
@@ -63,30 +63,45 @@ ScaleStructureComponent::ScaleStructureComponent (ScaleStructure& scaleStructure
     stepSizePatternLbl->setColour (TextEditor::textColourId, Colours::black);
     stepSizePatternLbl->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    periodFactorSelector.reset (new NumberSelector ("Period\nFactor", NumberSelector::SelectionType::List, NumberSelector::SelectorStyle::TickBox, NumberSelector::Orientation::Vertical));
-    addAndMakeVisible (periodFactorSelector.get());
-    periodFactorSelector->setName ("Period Factor");
-
-    scaleSizeSelector.reset (new NumberSelector ("Scale Size", NumberSelector::SelectionType::List));
-    addAndMakeVisible (scaleSizeSelector.get());
-    scaleSizeSelector->setName ("Scale Size");
-
 
     //[UserPreSize]
+	generatorLookAndFeel.reset(new TransparentDropDown());
+	// TODO: add SSC colour ids
+	//generatorLookAndFeel.setBaseColour(findColour(ColourIds::backgroundColourId));
+	generatorLookAndFeel->setColour(PopupMenu::ColourIds::backgroundColourId, Colour());
+	generatorSlider->setLookAndFeel(generatorLookAndFeel.get());
+
 	offsetLabel.reset(new Label("offsetLabel", "Offset\n0"));
 	offsetLabel->setJustificationType(Justification::centred);
 	offsetLabel->setColour(Label::ColourIds::textColourId, Colours::white);
 	addAndMakeVisible(offsetLabel.get());
-	
+
+	sizeSelector.reset(new NumberSelector("Scale Size", NumberSelector::SelectionType::List, colourTable[0].contrasting(0.8f)));
+	//sizeSelector->setColour(NumberSelector::ColourIds::valueTextColourId, colourTable[0].contrasting(1.0));
+	/*sizeSelector->setColour(NumberSelector::ColourIds::, colourTable[0].contrasting(1.0));*/
+	addAndMakeVisible(sizeSelector.get());
+
+	sizeLookAndFeel.reset(new TransparentDropDown());
+	sizeLookAndFeel->setBaseColour(colourTable.getReference(0));
+	sizeLookAndFeel->setColour(PopupMenu::ColourIds::backgroundColourId, Colour());
+	sizeLookAndFeel->setColour(ComboBox::ColourIds::textColourId, sizeSelector->findColour(NumberSelector::ColourIds::valueTextColourId));
+	sizeSelector->setLookAndFeel(sizeLookAndFeel.get());
+
+
+	// TODO: add component colour ids
+	//periodFactorLookAndFeel.setBaseColour(findColour(ColourIds::backgroundColourId));
+	periodFactorButton.reset(new ShapeButton("periodFactorButton", Colours::white, Colours::white.contrasting(0.125f), Colours::white.contrasting(0.25f)));
+	periodFactorButton->setTooltip("Number of periods.");
+	addAndMakeVisible(periodFactorButton.get());
+
+	periodFactorLookAndFeel.reset(new TransparentDropDown());
+	periodFactorMenu.setLookAndFeel(periodFactorLookAndFeel.get());
+
 	circle = dynamic_cast<GroupingCircle*>(circleComponent.get());
 
 	periodSlider->showNameLabel();
 	generatorSlider->showNameLabel();
-	scaleSizeSelector->showNameLabel();
-
-	// TODO: implement period factors properly, and get rid of below
-	periodFactorSelector->setInterceptsMouseClicks(false, false);
-
+	sizeSelector->showNameLabel();
     //[/UserPreSize]
 
     setSize (800, 800);
@@ -95,18 +110,24 @@ ScaleStructureComponent::ScaleStructureComponent (ScaleStructure& scaleStructure
     //[Constructor] You can add your own custom stuff here..
 
 	// Set up default values, then set up listening
-	periodSlider->setRange(5, 400, true, false);
+	periodSlider->setRange(5, 275, true, false);
 	periodSlider->setValue(scaleStructure.getPeriod());
+
+	updateGenerators();
 
 	scaleStructure.resetToPeriod(12);
 	scaleStructure.setGeneratorIndex(scaleStructure.getSuggestedGeneratorIndex());
 	scaleStructure.setSizeIndex(scaleStructure.getSuggestedSizeIndex());
 	scaleStructure.setGeneratorOffset(1);
 
+	periodFactors = scaleStructure.getPeriodFactors();
+	if (periodFactors.size() == 1)
+		periodFactorButton->setVisible(false);
+
 	generatorSlider->setList(scaleStructure.getValidGenerators());
 	generatorSlider->setIndex(scaleStructure.getGeneratorIndex());
-	scaleSizeSelector->setList(scaleStructure.getScaleSizes());
-	scaleSizeSelector->setIndex(scaleStructure.getScaleSizeIndex());
+
+	updateScaleSizes();
 
 	circleOffset = &circle->getOffsetValue();
 	*circleOffset = 1;
@@ -115,8 +136,10 @@ ScaleStructureComponent::ScaleStructureComponent (ScaleStructure& scaleStructure
 
 	periodSlider->addListener(this);
 	generatorSlider->addListener(this);
-	scaleSizeSelector->addListener(this);
+
 	circleOffset->addListener(this);
+	sizeSelector->addListener(this);
+	periodFactorButton->addListener(this);
 
 	circle->updatePeriod(scaleStructure.getPeriod());
 	circle->updateGenerator();
@@ -133,11 +156,11 @@ ScaleStructureComponent::~ScaleStructureComponent()
     periodSlider = nullptr;
     generatorValueLbl = nullptr;
     stepSizePatternLbl = nullptr;
-    periodFactorSelector = nullptr;
-    scaleSizeSelector = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
+	sizeSelector = nullptr;
+	periodFactorMenu.setLookAndFeel(nullptr);
     //[/Destructor]
 }
 
@@ -155,7 +178,6 @@ void ScaleStructureComponent::paint (Graphics& g)
 	g.setColour(Colours::white);
 	PathStrokeType strokeType(1.0f);
 	g.strokePath(offsetArrows, strokeType);
-
     //[/UserPaint]
 }
 
@@ -165,38 +187,77 @@ void ScaleStructureComponent::resized()
     //[/UserPreResize]
 
     circleComponent->setBounds (0, 0, proportionOfWidth (1.0000f), proportionOfHeight (1.0000f));
-    generatorSlider->setBounds (proportionOfWidth (0.5013f) - (proportionOfWidth (0.2503f) / 2), proportionOfHeight (0.4372f), proportionOfWidth (0.2503f), proportionOfHeight (0.1494f));
-    periodSlider->setBounds (proportionOfWidth (0.5041f) - (proportionOfWidth (0.2503f) / 2), proportionOfHeight (0.2769f), proportionOfWidth (0.2503f), proportionOfHeight (0.1494f));
-    generatorValueLbl->setBounds (proportionOfWidth (0.3606f) - (103 / 2), proportionOfHeight (0.7049f), 103, 24);
-    stepSizePatternLbl->setBounds (proportionOfWidth (0.6401f) - (96 / 2), proportionOfHeight (0.7049f), 96, 24);
-    periodFactorSelector->setBounds (proportionOfWidth (0.7470f), proportionOfHeight (0.2769f), proportionOfWidth (0.1448f), proportionOfHeight (0.3643f));
-    scaleSizeSelector->setBounds (proportionOfWidth (0.5013f) - (proportionOfWidth (0.1800f) / 2), proportionOfHeight (0.6266f), proportionOfWidth (0.1800f), proportionOfHeight (0.1111f));
+    generatorSlider->setBounds (proportionOfWidth (0.5011f) - (proportionOfWidth (0.2500f) / 2), proportionOfHeight (0.4658f), proportionOfWidth (0.2500f), proportionOfHeight (0.1492f));
+    periodSlider->setBounds (proportionOfWidth (0.5041f) - (proportionOfWidth (0.2500f) / 2), proportionOfHeight (0.3064f), proportionOfWidth (0.2500f), proportionOfHeight (0.1492f));
+    generatorValueLbl->setBounds (proportionOfWidth (0.3607f) - (103 / 2), proportionOfHeight (0.7050f), 103, 24);
+    stepSizePatternLbl->setBounds (proportionOfWidth (0.6404f) - (96 / 2), proportionOfHeight (0.7050f), 96, 24);
     //[UserResized] Add your own custom resize handling here..
 
 	// TODO: implement (probably ex-projucer) this so that the bounds don't have to be set twice
-	periodSlider->setCentrePosition(circle->getIntPointFromCenter(circle->getInnerRadius() * 0.45f, 0));
-	generatorSlider->setCentrePosition(circle->getIntPointFromCenter(circle->getInnerRadius() * 0.05f, float_Pi));
-	scaleSizeSelector->setCentrePosition(circle->getIntPointFromCenter(circle->getInnerRadius() *  7.0f / 10.0f, float_Pi));
+	periodSlider->setCentrePosition(circle->getIntPointFromCenter(circle->getInnerRadius() * 0.4f, 0));
+	generatorSlider->setCentrePosition(circle->getIntPointFromCenter(circle->getInnerRadius() * 0.125f, float_Pi));
 
 	generatorValueLbl->setCentrePosition(circle->getIntPointFromCenter(circle->getInnerRadius() * 2.0f / 3.0f, float_Pi * 11.0f / 8.0f));
 	stepSizePatternLbl->setCentrePosition(circle->getIntPointFromCenter(circle->getInnerRadius() * 2.0f / 3.0f, float_Pi * 5.0f / 8.0f));
-	
+
 	offsetLabel->setFont(Font().withHeight(getHeight() / 48.0f));
 	offsetLabel->setSize(offsetLabel->getFont().getStringWidth("Offset") * 2, offsetLabel->getFont().getHeight() * 3);
 	offsetLabel->setCentrePosition(circle->getIntPointFromCenter(circle->getInnerRadius() * 7.0f / 8.0f, 0));
 
+	sizeSelector->setSize(proportionOfWidth(0.175f), (circle->getOuterRadius() - circle->getMiddleRadius()) * 7.0f / 8.0f);
+	sizeSelector->setCentrePosition(circle->getIntPointFromCenter((circle->getOuterRadius() + circle->getMiddleRadius()) / 2.025f, 0));
+
+	// TODO: add other part of arrow / improve drawing
 	offsetArrows.clear();
 	GroupingCircle::addArcToPath(offsetArrows, circle->getInnerCircleBounds().reduced(circle->getInnerRadius() / 13.0f), float_Pi / 24, float_Pi / 12, true);
 	offsetArrows.lineTo(circle->getFloatPointFromCenter(circle->getInnerRadius() * 13.0f / 14.0f, float_Pi / 14));
 	GroupingCircle::addArcToPath(offsetArrows, circle->getInnerCircleBounds().reduced(circle->getInnerRadius() / 13.0f), -float_Pi / 24, -float_Pi / 12, true);
 	offsetArrows.lineTo(circle->getFloatPointFromCenter(circle->getInnerRadius() * 13.0f / 14.0f, -float_Pi / 14));
 
+	float periodFBtnSize = periodSlider->getHeight() / 8.0f;
+	periodFactorButtonShape.clear();
+	periodFactorButtonShape.addEllipse(periodSlider->getRight(), periodSlider->getY(), periodFBtnSize, periodFBtnSize);
+	periodFactorButton->setShape(periodFactorButtonShape, true, true, true);
+	periodFactorButton->setTopLeftPosition(periodSlider->getPosition().translated(periodSlider->getWidth() * 4 / 5.0f, 0));
     //[/UserResized]
 }
 
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+void ScaleStructureComponent::paintOverChildren(Graphics& g)
+{
+	// Period Factor label
+	if (periodFactorButton->isVisible())
+	{
+		g.setColour(Colours::black);
+		g.setFont(periodFactorButton->getHeight() * 7 / 8.0f );
+		g.drawFittedText(String(scaleStructure.getPeriodFactor()), periodFactorButton->getBounds().translated(0, -1), Justification::centred, 1);
+	}
+}
+
+void ScaleStructureComponent::buttonClicked(Button* buttonThatWasClicked)
+{
+	if (buttonThatWasClicked == periodFactorButton.get())
+	{
+		periodFactorMenu.clear();
+		for (int i = 0; i < periodFactors.size(); i++)
+		{
+			periodFactorMenu.addItem(i + 1, String(periodFactors[i]), true, i == scaleStructure.getPeriodFactorIndex());
+		}
+
+		PopupMenu::Options options = PopupMenu::Options()
+			.withMinimumWidth(periodSlider->getHeight() / 4)
+			.withStandardItemHeight(periodSlider->getHeight() / 4)
+			.withTargetComponent(periodFactorButton.get());
+
+		periodFactorMenu.showMenuAsync(options, [=](int choice)
+		{
+			updatePeriodFactor(choice - 1);
+		});
+	}
+}
+
 void ScaleStructureComponent::selectorValueChanged(NumberSelector* selectorThatHasChanged)
 {
 	if (selectorThatHasChanged == periodSlider.get())
@@ -207,8 +268,15 @@ void ScaleStructureComponent::selectorValueChanged(NumberSelector* selectorThatH
 		scaleStructure.resetToPeriod(periodSelected);
 		circle->updatePeriod(periodSelected);
 
-		generatorSlider->setList(scaleStructure.getValidGenerators());
-		generatorSlider->setIndex(scaleStructure.getSuggestedGeneratorIndex());
+		periodFactors = scaleStructure.getPeriodFactors();
+		periodFactorSelected = 0;
+
+		if (periodFactors.size() > 1)
+			periodFactorButton->setVisible(true);
+		else
+			periodFactorButton->setVisible(false);
+
+		updateGenerators();
 	}
 
 	else if (selectorThatHasChanged == generatorSlider.get())
@@ -218,22 +286,22 @@ void ScaleStructureComponent::selectorValueChanged(NumberSelector* selectorThatH
 		circle->updateGenerator();
 		DBG("SSC: Generator changed to: " + String(generatorSlider->getValue()));
 
-		float cents = roundf(log2(pow(2, (double)generatorSlider->getValue() / periodSelected)) * 1200000) / 1000.0f;
+		float cents = roundf(log2(pow(2, (double)scaleStructure.getGenerator() / periodSelected)) * 1200000) / 1000.0f;
 		generatorValueLbl->setText(String(cents) + " cents", dontSendNotification);
 
-		// update available sizes
-		Array<int> sizes = scaleStructure.getScaleSizes();
-		sizes.remove(0);
-		scaleSizeSelector->setList(sizes);
-		scaleSizeSelector->setIndex(scaleStructure.getSuggestedSizeIndex() - 1);
+		updateScaleSizes();
 	}
 
-	else if (selectorThatHasChanged == scaleSizeSelector.get())
+	else if (selectorThatHasChanged == sizeSelector.get())
 	{
-		scaleStructure.setSizeIndex(scaleSizeSelector->getIndex() + 1);
-		DBG("SSC: Size changed to: " + String(scaleSizeSelector->getValue()));
+		// Prevent fractional periods from suggesting index 0
+		//if (sizeSelector->getSelectedId() == 0)
+		//	sizeSelector->setSelectedId(1, dontSendNotification);
 
-		circle->setOffsetLimit(scaleSizeSelector->getValue() - 1);
+		scaleStructure.setSizeIndex(sizeSelector->getIndex() + 1);
+		DBG("SSC: Size changed to: " + String(scaleStructure.getScaleSize()));
+
+		circle->setOffsetLimit(scaleStructure.getScaleSize() - 1);
 		circle->updateGenerator();
 
 		stepSizePatternLbl->setText(scaleStructure.getLsSteps(), dontSendNotification);
@@ -259,6 +327,43 @@ void ScaleStructureComponent::valueChanged(Value& valueThatHasChanged)
 	}
 }
 
+void ScaleStructureComponent::updateGenerators()
+{
+	generatorSlider->setList(scaleStructure.getValidGenerators(), false, false);
+	generatorSlider->setIndex(scaleStructure.getSuggestedGeneratorIndex());
+}
+
+void ScaleStructureComponent::updateScaleSizes()
+{
+	Array<int> sizes = scaleStructure.getScaleSizes();
+	sizes.remove(0);
+	if (scaleStructure.getPeriodFactor() > 1)
+	{
+		for (int i = 0; i < sizes.size(); i++)
+		{
+			sizes.set(i, sizes[i] * scaleStructure.getPeriodFactor());
+		}
+	}
+
+	sizeSelector->setList(sizes);
+	sizeSelector->setIndex(jlimit(0, sizes.size(), scaleStructure.getSuggestedSizeIndex() - 1), sendNotificationSync);
+}
+
+void ScaleStructureComponent::updatePeriodFactor(int factorIndexIn)
+{
+	if (factorIndexIn > -1)
+	{
+		periodFactorSelected = factorIndexIn;
+
+		scaleStructure.setPeriodFactorIndex(periodFactorSelected);
+		updateGenerators();
+	}
+	else
+		periodFactorSelected = 0;
+
+	repaint();
+}
+
 //[/MiscUserCode]
 
 
@@ -272,7 +377,7 @@ void ScaleStructureComponent::valueChanged(Value& valueThatHasChanged)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="ScaleStructureComponent"
-                 componentName="" parentClasses="public Component, public NumberSelector::Listener, public Value::Listener, public ChangeBroadcaster"
+                 componentName="" parentClasses="public Component, public ChangeBroadcaster, private NumberSelector::Listener, private Value::Listener, private Button::Listener"
                  constructorParams="ScaleStructure&amp; scaleStructureIn, Array&lt;Colour&gt;&amp; colourTableIn"
                  variableInitialisers="scaleStructure(scaleStructureIn), colourTable(colourTableIn)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
@@ -280,29 +385,23 @@ BEGIN_JUCER_METADATA
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="circleComponent" id="ec9c5dc09c2f91cf" memberName="circleComponent"
                     virtualName="" explicitFocusOrder="0" pos="0 0 100% 100%" class="GroupingCircle"
-                    params="scaleStructure.getGeneratorChainReference(), scaleStructure.getGroupingSizesReference(), colourTable"/>
+                    params="scaleStructure.getDegreeGroupingsReference(), colourTable"/>
   <GENERICCOMPONENT name="Generator" id="efbe5586805bc62b" memberName="generatorSlider"
-                    virtualName="NumberSelector" explicitFocusOrder="0" pos="50.135%c 43.716% 25.034% 14.936%"
+                    virtualName="NumberSelector" explicitFocusOrder="0" pos="50.113%c 46.583% 25% 14.92%"
                     class="Component" params="&quot;Generator&quot;, NumberSelector::SelectionType::List"/>
   <GENERICCOMPONENT name="Period" id="39f9599ebb9952a" memberName="periodSlider"
-                    virtualName="NumberSelector" explicitFocusOrder="0" pos="50.406%c 27.687% 25.034% 14.936%"
+                    virtualName="NumberSelector" explicitFocusOrder="0" pos="50.413%c 30.638% 25% 14.92%"
                     class="Component" params="&quot;Period&quot;"/>
   <LABEL name="generatorValueLbl" id="7250d3d0fa11afcf" memberName="generatorValueLbl"
-         virtualName="" explicitFocusOrder="0" pos="36.062%c 70.492% 103 24"
+         virtualName="" explicitFocusOrder="0" pos="36.074%c 70.501% 103 24"
          edTextCol="ff000000" edBkgCol="0" labelText="700 cents" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="36"/>
   <LABEL name="stepSizePatternLbl" id="b4e52c793121b24" memberName="stepSizePatternLbl"
-         virtualName="" explicitFocusOrder="0" pos="64.005%c 70.492% 96 24"
+         virtualName="" explicitFocusOrder="0" pos="64.039%c 70.501% 96 24"
          edTextCol="ff000000" edBkgCol="0" labelText="LLsLLLs&#10;" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="36"/>
-  <GENERICCOMPONENT name="Period Factor" id="a3462f3523b591da" memberName="periodFactorSelector"
-                    virtualName="" explicitFocusOrder="0" pos="74.696% 27.687% 14.479% 36.43%"
-                    class="NumberSelector" params="&quot;Period\nFactor&quot;, NumberSelector::SelectionType::List, NumberSelector::SelectorStyle::TickBox, NumberSelector::Orientation::Vertical"/>
-  <GENERICCOMPONENT name="Scale Size" id="caf76440221c94" memberName="scaleSizeSelector"
-                    virtualName="" explicitFocusOrder="0" pos="50.135%c 62.659% 17.997% 11.111%"
-                    class="NumberSelector" params="&quot;Scale Size&quot;, NumberSelector::SelectionType::List"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

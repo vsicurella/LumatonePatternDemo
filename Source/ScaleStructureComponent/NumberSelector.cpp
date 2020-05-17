@@ -12,28 +12,49 @@
 #include "NumberSelector.h"
 
 //==============================================================================
-NumberSelector::NumberSelector(String componentName, SelectionType typeIn, SelectorStyle styleIn, Orientation orientationIn)
+NumberSelector::NumberSelector(String componentName, SelectionType typeIn, SelectorStyle styleIn, Orientation orientationIn, Colour defaultTextColour)
 	: selectionType(typeIn), selectorStyle(styleIn), orientation(orientationIn)
 {
 	setName(componentName);
 
-	valueLabel.reset(new Label());
-	addAndMakeVisible(valueLabel.get());
+	// Allow user text input
+	if (selectionType == SelectionType::Range)
+	{
+		rangeValueLabel.reset(new Label());
+		rangeValueLabel->addListener(this);
+		rangeValueLabel->setEditable(false, true);
+		addAndMakeVisible(rangeValueLabel.get());
+	}
+	// Essentially turns into a ComboBox wrapper
+	else
+	{
+		listValueLabel.reset(new ComboBox());
+		listValueLabel->addListener(this);
+		addAndMakeVisible(listValueLabel.get());
+	}
 
 	float arrowDirection = (orientation == Horizontal) ? 0.0 : 0.25f;
 
-	incrementButton.reset(new ArrowButton("incrementButton", arrowDirection, Colours::white));
+	// TODO: Implement something else that can change colour
+	incrementButton.reset(new ArrowButton("incrementButton", arrowDirection, defaultTextColour));
 	addAndMakeVisible(incrementButton.get());
 	incrementButton->addListener(this);
 
-	decrementButton.reset(new ArrowButton("decrementButton", arrowDirection + 0.5f, Colours::white));
+	decrementButton.reset(new ArrowButton("decrementButton", arrowDirection + 0.5f, defaultTextColour));
 	addAndMakeVisible(decrementButton.get());
 	decrementButton->addListener(this);
 
-	nameLabel.reset(new Label(componentName + "Label", getName()));
-	addChildComponent(nameLabel.get());
+	titleLabel.reset(new Label(componentName + "Label", getName()));
+	addChildComponent(titleLabel.get());
 
-	setupDefaultColours();
+	valueFont.setDefaultMinimumHorizontalScaleFactor(0.5f);
+	setupDefaultColours(defaultTextColour);
+}
+
+NumberSelector::NumberSelector(String componentName, SelectionType typeIn, Colour defaultTextColour)
+	: NumberSelector(componentName, typeIn, TickBox, Horizontal, defaultTextColour)
+{
+
 }
 
 NumberSelector::~NumberSelector()
@@ -63,7 +84,7 @@ NumberSelector::NamePlacement NumberSelector::getNamePlacement() const
 
 bool NumberSelector::isShowingName() const
 {
-	return nameLabel->isVisible();
+	return titleLabel->isVisible();
 }
 
 int NumberSelector::getValue() const
@@ -93,10 +114,13 @@ void NumberSelector::increment()
 {
 	int newIndex = indexSelected + 1;
 
-	if (selectionType == SelectionType::Range && selectionRange.contains(newIndex) ||
-		selectionType == SelectionType::List && indexSelected < selectionList.size() - 1)
+	if (selectionType == SelectionType::Range && selectionRange.contains(newIndex))
 	{
 		setIndex(newIndex);
+	}
+	else if (selectionType == SelectionType::List && indexSelected < selectionList.size() - 1)
+	{
+		listValueLabel->setSelectedId(newIndex + 1);
 	}
 }
 
@@ -105,10 +129,13 @@ void NumberSelector::decrement()
 {
 	int newIndex = indexSelected - 1;
 
-	if (selectionType == SelectionType::Range && selectionRange.contains(newIndex) ||
-		selectionType == SelectionType::List && indexSelected > 0)
+	if (selectionType == SelectionType::Range && selectionRange.contains(newIndex))
 	{
 		setIndex(newIndex);
+	}
+	else if (selectionType == SelectionType::List && indexSelected > 0)
+	{
+		listValueLabel->setSelectedId(newIndex + 1);
 	}
 }
 
@@ -145,7 +172,7 @@ void NumberSelector::setNamePlacement(NamePlacement placementIn)
 
 void NumberSelector::showNameLabel(bool toShow)
 {
-	nameLabel->setVisible(toShow);
+	titleLabel->setVisible(toShow);
 	//repaint();
 }
 
@@ -154,7 +181,10 @@ void NumberSelector::setValue(int valueIn, bool sendNotification)
 {
 	valueSelected = valueIn;
 	updateIndexFromValue();
-	updateTextBox();
+
+	if (selectionType == SelectionType::Range)
+		updateTextBox();
+	
 	if (sendNotification)
 		listeners.call(&NumberSelector::Listener::selectorValueChanged, this);
 }
@@ -163,7 +193,10 @@ void NumberSelector::setIndex(int indexIn, bool sendNotification)
 {
 	indexSelected = indexIn;
 	updateValueFromIndex();
-	updateTextBox();
+	
+	if (selectionType == SelectionType::Range)
+		updateTextBox();
+
 	if (sendNotification)
 		listeners.call(&NumberSelector::Listener::selectorValueChanged, this);
 }
@@ -187,12 +220,24 @@ void NumberSelector::setRange(int min, int max, bool updateValueAndIndex, bool s
 void NumberSelector::setList(IntList listIn, bool updateValueAndIndex, bool sendNotification)
 {
 	selectionList = listIn;
+
+	listValueLabel->clear();
+	for (int i = 0; i < selectionList.size(); i++)
+		listValueLabel->addItem(String(selectionList[i]), i + 1);
 	
 	if (sendNotification)
 		listeners.call(&NumberSelector::Listener::selectorListChanged, this);
 
 	if (updateValueAndIndex)
+	{
 		setIndex(jlimit(0, listIn.size() - 1, indexSelected), sendNotification);
+	}
+}
+
+void NumberSelector::setListLookAndFeel(LookAndFeel* newLookAndFeel)
+{
+	if (listValueLabel.get())
+		listValueLabel->setLookAndFeel(newLookAndFeel);
 }
 
 void NumberSelector::addListener(Listener* listenerIn)
@@ -214,14 +259,15 @@ void NumberSelector::paint (Graphics& g)
 		g.setColour(findColour(ColourIds::beltBackgroundColorId));
 		g.fillRect(getBounds());
 	}
+
+	// update colours here?
+	
 }
 
 void NumberSelector::resized()
 {
 	if (selectorStyle == TickBox)
 	{
-		valueLabel->setBounds(proportionOfWidth(0.2f), 0, proportionOfWidth(0.6f), proportionOfHeight(1.0f));
-
 		if (orientation == Horizontal)
 		{
 			decrementButton->setBounds(0, proportionOfHeight(3.0f / 8.0f), proportionOfWidth(0.2f), proportionOfHeight(1.0f / 3.0f));
@@ -236,29 +282,44 @@ void NumberSelector::resized()
 
 	if (isShowingName())
 	{
-		nameLabel->setFont(Font().withHeight(proportionOfHeight(0.2f)));
-		int nameStringWidth = nameLabel->getFont().getStringWidth(getName()) * 1.05f;
-		int nameStringHeight = nameLabel->getFont().getHeight();
+		titleLabel->setFont(Font().withHeight(proportionOfHeight(0.2f)));
+		int nameStringWidth = titleLabel->getFont().getStringWidth(getName()) * 1.05f;
+		int nameStringHeight = titleLabel->getFont().getHeight();
 
 		// TODO: handle vertical orientation
 
 		float nameHeight = (namePlacementSelected == NamePlacement::AboveValue)
-			? valueLabel->getPosition().y - proportionOfHeight(0.01f)
-			: valueLabel->getPosition().y + valueLabel->getFont().getHeight() + proportionOfHeight(0.01f);		
+			? titleLabel->getPosition().y - proportionOfHeight(0.01f)
+			: titleLabel->getPosition().y + titleLabel->getFont().getHeight() + proportionOfHeight(0.01f);
 		
-		nameLabel->setBounds(proportionOfWidth(0.5f) - nameStringWidth / 2.0f, nameHeight, nameStringWidth, nameStringHeight);
+		titleLabel->setBounds(proportionOfWidth(0.5f) - nameStringWidth / 2.0f, nameHeight, nameStringWidth, nameStringHeight);
 	}
 
-	valueFont.setHeight(proportionOfHeight(0.9f));
-	valueLabel->setFont(valueFont);
-	valueLabel->setJustificationType(Justification::centred);	
+	if (selectionType == SelectionType::Range)
+	{
+		rangeValueLabel->setBounds(proportionOfWidth(0.2f), 0, proportionOfWidth(0.6f), proportionOfHeight(1.0f));
+		
+		valueFont.setHeight(rangeValueLabel->getHeight());
+		rangeValueLabel->setFont(valueFont);
+		titleLabel->setJustificationType(Justification::centred);
+	}
+	else
+	{
+		listValueLabel->setBounds(proportionOfWidth(0.2f), 0, proportionOfWidth(0.6f), proportionOfHeight(1.0f));
+	}
 }
 
 void NumberSelector::updateValueFromIndex()
 {
-	valueSelected = (selectionType == SelectionType::Range)
-		? indexSelected + selectionRange.getStart()
-		: selectionList[indexSelected];
+	if (selectionType == SelectionType::Range)
+	{
+		valueSelected = indexSelected + selectionRange.getStart();
+	}
+	else
+	{
+		valueSelected = selectionList[indexSelected];
+		listValueLabel->setText(String(valueSelected), dontSendNotification);
+	}
 }
 
 void NumberSelector::updateIndexFromValue()
@@ -270,7 +331,7 @@ void NumberSelector::updateIndexFromValue()
 
 void NumberSelector::updateTextBox()
 {
-	valueLabel->setText(String(valueSelected), dontSendNotification);
+	rangeValueLabel->setText(String(valueSelected), dontSendNotification);
 }
 
 void NumberSelector::buttonClicked(Button* buttonThatHasChanged)
@@ -282,33 +343,66 @@ void NumberSelector::buttonClicked(Button* buttonThatHasChanged)
 		decrement();
 }
 
-void NumberSelector::setupDefaultColours()
+void NumberSelector::comboBoxChanged(ComboBox* comboBox)
+{
+	setIndex(comboBox->getSelectedId() - 1);
+}
+
+void NumberSelector::labelTextChanged(Label* labelThatHasChanged)
+{
+	// Limit to valid range
+	int newValue = selectionRange.clipValue(labelThatHasChanged->getText().getIntValue());
+	setValue(newValue);
+	DBG("NUMBERSELECTORLABEL: Value changed to " + String(getValue()));
+}
+
+void NumberSelector::editorShown(Label* label, TextEditor& editor)
+{
+	editor.addListener(this);
+	editor.setJustification(Justification::centred);
+	editor.applyFontToAllText(label->getFont().withHeight(editor.getHeight() * 0.95f));
+}
+
+void NumberSelector::editorHidden(Label* label, TextEditor& editor)
+{
+	editor.removeListener(this);
+}
+
+void NumberSelector::textEditorTextChanged(TextEditor& editor)
+{
+	String text = editor.getText();
+	char lastChar = text.getLastCharacter();
+	if (text.length() > 0 && (lastChar < 48 || lastChar > 57))
+		editor.setText(text.replaceSection(text.length() - 1, 1, ""), false);
+}
+
+void NumberSelector::setupDefaultColours(Colour defaultTextColourIn)
 {
 	setColour(valueTextBackgroundColourId, Colour());
 	setColour(valueTextBackgroundMouseOverColourId, Colours::white.withAlpha(0.1f));
 	
 	if (selectorStyle == SelectorStyle::TickBox)
-		setColour(valueTextColourId, Colours::white);
+		setColour(valueTextColourId, defaultTextColourIn);
 	else if (selectorStyle == SelectorStyle::Belt)
-		setColour(valueTextColourId, Colours::black);
+		setColour(valueTextColourId, defaultTextColourIn.contrasting(1));
 	
-	setColour(valueTextColourMouseOverColourId, Colours::white.withAlpha(0.1f));
+	setColour(valueTextColourMouseOverColourId, defaultTextColourIn.contrasting(0.1f));
 	setColour(valueOutlineColourId, Colour());
 
 	setColour(buttonBackgroundColourId, Colour());
 	setColour(buttonBackgroundMouseOverColourId, Colours::white.withAlpha(0.1f));
 	setColour(buttonBackgroundMouseDownColourId, Colours::lightgrey);
-	setColour(buttonTextColourId, Colours::white);
-	setColour(buttonTextMouseOverColourId, Colours::white.withAlpha(0.1f));
-	setColour(buttonTextMouseDownColourId, Colours::lightgrey);
+	setColour(buttonTextColourId, defaultTextColourIn);
+	setColour(buttonTextMouseOverColourId, defaultTextColourIn.contrasting(0.1f));
+	setColour(buttonTextMouseDownColourId, defaultTextColourIn.contrasting(0.25f));
 	setColour(buttonOutlineColourId, Colour());
 
 	setColour(beltBackgroundColorId, Colours::white);
 	setColour(beltBuckleColourId, Colours::darkgrey);
 
-	valueLabel->setColour(Label::ColourIds::backgroundColourId, findColour(valueTextBackgroundColourId));
-	valueLabel->setColour(Label::ColourIds::textColourId, findColour(valueTextColourId));
-	valueLabel->setColour(Label::ColourIds::outlineColourId, findColour(valueOutlineColourId));
+	titleLabel->setColour(Label::ColourIds::backgroundColourId, findColour(valueTextBackgroundColourId));
+	titleLabel->setColour(Label::ColourIds::textColourId, findColour(valueTextColourId));
+	titleLabel->setColour(Label::ColourIds::outlineColourId, findColour(valueOutlineColourId));
 
 	//incrementButton->setColour(TextButton::ColourIds::buttonColourId, findColour(buttonBackgroundColourId));
 	//incrementButton->setColour(TextButton::ColourIds::buttonOnColourId, findColour(buttonBackgroundMouseDownColourId));

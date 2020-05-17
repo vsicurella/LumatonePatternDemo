@@ -24,7 +24,9 @@
 
 #include "NumberSelector.h"
 #include "GroupingCircle.h"
+#include "TransparentDropDown.h"
 #include "../ScaleStructure.h"
+
 //[/Headers]
 
 
@@ -38,9 +40,10 @@
                                                                     //[/Comments]
 */
 class ScaleStructureComponent  : public Component,
-                                 public NumberSelector::Listener,
-                                 public Value::Listener,
-                                 public ChangeBroadcaster
+                                 public ChangeBroadcaster,
+                                 private NumberSelector::Listener,
+                                 private Value::Listener,
+                                 private Button::Listener
 {
 public:
     //==============================================================================
@@ -49,8 +52,16 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+	void paintOverChildren(Graphics& g) override;
+
+	void buttonClicked(Button* buttonThatWasClicked) override;
 	void selectorValueChanged(NumberSelector* selectorThatHasChanged) override;
 	void valueChanged(Value& valueThatHasChanged) override;
+
+	void updateGenerators();
+	void updateScaleSizes();
+
+	void updatePeriodFactor(int factorIndexIn);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -60,17 +71,37 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+
+	// Functional Elements
 	ScaleStructure& scaleStructure;
 	Array<Colour>& colourTable;
 
 	GroupingCircle* circle;
 	Value* circleOffset;
 
+	TooltipWindow tooltipWindow;
+
+	// Components
+	std::unique_ptr<NumberSelector> sizeSelector;
+
 	std::unique_ptr<Label> offsetLabel;
 	Path offsetArrows;
 
+	Path periodFactorButtonShape;
+	std::unique_ptr<ShapeButton> periodFactorButton;
+	PopupMenu periodFactorMenu;
+
+	// Look and Feels
+	std::unique_ptr<TransparentDropDown> generatorLookAndFeel;
+	std::unique_ptr<TransparentDropDown> sizeLookAndFeel;
+	std::unique_ptr<TransparentDropDown> periodFactorLookAndFeel;
+
+	// Helpers
 	int periodSelected;
 	int generatorSelected;
+
+	Array<int> periodFactors;
+	int periodFactorSelected = 0;
     //[/UserVariables]
 
     //==============================================================================
@@ -79,8 +110,6 @@ private:
     std::unique_ptr<NumberSelector> periodSlider;
     std::unique_ptr<Label> generatorValueLbl;
     std::unique_ptr<Label> stepSizePatternLbl;
-    std::unique_ptr<NumberSelector> periodFactorSelector;
-    std::unique_ptr<NumberSelector> scaleSizeSelector;
 
 
     //==============================================================================
